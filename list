@@ -1,7 +1,7 @@
 - using ATmega32u4 for USB-MIDI. Using LUFA low-level framework to handle the USB.
 - using mechanical keyboard style buttons (clean, easy, customisable)
 - oled screen with as many utilities as possible. what will it display? (then choose a size)
-- 2 octaves piano to play some melodies? also adding a pitch shifter for that. 
+- 2 octaves piano to play some melodies? also adding a pitch shifter for that. (probably just one octave, switch between chord mode and melody, will handle the outside the key chords latter in software).
 - in the piano, use magnetic keyboard push buttons for mesuring velocity (they have hall sensors)
 - using SysEx (system exclusive) adding to MCU (Mackie Control Universal) to send more complex messages through midi.
 Controlling things like pause/play, record, track selection, feedback on volume and much more.
@@ -12,7 +12,7 @@ Controlling things like pause/play, record, track selection, feedback on volume 
 
 
 
-OTHER KEYBOARD INPIRATIONS:
+OTHER KEYBOARD INSPIRATIONS:
 - nopia
 
 - op-1
