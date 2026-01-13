@@ -1,17 +1,25 @@
-#include "SH1106.h"
 #include "UART.h"
 #include "I2C.h"
+#include "display.h"
+#include "sh1106.h"
+#include "display_bus_i2c.h"
 
-void main(void) {
+int main(void)
+{
     i2c_init();
     UART_init();
+
     UART_print_str("Starting... \r\n");
-    sh1106_init();
+    display_init(&sh1106, &display_bus_i2c);
     UART_print_str("SH1106 Initialized\r\n");
-    sh1106_clear();
+    display_clear();
     UART_print_str("SH1106 Cleared\r\n");
-    
-    while (1) {
-        // Main loop
-    }
+
+    for (uint8_t i = 0; i < 64; i++)
+        sh1106_set_pixel(i, i, 1);
+
+    sh1106_update();  // push framebuffer to screen
+    UART_print_str("SH1106 Updated\r\n");
+
+    while (1);
 }

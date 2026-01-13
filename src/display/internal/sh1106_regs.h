@@ -1,9 +1,5 @@
-#ifndef SH1106_H
-#define SH1106_H
-
-#define SH1106_ADDR 0x3C
-#define SH1106_WIDTH 128
-#define SH1106_HEIGHT 64
+#ifndef SH1106_REGS_H
+#define SH1106_REGS_H 
 
 #define DISPLAY_OFF 0xAE
 #define DISPLAY_ON 0xAF
@@ -20,11 +16,5 @@
 #define SET_PAGE_ADDR 0xB0
 #define COMMAND_MODE 0x00
 #define DATA_MODE 0x40
-
-extern display_controller_t sh1106;
-
-void sh1106_attach_bus(display_bus_t *bus);
-void sh1106_init(void);
-void sh1106_clear(void);
 
 #endif

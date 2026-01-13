@@ -6,19 +6,27 @@ AVRDUDE = avrdude
 PROGRAMMER = arduino
 PORT = /dev/ttyACM0#ttyUSB0
 BAUD = 115200
-SIZE = avr-size
+SIZE = avr-s:ize
 SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
 
 BUILD_DIR = .build
 
 # Compiler flags
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os -Iinc
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os
+CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal
+CFLAGS += -Isrc/I2C
+CFLAGS += -Isrc/UART
 
 # Source files
-SRC_DIR = src
-SRC_FILES = main.c UART.c I2C.c SH1106.c
-SRC = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
+include src/display/display.mk
+include src/I2C/I2C.mk
+include src/UART/UART.mk
+
+SRC = src/main.c 
+SRC += $(DISPLAY_SRC)
+SRC += $(I2C_SRC)
+SRC += $(UART_SRC)
 
 # Output files in build folder
 ELF = $(BUILD_DIR)/program.elf
@@ -43,9 +51,9 @@ $(HEX): $(ELF)
 # Flash target: generates HEX if needed, flashes, and prints memory usage
 flash: $(HEX)
 	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(HEX):i
-	@echo "\033[0;34m-------  Memory usage  --------\033[0m"
-	@$(MAKE) -s size
-	@echo "\n"
+	#@echo "\033[0;34m-------  Memory usage  --------\033[0m"
+	#@$(MAKE) -s size
+	#@echo "\n"
 
 # Print flash and RAM usage only (no Program/Data lines)
 size: $(ELF) | $(BUILD_DIR)
@@ -66,5 +74,5 @@ clean:
 re: clean all
 
 # Declare phony targets
-.PHONY: all flash size clean
+.PHONY: all flash size clean re screen
 
