@@ -31,12 +31,10 @@
 #define ERR_I2C_SLAR_ACK  5
 #define ERR_I2C_WRITE_ACK 6
 
-// I2C
-void I2C_init(void);
-void I2C_start(void);
-void I2C_SLA_WR(uint8_t addr, uint8_t rw);
-void I2C_write(uint8_t data);
-void I2C_stop(void);
-uint8_t I2C_read(uint8_t ack);
+void i2c_init(void);
+void i2c_start(uint8_t addr_rw);
+void i2c_write(uint8_t data);
+void i2c_stop(void);
+uint8_t i2c_read(uint8_t ack);
 
 #endif
