@@ -4,7 +4,7 @@ void i2c_init(void) {
   DDRC &= ~((1 << PC4) | (1 << PC5));
   PORTC |= (1 << PC4) | (1 << PC5);
   TWSR = 0;
-  TWBR = 72; // 100kHz
+  TWBR = 12;// 400kHz! 72; // 100kHz
 }
 
 void i2c_start(uint8_t addr_rw) {

@@ -35,7 +35,7 @@ void	UART_print_byte(const uint8_t byte)
 		UART_tx(byte & 1 << i);
 }
 
-void	UART_print_num(const uint16_t number)
+void	UART_print_num(const uint32_t number)
 {
 	const uint8_t num = number % 10;
 	if (number > 9)

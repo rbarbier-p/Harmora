@@ -1,6 +1,8 @@
 #ifndef SH1106_REGS_H
 #define SH1106_REGS_H 
 
+#define SH1106_ADDR 0x3C
+
 #define DISPLAY_OFF 0xAE
 #define DISPLAY_ON 0xAF
 #define MULTIPLEX 0xA8

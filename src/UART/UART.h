@@ -13,6 +13,6 @@ uint8_t	UART_rx(void);
 void UART_print_str(char *str);
 void UART_print_hex(uint8_t hex);
 void UART_print_byte(uint8_t data);
-void	UART_print_num(uint16_t number);
+void	UART_print_num(uint32_t number);
 
 #endif
