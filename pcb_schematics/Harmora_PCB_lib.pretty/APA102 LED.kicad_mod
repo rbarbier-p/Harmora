@@ -1,0 +1,146 @@
+(footprint "APA102 LED"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -0.5 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "91307910-22af-4ce0-b340-fdb1cc7c0132")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "APA102 LED"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "bde9e583-72d5-4b60-bbdb-f97bf1e33adc")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b8a743a8-5f03-4fcf-b40b-8446e3447b8a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "967d8b37-1bbb-429c-93ad-6f0acb5749d9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -2.675 -2.5)
+		(end 2.675 2.5)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "67857f3d-5fb0-4201-bd97-9d65135abdf8")
+	)
+	(fp_poly
+		(pts
+			(xy 2.95 -2.8) (xy 2.95 -2.35) (xy 3.9 -2.35) (xy 3.9 2.35) (xy 2.95 2.35) (xy 2.95 2.8) (xy -2.95 2.8)
+			(xy -2.95 2.35) (xy -3.9 2.35) (xy -3.9 -2.35) (xy -2.95 -2.35) (xy -2.95 -2.8)
+		)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "b9b803c7-3791-408e-9e11-9be886f45098")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 3.9 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "c605ea4a-b683-4671-a0ad-04325b8befc4")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.1)
+				(bold yes)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at 3.18 -1.6 180)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(clearance 0.01)
+		(uuid "aa3f1294-d9ab-4c44-9eae-5e5ecd4e46b7")
+	)
+	(pad "2" smd rect
+		(at 3.18 0 180)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(clearance 0.01)
+		(uuid "37eb3e5e-3d0b-493e-b888-818b386dbaf1")
+	)
+	(pad "3" smd rect
+		(at 3.18 1.6 180)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "1cb12595-948b-4e0d-843e-2e2de61c9c87")
+	)
+	(pad "4" smd rect
+		(at -3.18 1.6 180)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "672a7a28-65c1-4bd1-85f6-149a13af866f")
+	)
+	(pad "5" smd rect
+		(at -3.18 0 180)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "f0bd8100-df44-4805-b04b-317ec46a6898")
+	)
+	(pad "6" smd rect
+		(at -3.18 -1.6 180)
+		(size 1 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "e58cd6dc-84dd-4c28-ae0d-a3f41f996973")
+	)
+	(embedded_fonts no)
+	(model "${KICAD9_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_5050-6.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -180 -0)
+		)
+	)
+)
