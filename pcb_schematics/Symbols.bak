@@ -764,7 +764,7 @@
 		)
 		(embedded_fonts no)
 	)
-	(symbol "Capacitor"
+	(symbol "Capacitor 0603"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -811,7 +811,7 @@
 				(hide yes)
 			)
 		)
-		(symbol "Capacitor_0_1"
+		(symbol "Capacitor 0603_0_1"
 			(polyline
 				(pts
 					(xy -1.524 0.508) (xy 1.524 0.508)
@@ -837,7 +837,7 @@
 				)
 			)
 		)
-		(symbol "Capacitor_1_1"
+		(symbol "Capacitor 0603_1_1"
 			(pin passive line
 				(at 0 2.54 270)
 				(length 2.032)
@@ -877,11 +877,152 @@
 		)
 		(embedded_fonts no)
 	)
+	(symbol "Capacitor Electrolytic"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "C"
+			(at -3.302 0 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "Capacitor Electrolytic_0_1"
+			(polyline
+				(pts
+					(xy -2.54 1.524) (xy -2.032 1.524)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.286 1.27) (xy -2.286 1.778)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.524 0.6858)
+				(end 1.524 0.3048)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(rectangle
+				(start -1.524 -0.3048)
+				(end 1.524 -0.6858)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type outline)
+				)
+			)
+		)
+		(symbol "Capacitor Electrolytic_1_1"
+			(pin passive line
+				(at 0 2.54 270)
+				(length 1.8542)
+				(name "~"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -2.54 90)
+				(length 1.8542)
+				(name "~"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
 	(symbol "GND"
 		(power)
-		(exclude_from_sim yes)
-		(in_bom no)
-		(on_board no)
+		(pin_numbers
+			(hide yes)
+		)
+		(pin_names
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
 		(property "Reference" "#PWR"
 			(at 0 0 0)
 			(effects
@@ -962,7 +1103,7 @@
 		)
 		(embedded_fonts no)
 	)
-	(symbol "Resistor"
+	(symbol "Resistor 0603"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -1009,7 +1150,7 @@
 				(hide yes)
 			)
 		)
-		(symbol "Resistor_0_1"
+		(symbol "Resistor 0603_0_1"
 			(rectangle
 				(start -0.762 1.778)
 				(end 0.762 -1.778)
@@ -1022,7 +1163,7 @@
 				)
 			)
 		)
-		(symbol "Resistor_1_1"
+		(symbol "Resistor 0603_1_1"
 			(pin passive line
 				(at 0 2.54 270)
 				(length 0.762)
