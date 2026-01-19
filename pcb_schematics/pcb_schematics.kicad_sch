@@ -6,7 +6,49 @@
 	(paper "A4")
 	(lib_symbols)
 	(sheet
-		(at 121.92 34.29)
+		(at 71.12 17.78)
+		(size 51.435 39.37)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "333a86ff-2f60-4263-8580-754eb0fa7cf4")
+		(property "Sheetname" "Hall Sensors"
+			(at 71.12 17.0684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "hall_sensors.kicad_sch"
+			(at 71.12 57.7346 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "pcb_schematics"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 17.78 17.78)
 		(size 49.53 39.37)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -21,8 +63,8 @@
 			(color 0 0 0 0.0000)
 		)
 		(uuid "8c7f0436-3a68-4f5f-872d-97f6a622412c")
-		(property "Sheetname" "Piano"
-			(at 121.92 33.5784 0)
+		(property "Sheetname" "SPI LED chain"
+			(at 17.78 17.0684 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -30,8 +72,8 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "piano_subsheet.kicad_sch"
-			(at 121.92 74.2446 0)
+		(property "Sheetfile" "SPI_LED_chain.kicad_sch"
+			(at 17.78 57.7346 0)
 			(effects
 				(font
 					(size 1.27 1.27)

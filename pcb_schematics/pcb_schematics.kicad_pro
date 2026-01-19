@@ -601,7 +601,7 @@
       "version": 1
     },
     "net_format_name": "",
-    "page_layout_descr_file": "",
+    "page_layout_descr_file": "SPI_LED_chain",
     "plot_directory": "",
     "space_save_all_events": true,
     "spice_current_sheet_as_root": false,
@@ -620,7 +620,11 @@
     ],
     [
       "8c7f0436-3a68-4f5f-872d-97f6a622412c",
-      "Piano"
+      "SPI LED chain"
+    ],
+    [
+      "333a86ff-2f60-4263-8580-754eb0fa7cf4",
+      "Hall Sensors"
     ]
   ],
   "text_variables": {}
