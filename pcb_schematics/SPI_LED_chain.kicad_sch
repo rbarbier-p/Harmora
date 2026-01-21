@@ -1126,6 +1126,14 @@
 		(color 255 0 0 1)
 		(uuid "ffcc6913-e910-4d21-9d73-3357806b67be")
 	)
+	(no_connect
+		(at 110.49 176.53)
+		(uuid "37510e4c-5f4d-4086-a04f-a8bd6f07251c")
+	)
+	(no_connect
+		(at 110.49 179.07)
+		(uuid "442d4566-70d0-453e-add3-fb9c9d82c648")
+	)
 	(wire
 		(pts
 			(xy 179.07 31.75) (xy 175.26 31.75)
@@ -3160,7 +3168,7 @@
 		)
 		(uuid "ff818ba7-92d2-43a7-8a3c-bfcf79bd854a")
 	)
-	(global_label "SOFT_SPI_MISO"
+	(global_label "SOFT_SPI_MOSI"
 		(shape input)
 		(at 44.45 38.1 180)
 		(fields_autoplaced yes)

@@ -624,7 +624,15 @@
     ],
     [
       "333a86ff-2f60-4263-8580-754eb0fa7cf4",
-      "Hall Sensors"
+      "Piano MUX"
+    ],
+    [
+      "2a4f78f1-8b77-4f8a-9948-76c5bec94d5f",
+      "Encoders MUX"
+    ],
+    [
+      "8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b",
+      "Expanders"
     ]
   ],
   "text_variables": {}
