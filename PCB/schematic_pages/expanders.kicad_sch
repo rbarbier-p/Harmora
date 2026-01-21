@@ -2817,29 +2817,6 @@
 			)
 		)
 	)
-	(global_label "I2C_SDA"
-		(shape input)
-		(at 67.31 31.75 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "0de13811-ac6f-48f8-9a17-942d2cfc869e")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 56.7048 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "D_IN_23"
 		(shape input)
 		(at 102.87 144.78 0)
@@ -2859,29 +2836,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "EXP1_INTA"
-		(shape input)
-		(at 67.31 49.53 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "71bad31e-5131-4d66-8c01-b6b6f81c20f3")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 54.5277 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)
@@ -2909,98 +2863,6 @@
 			)
 		)
 	)
-	(global_label "I2C_SDA"
-		(shape input)
-		(at 67.31 104.14 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "8ff4805b-cb68-4e7f-889a-49488ab63086")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 56.7048 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "I2C_SCL"
-		(shape input)
-		(at 67.31 34.29 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "937565c1-1cc2-4b99-885e-7cc50f0367b9")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 56.7653 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "EXP2_INTA"
-		(shape input)
-		(at 67.31 121.92 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "b0bf22e3-248a-44d1-96dd-035a871f7126")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 54.5277 121.92 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "EXP1_INTB"
-		(shape input)
-		(at 67.31 46.99 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "b6891b83-3220-4936-b31a-be99765b0110")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 54.3463 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "D_IN_22"
 		(shape input)
 		(at 102.87 142.24 0)
@@ -3024,51 +2886,93 @@
 			)
 		)
 	)
-	(global_label "I2C_SCL"
+	(hierarchical_label "EXP1_INTA"
 		(shape input)
-		(at 67.31 106.68 180)
-		(fields_autoplaced yes)
+		(at 67.31 49.53 180)
 		(effects
 			(font
 				(size 1.27 1.27)
-				(color 221 133 0 1)
 			)
 			(justify right)
 		)
-		(uuid "d7dd0b1f-53a2-4218-ad31-937c020e7549")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 56.7653 106.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
+		(uuid "13350938-9461-4639-9594-339162bb7887")
 	)
-	(global_label "EXP2_INTB"
+	(hierarchical_label "EXP2_INTA"
+		(shape input)
+		(at 67.31 121.92 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "15b6e9d8-8e02-4c20-b64d-82c3759dc4a9")
+	)
+	(hierarchical_label "I2C_SDA"
+		(shape input)
+		(at 67.31 31.75 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "36e82549-f072-4411-b6ec-3cd1cb8bfe10")
+	)
+	(hierarchical_label "I2C_SDA"
+		(shape input)
+		(at 67.31 104.14 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "52a40981-ffd6-465b-9484-1d06f7ddbf51")
+	)
+	(hierarchical_label "EXP1_INTB"
+		(shape input)
+		(at 67.31 46.99 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "78082f67-a9e2-4af3-8910-323039332900")
+	)
+	(hierarchical_label "EXP2_INTB"
 		(shape input)
 		(at 67.31 119.38 180)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
-				(color 221 133 0 1)
 			)
 			(justify right)
 		)
-		(uuid "f05ee3cf-e1bd-435f-a025-8bfd93fa1ecd")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 54.3463 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
+		(uuid "86573de8-da4a-4eda-96aa-2bee049c7f2c")
+	)
+	(hierarchical_label "I2C_SCK"
+		(shape input)
+		(at 67.31 34.29 180)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right)
 		)
+		(uuid "b50d9b01-dfac-4b13-bbb8-0453cbeb520d")
+	)
+	(hierarchical_label "I2C_SCK"
+		(shape input)
+		(at 67.31 106.68 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "dc5a390d-b6be-4844-8453-c3d7de4319ab")
 	)
 	(symbol
 		(lib_id "Symbols:Push_Switch")
@@ -3131,7 +3035,7 @@
 			(uuid "0788a097-0871-41af-a007-16683ac9b39e")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B17")
 					(unit 1)
@@ -3200,7 +3104,7 @@
 			(uuid "2e2225f2-390f-4c52-842e-c8bbfcaa4ffd")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B6")
 					(unit 1)
@@ -3268,7 +3172,7 @@
 			(uuid "13e47207-2f06-41c8-92ce-43f34fa2f22f")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "C43")
 					(unit 1)
@@ -3334,7 +3238,7 @@
 			(uuid "e873120a-d632-4731-9283-5db933dbe9db")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0122")
 					(unit 1)
@@ -3482,7 +3386,7 @@
 			(uuid "819179da-ad10-429b-9bf4-8f410b8a3eda")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "EX2")
 					(unit 1)
@@ -3548,7 +3452,7 @@
 			(uuid "8c7eedf9-0c47-4ffa-9917-5b605b303d6f")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0121")
 					(unit 1)
@@ -3614,7 +3518,7 @@
 			(uuid "8da0f7b8-89c2-4217-9023-63133e3520da")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0106")
 					(unit 1)
@@ -3683,7 +3587,7 @@
 			(uuid "5ce3486d-0103-4147-9925-b5b9224628a2")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B28")
 					(unit 1)
@@ -3750,7 +3654,7 @@
 			(uuid "f4d95031-49d3-4000-b475-5ed22eddf226")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0123")
 					(unit 1)
@@ -3817,7 +3721,7 @@
 			(uuid "b9cd23a9-aae4-4de5-8ec1-7641543a09ab")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0118")
 					(unit 1)
@@ -3886,7 +3790,7 @@
 			(uuid "c6ccfd24-4b51-4b56-845a-b322d4cb2a5d")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B18")
 					(unit 1)
@@ -3955,7 +3859,7 @@
 			(uuid "cf6ca30e-1282-4f59-bd88-be9d6bd01761")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B29")
 					(unit 1)
@@ -4024,7 +3928,7 @@
 			(uuid "283013e3-e2c3-48b1-9908-2be16ed6bb53")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B7")
 					(unit 1)
@@ -4093,7 +3997,7 @@
 			(uuid "98e1f7a5-b953-47ff-9066-200a386a2563")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B23")
 					(unit 1)
@@ -4162,7 +4066,7 @@
 			(uuid "7ed57d9f-990f-4f98-b8f7-631941b4be89")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B21")
 					(unit 1)
@@ -4229,7 +4133,7 @@
 			(uuid "98343b11-19d0-4184-bf3c-a565db33526f")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0116")
 					(unit 1)
@@ -4294,7 +4198,7 @@
 			(uuid "240332db-3085-4c33-bd61-4a450aff1746")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0107")
 					(unit 1)
@@ -4363,7 +4267,7 @@
 			(uuid "9134d53b-1943-468a-b1ad-d53fceff3ba6")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B19")
 					(unit 1)
@@ -4432,7 +4336,7 @@
 			(uuid "c0933740-1ce7-42a1-892d-0a9d04bac9fa")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B13")
 					(unit 1)
@@ -4498,7 +4402,7 @@
 			(uuid "4abe68de-0c0d-4a74-b2c8-f218428f90e7")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0120")
 					(unit 1)
@@ -4567,7 +4471,7 @@
 			(uuid "f577fdb4-7e18-45fa-8b17-39b998258eba")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B9")
 					(unit 1)
@@ -4636,7 +4540,7 @@
 			(uuid "9a51ba4a-352b-429e-9c63-0b78205b7edf")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B24")
 					(unit 1)
@@ -4702,7 +4606,7 @@
 			(uuid "c5f77abd-3292-447e-8759-fe90fd161584")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0111")
 					(unit 1)
@@ -4850,7 +4754,7 @@
 			(uuid "98816b06-aa55-481b-9556-d6d17785194b")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "EX1")
 					(unit 1)
@@ -4917,7 +4821,7 @@
 			(uuid "6a124ae2-da97-4dd2-bb72-d6623397206b")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0115")
 					(unit 1)
@@ -4986,7 +4890,7 @@
 			(uuid "29a18313-a3da-4c29-8a82-e70204955f9d")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B14")
 					(unit 1)
@@ -5052,7 +4956,7 @@
 			(uuid "69e65243-84cd-4535-8ef4-07b3a4d5c038")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0119")
 					(unit 1)
@@ -5121,7 +5025,7 @@
 			(uuid "2beeba5a-1dcd-4d6b-b839-af979ef74555")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B1")
 					(unit 1)
@@ -5190,7 +5094,7 @@
 			(uuid "a90c5f22-02ae-485f-9338-d5b75fd7d035")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B2")
 					(unit 1)
@@ -5255,7 +5159,7 @@
 			(uuid "84697ed0-49c5-4396-af97-35e6a353ae71")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0110")
 					(unit 1)
@@ -5324,7 +5228,7 @@
 			(uuid "29c4e179-bc4e-4d6d-bb72-a498d3e84bc9")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B3")
 					(unit 1)
@@ -5391,7 +5295,7 @@
 			(uuid "f464b30a-c570-4b7b-bf0e-d9ed10a17ef6")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0117")
 					(unit 1)
@@ -5460,7 +5364,7 @@
 			(uuid "f6c89f0a-3304-4739-adfe-cd9cf84e420f")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B11")
 					(unit 1)
@@ -5528,7 +5432,7 @@
 			(uuid "2f564eb7-ff4b-4b4d-8e4b-2e1d6ce91f0a")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B16")
 					(unit 1)
@@ -5593,7 +5497,7 @@
 			(uuid "abe3b8c8-bdf7-46b7-a7de-79387884c3bf")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0112")
 					(unit 1)
@@ -5661,7 +5565,7 @@
 			(uuid "4e4bc4c2-76ae-42f0-a6cf-3b05c5b17e31")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "C42")
 					(unit 1)
@@ -5730,7 +5634,7 @@
 			(uuid "dbe98922-a4c1-4668-8cc8-243128a3adae")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B4")
 					(unit 1)
@@ -5799,7 +5703,7 @@
 			(uuid "c0b9e655-86e3-43e2-8687-1a8a47abf6e9")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B25")
 					(unit 1)
@@ -5868,7 +5772,7 @@
 			(uuid "fe551756-7551-4cd7-96b4-9040763c9447")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B26")
 					(unit 1)
@@ -5937,7 +5841,7 @@
 			(uuid "eb2c9a2e-451e-40ed-bce5-1988c22dd006")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B15")
 					(unit 1)
@@ -6006,7 +5910,7 @@
 			(uuid "97fd5f7c-2604-4fe9-ab16-e741c8355d71")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B12")
 					(unit 1)
@@ -6075,7 +5979,7 @@
 			(uuid "3dc0e38c-b93a-49f5-bc16-e82c55ab720e")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B20")
 					(unit 1)
@@ -6144,7 +6048,7 @@
 			(uuid "427c9502-41ce-4c23-b102-61efda199f65")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B8")
 					(unit 1)
@@ -6213,7 +6117,7 @@
 			(uuid "cff58dc1-4407-4350-8b34-1f9c5f47ae96")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B27")
 					(unit 1)
@@ -6282,7 +6186,7 @@
 			(uuid "ec1c08e3-980c-49de-b12f-6c84b22693d9")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B5")
 					(unit 1)
@@ -6351,7 +6255,7 @@
 			(uuid "448d8a5b-e960-4248-8243-c4469a53adbf")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B22")
 					(unit 1)
@@ -6416,7 +6320,7 @@
 			(uuid "0e85d100-2b65-4f28-b0ce-a176b69c6924")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "#PWR0108")
 					(unit 1)

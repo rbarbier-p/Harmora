@@ -902,13 +902,13 @@
 	(junction
 		(at 93.98 137.16)
 		(diameter 0)
-		(color 0 0 0 0)
+		(color 0 0 0 1)
 		(uuid "08adda4e-1f35-43cc-8f8a-f17b9a5fc8ab")
 	)
 	(junction
 		(at 93.98 100.33)
 		(diameter 0)
-		(color 0 0 0 0)
+		(color 0 0 0 1)
 		(uuid "372a8496-877b-484c-bc06-4a7935eb049b")
 	)
 	(no_connect
@@ -984,6 +984,7 @@
 		(stroke
 			(width 0)
 			(type default)
+			(color 0 0 0 1)
 		)
 		(uuid "1e350246-7e72-4b65-88b5-a3a41419ea46")
 	)
@@ -994,6 +995,7 @@
 		(stroke
 			(width 0)
 			(type default)
+			(color 0 0 0 1)
 		)
 		(uuid "20fb8011-62e7-402c-9844-b3b978ce1356")
 	)
@@ -1004,6 +1006,7 @@
 		(stroke
 			(width 0)
 			(type default)
+			(color 0 0 0 1)
 		)
 		(uuid "22826a78-6fd6-48bd-b7bd-93034d28cb52")
 	)
@@ -1134,6 +1137,7 @@
 		(stroke
 			(width 0)
 			(type default)
+			(color 0 0 0 1)
 		)
 		(uuid "7967b478-2472-4bdf-8c58-3cd84518e177")
 	)
@@ -1204,6 +1208,7 @@
 		(stroke
 			(width 0)
 			(type default)
+			(color 0 0 0 1)
 		)
 		(uuid "be0a436b-0655-49ee-8817-3849a0461aa9")
 	)
@@ -1244,6 +1249,7 @@
 		(stroke
 			(width 0)
 			(type default)
+			(color 0 0 0 1)
 		)
 		(uuid "cc07e9a2-b56e-43a2-86a4-f5705fc22d1b")
 	)
@@ -1327,52 +1333,6 @@
 		)
 		(uuid "f6c1af4b-8588-451e-bedc-c235eb4d4383")
 	)
-	(global_label "MUX_IN_0"
-		(shape input)
-		(at 85.09 77.47 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "117e0cfc-4400-4582-bbf4-7c04ef7b7c35")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 73.0334 77.47 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "MUX_IN_2"
-		(shape input)
-		(at 85.09 119.38 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "1f446cdc-29d5-4aef-9da8-bc64a7b1957b")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 73.0334 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "D_IN_22"
 		(shape input)
 		(at 115.57 53.34 90)
@@ -1392,29 +1352,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "MUX_IN_3"
-		(shape input)
-		(at 54.61 105.41 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "33fd1881-106a-4c98-9361-ce06baf5c44f")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 42.5534 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)
@@ -1442,29 +1379,6 @@
 			)
 		)
 	)
-	(global_label "MUX2_OUT"
-		(shape input)
-		(at 54.61 107.95 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "405e13f1-5a02-4e69-a46b-a73be99aca40")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 41.8277 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
 	(global_label "D_IN_23"
 		(shape input)
 		(at 156.21 53.34 90)
@@ -1484,52 +1398,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "MUX_IN_1"
-		(shape input)
-		(at 85.09 116.84 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "80f26576-586b-4be6-8326-1a76094b470e")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 73.0334 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "MUX_IN_1"
-		(shape input)
-		(at 85.09 80.01 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-				(color 221 133 0 1)
-			)
-			(justify right)
-		)
-		(uuid "9a829add-4004-4400-bf62-1d1a9a19f67c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 73.0334 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
 				(hide yes)
 			)
 		)
@@ -1557,51 +1425,93 @@
 			)
 		)
 	)
-	(global_label "MUX_IN_0"
+	(hierarchical_label "DMUX_S3"
+		(shape input)
+		(at 54.61 105.41 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "40d6dddd-8486-4cf4-b26a-cf63ba8ad0b0")
+	)
+	(hierarchical_label "DMUX_S0"
 		(shape input)
 		(at 85.09 114.3 180)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
-				(color 221 133 0 1)
 			)
 			(justify right)
 		)
-		(uuid "ea8733a4-25fb-4ec4-a1d6-82b219da83ae")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 73.0334 114.3 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
-			)
-		)
+		(uuid "5136c84a-ef60-4706-aae9-8b0bbad50eca")
 	)
-	(global_label "MUX_IN_2"
+	(hierarchical_label "DMUX_S1"
+		(shape input)
+		(at 85.09 80.01 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5dc2a87d-f5f8-40d6-8628-1abd031c0a49")
+	)
+	(hierarchical_label "DMUX_S2"
 		(shape input)
 		(at 85.09 82.55 180)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
-				(color 221 133 0 1)
 			)
 			(justify right)
 		)
-		(uuid "fe6ec9ba-9194-43b3-b48c-721f9303c3bb")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 73.0334 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-				(hide yes)
+		(uuid "63deb071-1a0a-45e4-8b0f-2764ddc350a7")
+	)
+	(hierarchical_label "DMUX_S0"
+		(shape input)
+		(at 85.09 77.47 180)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right)
 		)
+		(uuid "6f35636c-af0a-4020-bc2e-21d637142d58")
+	)
+	(hierarchical_label "DMUX_S1"
+		(shape input)
+		(at 85.09 116.84 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "90829596-8221-4dea-8d01-80ca4b3db8e4")
+	)
+	(hierarchical_label "DMUX_OUT"
+		(shape input)
+		(at 54.61 107.95 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ea4b7773-3ec7-425d-a2b6-31834b734c97")
+	)
+	(hierarchical_label "DMUX_S2"
+		(shape input)
+		(at 85.09 119.38 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ffd1e77b-1a2a-40a2-9868-9c0dd8ded5ef")
 	)
 	(symbol
 		(lib_id "Symbols:Rotary_Encoder")
@@ -1672,7 +1582,7 @@
 			(uuid "f6397fe9-727c-4061-8e3e-49106f9156b2")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "EN5")
 					(unit 1)
@@ -1737,7 +1647,7 @@
 			(uuid "5b045217-a714-4fb4-bbf8-1ad0546b3f2e")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR094")
 					(unit 1)
@@ -1803,7 +1713,7 @@
 			(uuid "472aa445-7eba-4a17-a2c2-fbe77ef7cb1b")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR099")
 					(unit 1)
@@ -1868,7 +1778,7 @@
 			(uuid "83ab1081-cc42-4f4b-83a5-fc96f28d679a")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR091")
 					(unit 1)
@@ -1934,7 +1844,7 @@
 			(uuid "1a69a541-f8a0-44fd-ad5f-bcf77e97d134")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR0102")
 					(unit 1)
@@ -1999,7 +1909,7 @@
 			(uuid "639bab38-5c40-4153-bb8d-c839242c19c0")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR092")
 					(unit 1)
@@ -2064,7 +1974,7 @@
 			(uuid "79ea5121-4fd2-49a1-a2b6-3c39f9f1e657")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR093")
 					(unit 1)
@@ -2130,7 +2040,7 @@
 			(uuid "3334a2d1-bfc7-4b97-a7c8-37dde3185da0")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR0104")
 					(unit 1)
@@ -2196,7 +2106,7 @@
 			(uuid "3346b4ed-1a07-4492-a22e-7c1238d359de")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR097")
 					(unit 1)
@@ -2273,7 +2183,7 @@
 			(uuid "139adde8-18f7-4d37-a79f-34cc1d9f245c")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "EN2")
 					(unit 1)
@@ -2338,7 +2248,7 @@
 			(uuid "6034ab37-03ac-48e0-a21c-b081b55eeb5a")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR089")
 					(unit 1)
@@ -2450,7 +2360,7 @@
 			(uuid "81432c09-bd85-4e99-b307-dac821637a68")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "DM2")
 					(unit 1)
@@ -2516,7 +2426,7 @@
 			(uuid "9f99898c-bc63-4025-9b08-6252592a510d")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR088")
 					(unit 1)
@@ -2582,7 +2492,7 @@
 			(uuid "ef0731ac-768c-440a-93a0-a83f27e4815c")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR0103")
 					(unit 1)
@@ -2648,7 +2558,7 @@
 			(uuid "ed063d26-a1cd-4a0e-89c4-3a1dbfb6f71d")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR087")
 					(unit 1)
@@ -2714,7 +2624,7 @@
 			(uuid "c6738fac-3a33-48d4-980c-599b9adea637")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR0101")
 					(unit 1)
@@ -2791,7 +2701,7 @@
 			(uuid "be3368b8-b01c-4156-8baf-a35f21744b81")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "EN3")
 					(unit 1)
@@ -2868,7 +2778,7 @@
 			(uuid "1b0fde10-aa43-42bb-bb7d-ae4e22c8f601")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "EN4")
 					(unit 1)
@@ -2933,7 +2843,7 @@
 			(uuid "52dc6c2a-8afd-4825-8e31-f7541bb0741d")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR090")
 					(unit 1)
@@ -3015,7 +2925,7 @@
 			(uuid "033d2aaf-3174-4487-8a68-645a3f824667")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "DM1")
 					(unit 1)
@@ -3081,7 +2991,7 @@
 			(uuid "35153bae-edb6-46d8-a4c1-108dae802481")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR098")
 					(unit 1)
@@ -3147,7 +3057,7 @@
 			(uuid "009a7157-44f7-4c3f-8424-8d36e12d9cc1")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR095")
 					(unit 1)
@@ -3224,7 +3134,7 @@
 			(uuid "32e06dbc-21de-4784-8ff1-b1847141e644")
 		)
 		(instances
-			(project ""
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "EN1")
 					(unit 1)
@@ -3301,7 +3211,7 @@
 			(uuid "59a12405-d6b7-4173-8210-fffd0922661a")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "EN6")
 					(unit 1)
@@ -3367,7 +3277,7 @@
 			(uuid "2e181eb5-6452-4c04-908f-3b450ca3e58c")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR0100")
 					(unit 1)
@@ -3479,7 +3389,7 @@
 			(uuid "cb40d0ed-ac18-47ff-9657-706afb773088")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "DM3")
 					(unit 1)
@@ -3545,7 +3455,7 @@
 			(uuid "f7882e6b-b140-4ab8-94ff-f5a715d0c777")
 		)
 		(instances
-			(project "pcb_schematics"
+			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/2a4f78f1-8b77-4f8a-9948-76c5bec94d5f"
 					(reference "#PWR096")
 					(unit 1)

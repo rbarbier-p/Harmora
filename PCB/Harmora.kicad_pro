@@ -448,7 +448,7 @@
   },
   "libraries": {
     "pinned_footprint_libs": [
-      "Harmora_PCB_lib"
+      "Footprints"
     ],
     "pinned_symbol_libs": [
       "Symbols"
@@ -624,15 +624,15 @@
     ],
     [
       "333a86ff-2f60-4263-8580-754eb0fa7cf4",
-      "Piano MUX"
+      "Analog MUX"
     ],
     [
       "2a4f78f1-8b77-4f8a-9948-76c5bec94d5f",
-      "Encoders MUX"
+      "Digital MUX"
     ],
     [
       "8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b",
-      "Expanders"
+      "GPIO Expanders"
     ]
   ],
   "text_variables": {}
