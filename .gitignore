@@ -2,5 +2,4 @@
 *.kicad_prl
 fp-info-cache
 **/*-backups/
-
-
+*.bak
