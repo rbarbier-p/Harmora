@@ -455,7 +455,7 @@
     ]
   },
   "meta": {
-    "filename": "pcb_schematics.kicad_pro",
+    "filename": "Harmora.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -633,6 +633,10 @@
     [
       "8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b",
       "GPIO Expanders"
+    ],
+    [
+      "65694d34-2946-48e5-a5ba-19c1727ab9b1",
+      "ATmega32u4"
     ]
   ],
   "text_variables": {}

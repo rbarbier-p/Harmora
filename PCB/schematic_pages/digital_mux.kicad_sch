@@ -1539,7 +1539,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Rotary Encoder EC11E"
 			(at 199.39 62.23 0)
 			(effects
 				(font
@@ -2140,7 +2140,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Rotary Encoder EC11E"
 			(at 138.43 62.23 0)
 			(effects
 				(font
@@ -2284,7 +2284,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:74AC151SC SOIC-16 8_1 MUX"
 			(at 93.98 83.82 0)
 			(effects
 				(font
@@ -2658,7 +2658,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Rotary Encoder EC11E"
 			(at 158.75 62.23 0)
 			(effects
 				(font
@@ -2735,7 +2735,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Rotary Encoder EC11E"
 			(at 179.07 62.23 0)
 			(effects
 				(font
@@ -2879,7 +2879,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:74LVC1G157 SOT-363 2_1 MUX"
 			(at 63.5 106.68 0)
 			(effects
 				(font
@@ -3091,7 +3091,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Rotary Encoder EC11E"
 			(at 118.11 62.23 0)
 			(effects
 				(font
@@ -3168,7 +3168,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Rotary Encoder EC11E"
 			(at 219.71 62.23 0)
 			(effects
 				(font
@@ -3313,7 +3313,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:74AC151SC SOIC-16 8_1 MUX"
 			(at 93.98 120.65 0)
 			(effects
 				(font

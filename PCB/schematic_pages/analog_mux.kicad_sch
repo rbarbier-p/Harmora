@@ -9,7 +9,7 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
+			(property "Reference" "AM"
 				(at 0 0 0)
 				(effects
 					(font
@@ -17,12 +17,13 @@
 					)
 				)
 			)
-			(property "Value" ""
+			(property "Value" "CD74HC4067M"
 				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Footprint" ""
@@ -1286,6 +1287,12 @@
 		(uuid "2b5ded9e-ae56-47ef-906e-189b54770705")
 	)
 	(junction
+		(at 38.1 130.81)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "354a77cd-9c58-4112-b1d2-aca12230faee")
+	)
+	(junction
 		(at 163.83 67.31)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1344,12 +1351,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a136bc95-90e3-40e2-b9eb-57539dfee850")
-	)
-	(junction
-		(at 38.1 130.81)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "cd1c78c6-0fd8-4533-a508-cdb00aaba065")
 	)
 	(junction
 		(at 245.11 72.39)
@@ -2543,7 +2544,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 62.23 67.31 0)
 			(effects
 				(font
@@ -2612,7 +2613,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 176.53 67.31 0)
 			(effects
 				(font
@@ -2679,7 +2680,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 270.51 74.93 0)
 			(effects
 				(font
@@ -2749,7 +2750,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 157.48 74.93 0)
 			(effects
 				(font
@@ -2819,7 +2820,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 214.63 74.93 0)
 			(effects
 				(font
@@ -2859,6 +2860,141 @@
 			(project "pcb_schematics"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/333a86ff-2f60-4263-8580-754eb0fa7cf4"
 					(reference "U10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:CD74HC4067M Analog Mux")
+		(at 38.1 104.14 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1fd2e117-f3bb-420a-9666-5630fb2e7f92")
+		(property "Reference" "AM1"
+			(at 36.83 104.394 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "CD74HC4067M"
+			(at 38.1 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Footprints:CD74HC4067M Analog Mux (SOIC-24)"
+			(at 38.1 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 38.1 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "946e606d-e52d-4e76-bb65-5c36d7e5c285")
+		)
+		(pin "10"
+			(uuid "cd013cb6-48e6-463e-a9bf-531702c0cbc4")
+		)
+		(pin "11"
+			(uuid "8d210b49-0336-4ec0-baaa-f4b025bf15bb")
+		)
+		(pin "14"
+			(uuid "97a632af-0b6a-4475-8f28-05bd4442ee1e")
+		)
+		(pin "13"
+			(uuid "450db7f0-1615-4325-9c03-0ecaf2d3ca36")
+		)
+		(pin "15"
+			(uuid "4b6e8c3b-87f0-43fd-bbb8-2c0d992814a5")
+		)
+		(pin "24"
+			(uuid "13bc239a-09a8-480b-8785-fe255dfe9681")
+		)
+		(pin "12"
+			(uuid "32d45124-5429-46f3-8b69-87d643b9ff6c")
+		)
+		(pin "9"
+			(uuid "e5d57d9a-a5f1-4cc7-8a35-adc7d5da6abd")
+		)
+		(pin "8"
+			(uuid "756666bb-0c6f-457e-9781-b3e7f8e98862")
+		)
+		(pin "7"
+			(uuid "8240f7e5-600c-4838-977a-1787aeef8d87")
+		)
+		(pin "6"
+			(uuid "8cc8c27c-d4c4-421a-a7e5-f10a54c01bc2")
+		)
+		(pin "5"
+			(uuid "5c7e13a7-012b-484c-8af6-0aba268383b6")
+		)
+		(pin "4"
+			(uuid "4ad30f45-0a20-44fd-8b3f-1ed5ac3a0598")
+		)
+		(pin "3"
+			(uuid "a8d59e52-9c28-418e-adcd-f75072be65b2")
+		)
+		(pin "2"
+			(uuid "af401a0e-4be1-4f69-9b38-b2967700c646")
+		)
+		(pin "23"
+			(uuid "ba9a0a51-eef3-4ca7-8475-7e7efdd0b552")
+		)
+		(pin "22"
+			(uuid "c76474ae-6cfb-4834-8d7e-bbe42c278ea0")
+		)
+		(pin "21"
+			(uuid "addf4c23-4f39-4932-9933-53b22a84a92a")
+		)
+		(pin "20"
+			(uuid "42e41d65-972f-405b-b31c-ed9975334521")
+		)
+		(pin "19"
+			(uuid "d7b7cab2-bfa0-4cd3-9d4b-d05af2e2c405")
+		)
+		(pin "18"
+			(uuid "cea69d8b-db4f-4bc3-80c3-c0e35e5ecca2")
+		)
+		(pin "17"
+			(uuid "dac5518f-9d5c-4e1e-a7d3-38447a452321")
+		)
+		(pin "16"
+			(uuid "c39ca365-0b77-49e9-afd9-73e2b9da68b2")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/333a86ff-2f60-4263-8580-754eb0fa7cf4"
+					(reference "AM1")
 					(unit 1)
 				)
 			)
@@ -2955,7 +3091,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 233.68 74.93 0)
 			(effects
 				(font
@@ -3026,7 +3162,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 57.15 118.11 0)
 			(effects
 				(font
@@ -3093,7 +3229,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 251.46 74.93 0)
 			(effects
 				(font
@@ -3294,7 +3430,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 195.58 74.93 0)
 			(effects
 				(font
@@ -3537,142 +3673,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Symbols:CD74HC4067M Analog Mux")
-		(at 38.1 104.14 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "39c9259e-63da-4bd5-abe1-15d79ca3fc52")
-		(property "Reference" "U2"
-			(at 40.132 79.248 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 40.2433 78.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 38.1 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 38.1 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 38.1 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "9"
-			(uuid "08c39eae-1868-41c2-a878-912c0f95e95e")
-		)
-		(pin "2"
-			(uuid "e5b6d219-3c87-439c-8ced-a06a86238ee6")
-		)
-		(pin "17"
-			(uuid "93ccef0b-fda6-41e0-9a0b-261b52083986")
-		)
-		(pin "11"
-			(uuid "334874de-b3d3-4402-b015-6e9293309149")
-		)
-		(pin "15"
-			(uuid "fc68c5c6-a485-485f-bbd2-b882b643c85a")
-		)
-		(pin "18"
-			(uuid "36f89be9-af55-4b59-9ff8-52ce284538ea")
-		)
-		(pin "22"
-			(uuid "3c1e53c4-bbc4-4281-aa26-4c00ca80353e")
-		)
-		(pin "4"
-			(uuid "854183b8-68a5-4606-8ede-d021d86c60b2")
-		)
-		(pin "20"
-			(uuid "6c444a40-f14a-4657-928d-a88ef849fd05")
-		)
-		(pin "7"
-			(uuid "35fc4ca0-1223-473e-8c00-19eec432032f")
-		)
-		(pin "21"
-			(uuid "40857d3a-f65c-4a9c-beec-2553891e9ead")
-		)
-		(pin "24"
-			(uuid "da10491a-d01b-47eb-b520-415377f963b3")
-		)
-		(pin "23"
-			(uuid "2b5d5eb5-7897-48b7-8c1e-10f3b6544283")
-		)
-		(pin "8"
-			(uuid "5154fbed-85f8-41c1-86fa-2de7d5a0b7d0")
-		)
-		(pin "5"
-			(uuid "55722d0e-9702-4a15-a64d-b5fb18376301")
-		)
-		(pin "6"
-			(uuid "31568046-50ec-4410-922e-f1a453bd231c")
-		)
-		(pin "16"
-			(uuid "00b182cc-bcae-4f8f-b1ce-01b0a8bd9a75")
-		)
-		(pin "19"
-			(uuid "7eadfed6-6520-4658-a190-9e010771b031")
-		)
-		(pin "13"
-			(uuid "309d3931-6690-4823-95e4-45e1dd2d1921")
-		)
-		(pin "14"
-			(uuid "f42f57af-22a9-4cc9-9927-0b404b17f580")
-		)
-		(pin "12"
-			(uuid "314d31bb-42a6-4a1c-8cb6-d6963da404a6")
-		)
-		(pin "10"
-			(uuid "7c9c2fe1-9ee0-42f4-9d0d-436abe31c4e5")
-		)
-		(pin "1"
-			(uuid "7fb2ce2a-7934-4314-b059-3a06a841c56a")
-		)
-		(pin "3"
-			(uuid "82aec9bc-f10e-4d43-bd14-7d7d82611d48")
-		)
-		(instances
-			(project "pcb_schematics"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/333a86ff-2f60-4263-8580-754eb0fa7cf4"
-					(reference "U2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Symbols:GND")
 		(at 245.11 72.39 0)
 		(unit 1)
@@ -3764,7 +3764,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 57.15 123.19 0)
 			(effects
 				(font
@@ -3833,7 +3833,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 233.68 67.31 0)
 			(effects
 				(font
@@ -3968,7 +3968,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 195.58 67.31 0)
 			(effects
 				(font
@@ -4168,7 +4168,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 100.33 67.31 0)
 			(effects
 				(font
@@ -4761,7 +4761,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 81.28 74.93 0)
 			(effects
 				(font
@@ -5028,7 +5028,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 62.23 74.93 0)
 			(effects
 				(font
@@ -5100,7 +5100,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 157.48 67.31 0)
 			(effects
 				(font
@@ -5167,7 +5167,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 138.43 74.93 0)
 			(effects
 				(font
@@ -5237,7 +5237,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 119.38 74.93 0)
 			(effects
 				(font
@@ -5309,7 +5309,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 214.63 67.31 0)
 			(effects
 				(font
@@ -5508,7 +5508,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 176.53 74.93 0)
 			(effects
 				(font
@@ -5580,7 +5580,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 81.28 67.31 0)
 			(effects
 				(font
@@ -5648,7 +5648,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 104.14 137.16 0)
 			(effects
 				(font
@@ -5718,7 +5718,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:SLSS49E-3 Hall Sensor (SOT-23-3)"
 			(at 100.33 74.93 0)
 			(effects
 				(font
@@ -5789,7 +5789,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 62.23 137.16 0)
 			(effects
 				(font
@@ -5861,7 +5861,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 138.43 67.31 0)
 			(effects
 				(font
@@ -5929,7 +5929,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 76.2 137.16 0)
 			(effects
 				(font
@@ -6001,7 +6001,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 119.38 67.31 0)
 			(effects
 				(font
@@ -6135,7 +6135,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 57.15 120.65 0)
 			(effects
 				(font
@@ -6203,7 +6203,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 57.15 115.57 0)
 			(effects
 				(font
@@ -6468,7 +6468,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_R"
 			(at 90.17 137.16 0)
 			(effects
 				(font
@@ -6869,7 +6869,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 270.51 67.31 0)
 			(effects
 				(font
@@ -6938,7 +6938,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 251.46 67.31 0)
 			(effects
 				(font

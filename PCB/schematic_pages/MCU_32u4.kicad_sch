@@ -1,0 +1,1074 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "15aab6c4-11ab-46a7-998a-dbfaebfdf995")
+	(paper "A4")
+	(lib_symbols
+		(symbol "Symbols:ATMEGA32U4-AU"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -25.4 35.56 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "ATMEGA32U4-AU"
+				(at 12.7 -53.848 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "ATMEGA32U4-AU_1_1"
+				(rectangle
+					(start -22.86 46.99)
+					(end 21.59 -50.8)
+					(stroke
+						(width 0.254)
+						(type solid)
+					)
+					(fill
+						(type color)
+						(color 255 255 194 1)
+					)
+				)
+				(pin input line
+					(at -25.4 35.56 0)
+					(length 2.54)
+					(name "~{RESET}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -25.4 30.48 0)
+					(length 2.54)
+					(name "XTAL1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "17"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -25.4 25.4 0)
+					(length 2.54)
+					(name "XTAL2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -25.4 20.32 0)
+					(length 2.54)
+					(name "AREF"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "42"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -25.4 15.24 0)
+					(length 2.54)
+					(name "VBUS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -25.4 10.16 0)
+					(length 2.54)
+					(name "D+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -25.4 7.62 0)
+					(length 2.54)
+					(name "D-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -25.4 2.54 0)
+					(length 2.54)
+					(name "UCAP"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -2.54 49.53 270)
+					(length 2.54)
+					(name "UVCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -2.54 -53.34 90)
+					(length 2.54)
+					(name "UGND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 49.53 270)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 49.53 270)
+					(length 2.54)
+					(hide yes)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "34"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 1.27 -53.34 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 2.54 49.53 270)
+					(length 2.54)
+					(name "AVCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "24"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 49.53 270)
+					(length 2.54)
+					(hide yes)
+					(name "AVCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "44"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 35.56 180)
+					(length 2.54)
+					(name "(SS/PCINT0)PB0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 33.02 180)
+					(length 2.54)
+					(name "(PCINT1/SCLK)PB1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 30.48 180)
+					(length 2.54)
+					(name "(PDI/PCINT2/MOSI)PB2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 27.94 180)
+					(length 2.54)
+					(name "(PDO/PCINT3/MISO)PB3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 25.4 180)
+					(length 2.54)
+					(name "(PCINT4/ADC11)PB4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "28"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 22.86 180)
+					(length 2.54)
+					(name "(PCINT5/OC1A/~{OC4B}/ADC12)PB5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "29"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 20.32 180)
+					(length 2.54)
+					(name "(PCINT6/OC1B/OC4B/ADC13)PB6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "30"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 17.78 180)
+					(length 2.54)
+					(name "(PCINT7/OC0A/OC1C/~{RTS})PB7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 12.7 180)
+					(length 2.54)
+					(name "(OC3A/~{OC4A})PC6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "31"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 10.16 180)
+					(length 2.54)
+					(name "(ICP3/CLK0/OC4A)PC7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "32"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 5.08 180)
+					(length 2.54)
+					(name "(OC0B/SCL/INT0)PD0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "18"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 2.54 180)
+					(length 2.54)
+					(name "(SDA/INT1)PD1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "19"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 0 180)
+					(length 2.54)
+					(name "(RXD1/INT2)PD2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "20"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -2.54 180)
+					(length 2.54)
+					(name "(TXD1/INT3)PD3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "21"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -5.08 180)
+					(length 2.54)
+					(name "(ICP1/ADC8)PD4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "25"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -7.62 180)
+					(length 2.54)
+					(name "(XCK1/~{CTS})PD5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "22"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -10.16 180)
+					(length 2.54)
+					(name "(T1/~{OC4D}/ADC9)PD6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "26"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -12.7 180)
+					(length 2.54)
+					(name "(T0/OC4D/ADC10)PD7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "27"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -17.78 180)
+					(length 2.54)
+					(name "(~{HWB})PE2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "33"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -20.32 180)
+					(length 2.54)
+					(name "(INT.6/AIN0)PE6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -25.4 180)
+					(length 2.54)
+					(name "(ADC0)PF0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "41"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -27.94 180)
+					(length 2.54)
+					(name "(ADC1)PF1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "40"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -30.48 180)
+					(length 2.54)
+					(name "(ADC4/TCK)PF4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "39"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -33.02 180)
+					(length 2.54)
+					(name "(ADC5/TMS)PF5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "38"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -35.56 180)
+					(length 2.54)
+					(name "(ADC6/TDO)PF6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "37"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 24.13 -38.1 180)
+					(length 2.54)
+					(name "(ADC7/TDI)PF7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "36"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(wire
+		(pts
+			(xy 129.54 109.22) (xy 135.89 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d0a2245e-2420-47fb-bd13-d5bb23aa4369")
+	)
+	(label "MIDI_D"
+		(at 135.89 109.22 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "af3502a2-bd1b-4d0a-a906-da8faf0fe3a6")
+	)
+	(hierarchical_label "SPI_MOSI"
+		(shape input)
+		(at 129.54 76.2 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1f9a55fd-23b3-42bb-bb71-1a7d325ca032")
+	)
+	(hierarchical_label "SPI_MISO"
+		(shape input)
+		(at 129.54 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a07d3a1e-90db-40c8-a907-4bbb7921b097")
+	)
+	(hierarchical_label "SPI_SCK"
+		(shape input)
+		(at 129.54 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b18e1a7f-3d8a-4718-b72e-7ad96465fef4")
+	)
+	(hierarchical_label "SPI_SS"
+		(shape input)
+		(at 129.54 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d2a5f73f-3e7a-449d-9cb7-2997b0119e26")
+	)
+	(hierarchical_label "MCU_INT"
+		(shape input)
+		(at 129.54 81.28 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f3f94cf1-8df1-4a25-9846-220f8318a436")
+	)
+	(symbol
+		(lib_id "Symbols:ATMEGA32U4-AU")
+		(at 105.41 106.68 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9529d8bc-37f2-4476-b956-5d1517f07e24")
+		(property "Reference" "U15"
+			(at 108.8233 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ATMEGA32U4-AU"
+			(at 108.8233 162.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Footprints:ATMEGA32U4-AU"
+			(at 105.41 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 105.41 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 105.41 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "34"
+			(uuid "1125040a-ef7e-4c6a-99d6-11a5c6196b6f")
+		)
+		(pin "2"
+			(uuid "32afabe5-bfa7-496b-8739-adf957f79b17")
+		)
+		(pin "15"
+			(uuid "2d377aa0-7ba0-4100-9137-3e794cb5ca5d")
+		)
+		(pin "24"
+			(uuid "55af60a3-f8ba-4ee6-9334-059f444bc944")
+		)
+		(pin "44"
+			(uuid "f1a982b2-0cdd-47ac-a7b3-e8ba101b690f")
+		)
+		(pin "8"
+			(uuid "9ce21072-55df-4930-915f-6e296de9e109")
+		)
+		(pin "9"
+			(uuid "a324b54d-72dc-40de-940b-bfd32e4772c7")
+		)
+		(pin "10"
+			(uuid "d96278b9-6dae-454b-813d-1620885bcd85")
+		)
+		(pin "5"
+			(uuid "5ac481c4-69be-4760-8efa-3b5df4eb1b97")
+		)
+		(pin "42"
+			(uuid "dc8cdef5-a2a3-426c-857f-ed10c73baddd")
+		)
+		(pin "4"
+			(uuid "f54ded8e-ce40-4d70-8134-45330cc99238")
+		)
+		(pin "3"
+			(uuid "bed048d8-4c60-4d44-aac2-514153a17c50")
+		)
+		(pin "7"
+			(uuid "ade8f481-8275-4c59-bb95-837e21ab101c")
+		)
+		(pin "17"
+			(uuid "00653bfe-59d3-412b-a74a-634ddf8d80e5")
+		)
+		(pin "13"
+			(uuid "25352fdb-1dbb-43de-9f73-401e51e33ce5")
+		)
+		(pin "16"
+			(uuid "da9873e6-9485-42ca-b51a-55439e65f924")
+		)
+		(pin "20"
+			(uuid "2eada385-a6c8-4cf4-a909-bca886cfcb0a")
+		)
+		(pin "21"
+			(uuid "4e7fc3e3-4235-431e-80cd-56916683dac3")
+		)
+		(pin "25"
+			(uuid "7758d1b7-c896-444f-af92-92e68559b28e")
+		)
+		(pin "22"
+			(uuid "b375512d-0a18-4792-9ebb-4e6f43f7d8fa")
+		)
+		(pin "26"
+			(uuid "b1f72b97-9a4b-4cb7-aa11-3cf61bba0aa2")
+		)
+		(pin "27"
+			(uuid "85bfe6fa-396b-43bd-9e6e-29724649e745")
+		)
+		(pin "33"
+			(uuid "0918c0a3-acfb-4092-83f7-60839cdda5ad")
+		)
+		(pin "1"
+			(uuid "78f8c901-e574-4e1b-b730-b0b3b154256a")
+		)
+		(pin "41"
+			(uuid "6dfa2c86-74f5-4add-8068-fd4cdef8c12a")
+		)
+		(pin "40"
+			(uuid "192ca256-d94a-4708-b16a-cf15c03bd9b9")
+		)
+		(pin "39"
+			(uuid "61c98c9e-be70-4601-b0c3-f68a90304a26")
+		)
+		(pin "38"
+			(uuid "c6ebc15e-ee43-4480-a286-1e417f6e5c28")
+		)
+		(pin "37"
+			(uuid "e0cafb1a-6fd1-4d8f-91c5-1f1649597e33")
+		)
+		(pin "36"
+			(uuid "cd434b8f-6917-46b9-81b6-9d34644c6384")
+		)
+		(pin "11"
+			(uuid "aefa0055-09a0-4a1d-a6c1-a6d0610409e2")
+		)
+		(pin "28"
+			(uuid "ba84189b-2d0e-40e7-a0fd-ff20c1054176")
+		)
+		(pin "14"
+			(uuid "c9aae1f3-31d1-4959-993d-9bb47a11a68a")
+		)
+		(pin "29"
+			(uuid "e74c6e41-76ba-44eb-b609-65f2d1363081")
+		)
+		(pin "30"
+			(uuid "812a84e8-a083-4cc2-9f4e-e4eb32946697")
+		)
+		(pin "12"
+			(uuid "3a32e541-7c1e-4cc1-af40-ccde21958b43")
+		)
+		(pin "31"
+			(uuid "5c8d5b9f-4597-4cfc-a138-7dff69b6e2fa")
+		)
+		(pin "32"
+			(uuid "aaa0b788-3f6c-462e-a499-ca6f6d627c2e")
+		)
+		(pin "18"
+			(uuid "5b09e9c5-5fde-4e5f-944c-0a837dbb9cfb")
+		)
+		(pin "19"
+			(uuid "f83f533c-5cbe-4b1f-b93d-64f59d22344f")
+		)
+		(pin "6"
+			(uuid "97bcf3a7-9dbd-4614-a3a0-f573781b076b")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "U15")
+					(unit 1)
+				)
+			)
+		)
+	)
+)

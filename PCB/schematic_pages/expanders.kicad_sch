@@ -915,6 +915,170 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Symbols:Switch"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "S"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Switch_0_1"
+				(circle
+					(center -2.032 0)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.651 0.254) (xy 1.651 2.286)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 -2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Switch_1_1"
+				(rectangle
+					(start -3.175 3.81)
+					(end 3.175 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 2.54 180)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 2.54)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Symbols:VCC"
 			(power)
 			(pin_numbers
@@ -1158,7 +1322,7 @@
 	)
 	(rectangle
 		(start 198.12 140.97)
-		(end 238.76 157.48)
+		(end 241.3 157.48)
 		(stroke
 			(width 0)
 			(type dash)
@@ -1441,6 +1605,12 @@
 		(uuid "79d55ed7-3122-46b0-94cf-b97a11e9eb1c")
 	)
 	(junction
+		(at 222.25 153.67)
+		(diameter 0)
+		(color 0 0 0 1)
+		(uuid "7e3ef01d-4663-419f-969f-c8855b26297d")
+	)
+	(junction
 		(at 154.94 78.74)
 		(diameter 0)
 		(color 0 0 0 1)
@@ -1489,10 +1659,10 @@
 		(uuid "df184ba5-26c6-4c06-af9f-e01fb68c7642")
 	)
 	(junction
-		(at 234.95 151.13)
+		(at 234.95 153.67)
 		(diameter 0)
 		(color 0 0 0 1)
-		(uuid "ed000a57-fb3a-411a-9380-516112a18864")
+		(uuid "e0853b51-6d09-4213-8e23-22c214af84aa")
 	)
 	(junction
 		(at 180.34 151.13)
@@ -1500,11 +1670,17 @@
 		(color 0 0 0 1)
 		(uuid "efbe003c-c457-4963-99a7-f210106a428f")
 	)
-	(junction
-		(at 222.25 151.13)
-		(diameter 0)
-		(color 0 0 0 1)
-		(uuid "fc11a21f-9162-47ff-8e62-c3dafbd325c4")
+	(no_connect
+		(at 234.95 146.05)
+		(uuid "0b6ea17a-6973-4c2c-9cbb-d4ae29b2d9f1")
+	)
+	(no_connect
+		(at 222.25 146.05)
+		(uuid "6246a0ec-0500-4d9d-b39a-26b0e9a9d3fc")
+	)
+	(no_connect
+		(at 209.55 146.05)
+		(uuid "9b6b5afa-00f3-4f34-a0c1-8511af0f8133")
 	)
 	(wire
 		(pts
@@ -1609,17 +1785,6 @@
 			(type default)
 		)
 		(uuid "0f470ee6-5616-4940-bc9f-72936f522b3d")
-	)
-	(wire
-		(pts
-			(xy 209.55 151.13) (xy 222.25 151.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 0 0 0 1)
-		)
-		(uuid "118c2e6b-7abf-46be-a8e3-dd23b918ad0e")
 	)
 	(wire
 		(pts
@@ -1745,6 +1910,17 @@
 			(color 0 0 0 1)
 		)
 		(uuid "25b36e33-a978-4c38-b853-a283a533364f")
+	)
+	(wire
+		(pts
+			(xy 209.55 151.13) (xy 209.55 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 0 0 0 1)
+		)
+		(uuid "2e7c56d1-ae17-4caa-83f6-0416c2e5dca9")
 	)
 	(wire
 		(pts
@@ -1909,17 +2085,6 @@
 	)
 	(wire
 		(pts
-			(xy 234.95 149.86) (xy 234.95 151.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 0 0 0 1)
-		)
-		(uuid "546ecb67-28cc-46c8-bfde-e6fcc9c3f655")
-	)
-	(wire
-		(pts
 			(xy 132.08 36.83) (xy 132.08 31.75)
 		)
 		(stroke
@@ -1938,6 +2103,17 @@
 			(color 0 0 0 1)
 		)
 		(uuid "5535a452-9210-4bee-8586-8aaf2c18e8fb")
+	)
+	(wire
+		(pts
+			(xy 222.25 151.13) (xy 222.25 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 0 0 0 1)
+		)
+		(uuid "5693d355-ed3a-4fcb-bb16-8854d9208706")
 	)
 	(wire
 		(pts
@@ -2013,6 +2189,17 @@
 			(color 0 0 0 1)
 		)
 		(uuid "5cf722a2-3447-47ab-8317-8e89bba715c9")
+	)
+	(wire
+		(pts
+			(xy 222.25 153.67) (xy 234.95 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 0 0 0 1)
+		)
+		(uuid "6288dc12-c444-48f1-bb0a-5879acb10592")
 	)
 	(wire
 		(pts
@@ -2166,17 +2353,6 @@
 	)
 	(wire
 		(pts
-			(xy 234.95 151.13) (xy 222.25 151.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 0 0 0 1)
-		)
-		(uuid "81fbd739-7b44-4b56-a337-d7b22c9baa0e")
-	)
-	(wire
-		(pts
 			(xy 167.64 24.13) (xy 180.34 24.13)
 		)
 		(stroke
@@ -2279,17 +2455,6 @@
 			(type default)
 		)
 		(uuid "920e36ef-f3a3-49f0-be75-39c27fc98027")
-	)
-	(wire
-		(pts
-			(xy 209.55 149.86) (xy 209.55 151.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 0 0 0 1)
-		)
-		(uuid "92c131c3-73d3-4121-8a3c-c70a34f4b22a")
 	)
 	(wire
 		(pts
@@ -2450,6 +2615,17 @@
 	)
 	(wire
 		(pts
+			(xy 209.55 153.67) (xy 222.25 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 0 0 0 1)
+		)
+		(uuid "b3b6a098-4445-433b-a135-5f6b85e00e8a")
+	)
+	(wire
+		(pts
 			(xy 129.54 96.52) (xy 142.24 96.52)
 		)
 		(stroke
@@ -2483,7 +2659,7 @@
 	)
 	(wire
 		(pts
-			(xy 224.79 121.92) (xy 224.79 149.86)
+			(xy 224.79 121.92) (xy 224.79 148.59)
 		)
 		(stroke
 			(width 0)
@@ -2567,24 +2743,13 @@
 	)
 	(wire
 		(pts
-			(xy 212.09 127) (xy 212.09 149.86)
+			(xy 212.09 127) (xy 212.09 148.59)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "c97fbb8c-49bd-4aed-88d5-68472a7d3c44")
-	)
-	(wire
-		(pts
-			(xy 222.25 149.86) (xy 222.25 151.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 0 0 0 1)
-		)
-		(uuid "cc5dafcc-da3e-4743-b600-d5289c56feb9")
 	)
 	(wire
 		(pts
@@ -2701,6 +2866,17 @@
 	)
 	(wire
 		(pts
+			(xy 234.95 151.13) (xy 234.95 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 0 0 0 1)
+		)
+		(uuid "e42f6f54-9dc2-4479-b381-0400675c0610")
+	)
+	(wire
+		(pts
 			(xy 132.08 109.22) (xy 132.08 104.14)
 		)
 		(stroke
@@ -2775,7 +2951,7 @@
 	)
 	(wire
 		(pts
-			(xy 199.39 149.86) (xy 199.39 129.54)
+			(xy 199.39 148.59) (xy 199.39 129.54)
 		)
 		(stroke
 			(width 0)
@@ -3001,7 +3177,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 111.76 104.14 0)
 			(effects
 				(font
@@ -3070,7 +3246,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 175.26 31.75 0)
 			(effects
 				(font
@@ -3138,7 +3314,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 71.12 24.13 0)
 			(effects
 				(font
@@ -3274,7 +3450,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:MCP23017 GPIO Expander"
 			(at 85.09 124.46 0)
 			(effects
 				(font
@@ -3536,7 +3712,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "356a08b0-6b37-4a45-bd99-cef0f0c19d3e")
-		(property "Reference" "B28"
+		(property "Reference" "B25"
 			(at 175.26 144.78 0)
 			(effects
 				(font
@@ -3553,7 +3729,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 175.26 149.86 0)
 			(effects
 				(font
@@ -3589,7 +3765,149 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B28")
+					(reference "B25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Switch")
+		(at 204.47 148.59 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "36eddb89-a969-4162-aabb-a5ec6be10ea9")
+		(property "Reference" "S3"
+			(at 204.47 143.002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 204.47 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Footprints:MTS-102 Switch"
+			(at 204.47 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 204.47 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 204.47 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "07bb08c8-884b-4890-84af-71de50726d7a")
+		)
+		(pin "2"
+			(uuid "a115de5f-6c85-48de-b2a4-b6a60354ad69")
+		)
+		(pin "3"
+			(uuid "4e202ad8-7e05-4abb-a54b-b76ad372c830")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
+					(reference "S3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Switch")
+		(at 217.17 148.59 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3d42783a-1168-48e8-a605-e12c573b64fa")
+		(property "Reference" "S2"
+			(at 217.17 143.002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 217.17 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Footprints:MTS-102 Switch"
+			(at 217.17 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 217.17 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 217.17 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9f69a19e-7210-4b01-8d30-b33428c27b0d")
+		)
+		(pin "2"
+			(uuid "c98dbcce-cadb-4009-8425-a091c3efaabb")
+		)
+		(pin "3"
+			(uuid "9273d354-2090-401d-9d83-7fa071c622a1")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
+					(reference "S2")
 					(unit 1)
 				)
 			)
@@ -3756,7 +4074,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 124.46 104.14 0)
 			(effects
 				(font
@@ -3808,7 +4126,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "599a7542-a286-4cf3-9ad0-aab367786d9e")
-		(property "Reference" "B29"
+		(property "Reference" "B26"
 			(at 163.83 144.78 0)
 			(effects
 				(font
@@ -3825,7 +4143,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 163.83 149.86 0)
 			(effects
 				(font
@@ -3861,7 +4179,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B29")
+					(reference "B26")
 					(unit 1)
 				)
 			)
@@ -3894,7 +4212,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 187.96 31.75 0)
 			(effects
 				(font
@@ -3963,7 +4281,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 187.96 104.14 0)
 			(effects
 				(font
@@ -4032,7 +4350,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 162.56 104.14 0)
 			(effects
 				(font
@@ -4233,7 +4551,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 137.16 104.14 0)
 			(effects
 				(font
@@ -4302,7 +4620,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 149.86 77.47 0)
 			(effects
 				(font
@@ -4339,6 +4657,72 @@
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:GND")
+		(at 234.95 153.67 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "790b06fc-bf42-4c43-beb7-b0c0da853eaf")
+		(property "Reference" "#PWR0112"
+			(at 234.95 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 237.744 153.67 90)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 234.95 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 234.95 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 234.95 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "fb280cd7-b89d-4cb0-8efb-38e2a54bbef3")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
+					(reference "#PWR0112")
 					(unit 1)
 				)
 			)
@@ -4437,7 +4821,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 213.36 31.75 0)
 			(effects
 				(font
@@ -4474,75 +4858,6 @@
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
 					(reference "B9")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:Push_Switch")
-		(at 229.87 149.86 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "8d4040e1-ea5a-48e2-bc67-f92335dbd305")
-		(property "Reference" "B24"
-			(at 229.87 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 229.87 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 229.87 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 229.87 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 229.87 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "50c2eb2d-4809-4a37-ad5d-9b5de42ad311")
-		)
-		(pin "2"
-			(uuid "9a51ba4a-352b-429e-9c63-0b78205b7edf")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B24")
 					(unit 1)
 				)
 			)
@@ -4642,7 +4957,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:MCP23017 GPIO Expander"
 			(at 85.09 52.07 0)
 			(effects
 				(font
@@ -4856,7 +5171,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 137.16 77.47 0)
 			(effects
 				(font
@@ -4991,7 +5306,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 111.76 31.75 0)
 			(effects
 				(font
@@ -5060,7 +5375,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 124.46 31.75 0)
 			(effects
 				(font
@@ -5194,7 +5509,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 137.16 31.75 0)
 			(effects
 				(font
@@ -5330,7 +5645,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 179.07 77.47 0)
 			(effects
 				(font
@@ -5398,7 +5713,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 111.76 77.47 0)
 			(effects
 				(font
@@ -5441,71 +5756,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Symbols:GND")
-		(at 234.95 151.13 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "baed3edd-1e76-44f9-a532-8969a1f09cfe")
-		(property "Reference" "#PWR0112"
-			(at 234.95 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 234.95 154.686 0)
-			(effects
-				(font
-					(size 1.016 1.016)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 234.95 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 234.95 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 234.95 151.13 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin ""
-			(uuid "abe3b8c8-bdf7-46b7-a7de-79387884c3bf")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "#PWR0112")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Symbols:Capacitor 0603")
 		(at 71.12 96.52 90)
 		(unit 1)
@@ -5531,7 +5781,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:0603_C"
 			(at 71.12 96.52 0)
 			(effects
 				(font
@@ -5600,7 +5850,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 149.86 31.75 0)
 			(effects
 				(font
@@ -5644,144 +5894,6 @@
 	)
 	(symbol
 		(lib_id "Symbols:Push_Switch")
-		(at 217.17 149.86 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c57f451c-1f6a-4c9a-b575-e3350f00de87")
-		(property "Reference" "B25"
-			(at 217.17 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 217.17 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 217.17 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 217.17 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 217.17 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "58ae3f7c-62c5-4b1e-85e6-8464a3509f42")
-		)
-		(pin "2"
-			(uuid "c0b9e655-86e3-43e2-8687-1a8a47abf6e9")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B25")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:Push_Switch")
-		(at 204.47 149.86 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c9e80f56-1d50-424e-9b1d-6d4e2c22d836")
-		(property "Reference" "B26"
-			(at 204.47 144.78 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 204.47 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 204.47 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 204.47 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 204.47 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "98249504-c32c-41c5-9cd6-03e7cffc4f24")
-		)
-		(pin "2"
-			(uuid "fe551756-7551-4cd7-96b4-9040763c9447")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B26")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:Push_Switch")
 		(at 124.46 77.47 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5807,7 +5919,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 124.46 77.47 0)
 			(effects
 				(font
@@ -5876,7 +5988,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 166.37 77.47 0)
 			(effects
 				(font
@@ -5945,7 +6057,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 149.86 104.14 0)
 			(effects
 				(font
@@ -6014,7 +6126,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 200.66 31.75 0)
 			(effects
 				(font
@@ -6066,7 +6178,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f13ec2b8-a9d0-4ee5-9218-a3e986cf6dec")
-		(property "Reference" "B27"
+		(property "Reference" "B24"
 			(at 187.96 144.78 0)
 			(effects
 				(font
@@ -6083,7 +6195,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 187.96 149.86 0)
 			(effects
 				(font
@@ -6119,7 +6231,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B27")
+					(reference "B24")
 					(unit 1)
 				)
 			)
@@ -6152,7 +6264,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 162.56 31.75 0)
 			(effects
 				(font
@@ -6195,6 +6307,77 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:Switch")
+		(at 229.87 148.59 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f997834b-9c38-4212-97ba-69674b988c36")
+		(property "Reference" "S1"
+			(at 229.87 143.002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 229.87 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" "Footprints:MTS-102 Switch"
+			(at 229.87 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 229.87 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 229.87 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d49989da-491c-4e5b-8e23-9346dd674031")
+		)
+		(pin "2"
+			(uuid "700e90f1-5814-4ed5-82ea-58ccaee593e5")
+		)
+		(pin "3"
+			(uuid "cf414ee5-c993-476a-a1f3-4b13a334b085")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
+					(reference "S1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:Push_Switch")
 		(at 175.26 104.14 0)
 		(unit 1)
@@ -6221,7 +6404,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Footprints:Mechanical Switch"
 			(at 175.26 104.14 0)
 			(effects
 				(font
