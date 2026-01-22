@@ -1,0 +1,63 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "15aab6c4-11ab-46a7-998a-dbfaebfdf995")
+	(paper "A4")
+	(lib_symbols)
+	(hierarchical_label "SPI_MOSI"
+		(shape input)
+		(at 96.52 88.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1f9a55fd-23b3-42bb-bb71-1a7d325ca032")
+	)
+	(hierarchical_label "SPI_MISO"
+		(shape input)
+		(at 96.52 92.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a07d3a1e-90db-40c8-a907-4bbb7921b097")
+	)
+	(hierarchical_label "SPI_SCK"
+		(shape input)
+		(at 96.52 96.52 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b18e1a7f-3d8a-4718-b72e-7ad96465fef4")
+	)
+	(hierarchical_label "SPI_SS"
+		(shape input)
+		(at 96.52 85.09 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d2a5f73f-3e7a-449d-9cb7-2997b0119e26")
+	)
+	(hierarchical_label "MCU_INT"
+		(shape input)
+		(at 96.52 100.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f3f94cf1-8df1-4a25-9846-220f8318a436")
+	)
+)
