@@ -388,7 +388,7 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "C"
+			(property "Reference" "CE"
 				(at -3.302 0 90)
 				(effects
 					(font
@@ -887,12 +887,6 @@
 		(uuid "3b9b4f5a-cdef-4fb4-a74e-3adac2b316e8")
 	)
 	(junction
-		(at 52.07 48.26)
-		(diameter 0)
-		(color 255 0 0 1)
-		(uuid "3fdd5d70-94bf-43d7-aabc-d8bcf45eee3d")
-	)
-	(junction
 		(at 102.87 151.13)
 		(diameter 0)
 		(color 255 0 0 1)
@@ -917,12 +911,6 @@
 		(uuid "486f7ef5-c2c4-47a4-a485-d09f2bd9c65d")
 	)
 	(junction
-		(at 153.67 48.26)
-		(diameter 0)
-		(color 255 0 0 1)
-		(uuid "4b675d2c-3576-473e-8730-14bd6d21ba39")
-	)
-	(junction
 		(at 77.47 31.75)
 		(diameter 0)
 		(color 255 0 0 1)
@@ -935,12 +923,6 @@
 		(uuid "59cf8e45-a6b4-4cd4-87ae-89eceddaa9d6")
 	)
 	(junction
-		(at 153.67 31.75)
-		(diameter 0)
-		(color 255 0 0 1)
-		(uuid "61a9cdbd-3ba1-4a89-8402-8124398c2467")
-	)
-	(junction
 		(at 204.47 151.13)
 		(diameter 0)
 		(color 255 0 0 1)
@@ -951,6 +933,12 @@
 		(diameter 0)
 		(color 255 0 0 1)
 		(uuid "67711188-c87a-4c81-9d71-4ae9f2f3ad92")
+	)
+	(junction
+		(at 153.67 48.26)
+		(diameter 0)
+		(color 255 0 0 1)
+		(uuid "67b1a2d2-4fd5-43c1-b983-3737c57afdfd")
 	)
 	(junction
 		(at 204.47 48.26)
@@ -1011,6 +999,12 @@
 		(diameter 0)
 		(color 255 0 0 1)
 		(uuid "92cc7972-c3f3-4b13-b727-5d14e8bbd324")
+	)
+	(junction
+		(at 52.07 48.26)
+		(diameter 0)
+		(color 255 0 0 1)
+		(uuid "a6a09ce4-c349-4824-8c6f-ba25fc90aece")
 	)
 	(junction
 		(at 52.07 99.06)
@@ -1089,6 +1083,12 @@
 		(diameter 0)
 		(color 255 0 0 1)
 		(uuid "eaf20ebb-30bf-4131-a3f5-f7d4cb30aabd")
+	)
+	(junction
+		(at 153.67 31.75)
+		(diameter 0)
+		(color 255 0 0 1)
+		(uuid "ed7efe34-5e7f-42fb-b26f-c1a5f17779dc")
 	)
 	(junction
 		(at 52.07 80.01)
@@ -1297,17 +1297,6 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 31.75) (xy 144.78 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 255 0 0 1)
-		)
-		(uuid "12218667-aacd-4404-af85-4f8a1e442fda")
-	)
-	(wire
-		(pts
 			(xy 59.69 143.51) (xy 69.85 143.51)
 		)
 		(stroke
@@ -1412,17 +1401,6 @@
 			(color 255 0 0 1)
 		)
 		(uuid "269d962d-6aa2-4a41-87d7-1d11cd059178")
-	)
-	(wire
-		(pts
-			(xy 144.78 48.26) (xy 153.67 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 255 0 0 1)
-		)
-		(uuid "26dea6e4-c9ae-443b-b112-a6238aead290")
 	)
 	(wire
 		(pts
@@ -1641,17 +1619,6 @@
 	)
 	(wire
 		(pts
-			(xy 153.67 31.75) (xy 149.86 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 255 0 0 1)
-		)
-		(uuid "3902d7f9-9692-4c76-b90c-aa2cb554a4e4")
-	)
-	(wire
-		(pts
 			(xy 220.98 31.75) (xy 220.98 48.26)
 		)
 		(stroke
@@ -1691,6 +1658,17 @@
 			(color 255 0 0 1)
 		)
 		(uuid "3eb2504f-6836-4413-8c4a-2dad6d9db610")
+	)
+	(wire
+		(pts
+			(xy 153.67 33.02) (xy 153.67 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 255 0 0 1)
+		)
+		(uuid "4194908b-6849-4174-9a2b-f40deeac692f")
 	)
 	(wire
 		(pts
@@ -2209,6 +2187,17 @@
 	)
 	(wire
 		(pts
+			(xy 144.78 31.75) (xy 144.78 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 255 0 0 1)
+		)
+		(uuid "82784ee9-57d1-4efa-9a2a-7a59df6e9239")
+	)
+	(wire
+		(pts
 			(xy 52.07 134.62) (xy 48.26 134.62)
 		)
 		(stroke
@@ -2248,6 +2237,17 @@
 			(type default)
 		)
 		(uuid "866c930e-e166-4af8-a367-cb785133807e")
+	)
+	(wire
+		(pts
+			(xy 144.78 48.26) (xy 153.67 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 255 0 0 1)
+		)
+		(uuid "8a00e8a3-8428-48bf-97d6-c35aeadbc195")
 	)
 	(wire
 		(pts
@@ -2317,14 +2317,14 @@
 	)
 	(wire
 		(pts
-			(xy 27.94 48.26) (xy 52.07 48.26)
+			(xy 153.67 31.75) (xy 149.86 31.75)
 		)
 		(stroke
 			(width 0)
 			(type default)
 			(color 255 0 0 1)
 		)
-		(uuid "9a71f568-2d24-4eaa-b1d5-be741c532feb")
+		(uuid "968fe98c-07f7-48f1-a606-2d09844481dd")
 	)
 	(wire
 		(pts
@@ -2484,6 +2484,17 @@
 	)
 	(wire
 		(pts
+			(xy 52.07 48.26) (xy 64.77 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 255 0 0 1)
+		)
+		(uuid "ae0e07cb-fb8c-483b-b956-61155f672ee1")
+	)
+	(wire
+		(pts
 			(xy 204.47 31.75) (xy 200.66 31.75)
 		)
 		(stroke
@@ -2548,17 +2559,6 @@
 	)
 	(wire
 		(pts
-			(xy 153.67 33.02) (xy 153.67 31.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 255 0 0 1)
-		)
-		(uuid "b15917ec-a2bd-43b0-bcba-92a046b0cbe1")
-	)
-	(wire
-		(pts
 			(xy 68.58 99.06) (xy 68.58 115.57)
 		)
 		(stroke
@@ -2609,6 +2609,17 @@
 			(type default)
 		)
 		(uuid "b80630f7-f97d-4da0-a719-d388aaff9989")
+	)
+	(wire
+		(pts
+			(xy 27.94 48.26) (xy 52.07 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+			(color 255 0 0 1)
+		)
+		(uuid "b89953e7-d380-4f9f-a8d3-a487d235b0be")
 	)
 	(wire
 		(pts
@@ -2727,17 +2738,6 @@
 			(color 255 0 0 1)
 		)
 		(uuid "cf806e9f-4029-4b15-9aea-16c84d2d2bda")
-	)
-	(wire
-		(pts
-			(xy 52.07 48.26) (xy 64.77 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 255 0 0 1)
-		)
-		(uuid "d2b060fe-c862-4325-ad28-b739373d9e84")
 	)
 	(wire
 		(pts
@@ -3389,6 +3389,71 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:GND")
+		(at 52.07 48.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "06214303-2eae-4fd8-aa80-c90ecc84aa13")
+		(property "Reference" "#PWR01"
+			(at 52.07 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 52.07 51.816 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 52.07 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 52.07 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 52.07 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "e2caed78-6014-4879-bff8-a8edb952082c")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
+					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:VCC")
 		(at 77.47 31.75 0)
 		(unit 1)
@@ -3749,6 +3814,71 @@
 	)
 	(symbol
 		(lib_id "Symbols:VCC")
+		(at 153.67 31.75 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "107c0f83-bbd0-4c37-8eb8-c3afd3ee523d")
+		(property "Reference" "#PWR05"
+			(at 153.67 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 153.67 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 153.67 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 153.67 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 153.67 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "dcd4fa88-f51e-45f9-b63e-4c25540ea7f0")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
+					(reference "#PWR05")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:VCC")
 		(at 179.07 31.75 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3960,88 +4090,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Symbols:APA102 LED")
-		(at 153.67 40.64 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "20f98f2b-0fe6-4d5e-9525-6b3c72ca6da9")
-		(property "Reference" "D5"
-			(at 155.6386 30.48 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "APA102"
-			(at 155.6386 33.02 0)
-			(effects
-				(font
-					(size 1.016 1.016)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Footprints:APA102 LED"
-			(at 148.59 45.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 148.59 45.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 148.59 45.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "7962f732-149b-4aea-8078-42b11ea2c701")
-		)
-		(pin "6"
-			(uuid "3f86a6c4-a15d-42b6-8bf6-ffbdc57c72ad")
-		)
-		(pin "3"
-			(uuid "3aad8064-f3b5-422d-a3f2-a0bb180adc09")
-		)
-		(pin "4"
-			(uuid "8913e710-914c-4245-b42b-6a263ce2d81b")
-		)
-		(pin "1"
-			(uuid "9423aa4b-48fb-4100-8092-cb8518d199cd")
-		)
-		(pin "5"
-			(uuid "cc0f738e-ef3a-4117-b6f2-a371eb458a6e")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Symbols:VCC")
 		(at 52.07 31.75 0)
 		(unit 1)
@@ -4179,7 +4227,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "2603ee4d-8774-48d4-97c8-9253279ef12a")
+		(uuid "2946b767-bb86-49d5-ae9e-1b900213dd1b")
 		(property "Reference" "#PWR06"
 			(at 153.67 48.26 0)
 			(effects
@@ -4225,10 +4273,10 @@
 			)
 		)
 		(pin ""
-			(uuid "b533fc95-f34c-4cb2-9438-a81c5e97fab5")
+			(uuid "0f842732-656c-4a51-86f2-7b818418a2d5")
 		)
 		(instances
-			(project "MCU_328p"
+			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
 					(reference "#PWR06")
 					(unit 1)
@@ -6932,139 +6980,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Symbols:VCC")
-		(at 153.67 31.75 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7ddd4b0f-4f15-4e0f-b7f2-db93bff2e811")
-		(property "Reference" "#PWR05"
-			(at 153.67 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "VCC"
-			(at 153.67 27.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 153.67 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 153.67 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 153.67 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin ""
-			(uuid "752feca4-0548-439d-8d1f-08ee0700ea56")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "#PWR05")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:Capacitor 0603")
-		(at 147.32 31.75 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "81516498-31c7-4feb-a9d5-b55640a3ec87")
-		(property "Reference" "C5"
-			(at 147.3263 25.4 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100nF"
-			(at 147.3263 27.94 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Footprints:0603_C"
-			(at 147.32 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 147.32 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 147.32 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "e1cbac1e-cd42-4ee8-909b-1f5daf609029")
-		)
-		(pin "1"
-			(uuid "1325d5fe-d73a-4555-9a17-e8f02911b2cc")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "C5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Symbols:Capacitor Electrolytic")
 		(at 62.23 31.75 90)
 		(unit 1)
@@ -7090,7 +7005,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Footprints:0603_C"
+		(property "Footprint" "Footprints:C_Electrolytic_4x5.4"
 			(at 62.23 31.75 0)
 			(effects
 				(font
@@ -8663,6 +8578,74 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:Capacitor 0603")
+		(at 147.32 31.75 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b9c4f5d7-45cf-4847-8254-d54f682c9903")
+		(property "Reference" "C5"
+			(at 147.3263 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100nF"
+			(at 147.3263 27.94 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_C"
+			(at 147.32 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 147.32 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "c92f1a35-47bf-46aa-812a-b5b05d4f3b6f")
+		)
+		(pin "1"
+			(uuid "92033e2a-f548-4fa7-a3d9-6e04d0da75c7")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
+					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:Capacitor Electrolytic")
 		(at 63.5 134.62 90)
 		(unit 1)
@@ -8797,71 +8780,6 @@
 	)
 	(symbol
 		(lib_id "Symbols:GND")
-		(at 52.07 48.26 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bfa2ca9e-24cb-4ffd-b7aa-54a9b0443098")
-		(property "Reference" "#PWR01"
-			(at 52.07 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 52.07 52.07 0)
-			(effects
-				(font
-					(size 1.016 1.016)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 52.07 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 52.07 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 52.07 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin ""
-			(uuid "6b2ce47d-3368-435d-93f5-a98fcf6a145e")
-		)
-		(instances
-			(project "MCU_328p"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "#PWR01")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:GND")
 		(at 153.67 151.13 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -8920,6 +8838,88 @@
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
 					(reference "#PWR034")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:APA102 LED")
+		(at 153.67 40.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c43019da-6fdd-424b-868a-73e8186b4efd")
+		(property "Reference" "D5"
+			(at 155.6386 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "APA102"
+			(at 155.6386 33.02 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Footprints:APA102 LED"
+			(at 148.59 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 148.59 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 148.59 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "83529989-64fa-4ca8-b65e-ef1742edc611")
+		)
+		(pin "6"
+			(uuid "f345cbc9-6dc6-4fcf-9003-1bfda502e2e8")
+		)
+		(pin "3"
+			(uuid "8f09e0e4-57ee-400a-9f35-6416983e1650")
+		)
+		(pin "4"
+			(uuid "3a42a633-3bfa-48c3-a707-35315613d16d")
+		)
+		(pin "1"
+			(uuid "2c35606b-94ef-44c2-94c3-1c257a2c7005")
+		)
+		(pin "5"
+			(uuid "a5bf0923-7fbc-45ed-a4e5-0d97669332bf")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
+					(reference "D5")
 					(unit 1)
 				)
 			)

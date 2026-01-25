@@ -1163,7 +1163,25 @@
 				)
 			)
 			(pin power_in line
-				(at -10.16 43.18 270)
+				(at -13.97 43.18 270)
+				(length 2.54)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at -8.89 43.18 270)
 				(length 2.54)
 				(name "VCC"
 					(effects
@@ -1855,6 +1873,24 @@
 					)
 				)
 			)
+			(pin power_in line
+				(at -2.54 49.53 270)
+				(length 2.54)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "34"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
 			(pin passive line
 				(at -2.54 -53.34 90)
 				(length 2.54)
@@ -1866,43 +1902,6 @@
 					)
 				)
 				(number "5"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin power_in line
-				(at 0 49.53 270)
-				(length 2.54)
-				(name "VCC"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "14"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin passive line
-				(at 0 49.53 270)
-				(length 2.54)
-				(hide yes)
-				(name "VCC"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "34"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1928,10 +1927,27 @@
 					)
 				)
 			)
-			(pin passive line
+			(pin power_in line
 				(at 2.54 49.53 270)
 				(length 2.54)
-				(hide yes)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "14"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 10.16 49.53 270)
+				(length 2.54)
 				(name "AVCC"
 					(effects
 						(font
@@ -1948,7 +1964,7 @@
 				)
 			)
 			(pin power_in line
-				(at 10.16 49.53 270)
+				(at 15.24 49.53 270)
 				(length 2.54)
 				(name "AVCC"
 					(effects
@@ -3181,6 +3197,173 @@
 		)
 		(embedded_fonts no)
 	)
+	(symbol "DIN_5_MIDI"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "J"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "DIN_5_MIDI_0_1"
+			(circle
+				(center 0 3.81)
+				(radius 0.635)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(circle
+				(center 0 0)
+				(radius 5.715)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(circle
+				(center 0 -3.81)
+				(radius 0.635)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(circle
+				(center 3.175 2.54)
+				(radius 0.635)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(circle
+				(center 3.175 -2.54)
+				(radius 0.635)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(circle
+				(center 3.81 0)
+				(radius 0.635)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "DIN_5_MIDI_1_1"
+			(rectangle
+				(start -6.985 6.985)
+				(end 8.89 -6.985)
+				(stroke
+					(width 0)
+					(type solid)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(pin power_in line
+				(at 11.43 5.08 180)
+				(length 2.54)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.016 1.016)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 11.43 -5.08 180)
+				(length 2.54)
+				(name "DATA"
+					(effects
+						(font
+							(size 1.016 1.016)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
 	(symbol "Ferrite_beat"
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3387,6 +3570,177 @@
 					)
 				)
 				(number ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
+	(symbol "ISP_Port"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "J"
+			(at -1.524 9.652 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "ISP_Port_1_1"
+			(rectangle
+				(start -5.08 8.255)
+				(end 2.54 -8.255)
+				(stroke
+					(width 0)
+					(type solid)
+				)
+				(fill
+					(type background)
+				)
+			)
+			(pin passive line
+				(at 5.08 6.35 180)
+				(length 2.54)
+				(name "VCC"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 3.81 180)
+				(length 2.54)
+				(name "GND"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 1.27 180)
+				(length 2.54)
+				(name "MISO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 -1.27 180)
+				(length 2.54)
+				(name "MOSI"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "4"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 -3.81 180)
+				(length 2.54)
+				(name "SCK"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "5"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 5.08 -6.35 180)
+				(length 2.54)
+				(name "RESET"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "6"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -4639,8 +4993,8 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "D"
-			(at 11.176 7.366 0)
+		(property "Reference" "U"
+			(at 11.176 8.382 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4648,7 +5002,7 @@
 			)
 		)
 		(property "Value" "128x64 2.42 inc"
-			(at 4.064 -7.112 0)
+			(at 4.064 -8.382 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4684,8 +5038,8 @@
 		)
 		(symbol "SPI_OLED_Display_0_1"
 			(rectangle
-				(start 5.08 -2.54)
-				(end -5.08 2.54)
+				(start 5.08 -1.905)
+				(end -5.08 3.175)
 				(stroke
 					(width 0)
 					(type default)
@@ -4697,8 +5051,8 @@
 		)
 		(symbol "SPI_OLED_Display_1_1"
 			(rectangle
-				(start -12.7 8.89)
-				(end 12.7 -8.89)
+				(start -12.7 10.16)
+				(end 12.7 -10.16)
 				(stroke
 					(width 0)
 					(type solid)
@@ -4709,7 +5063,7 @@
 			)
 			(polyline
 				(pts
-					(xy 0 -2.54) (xy 0 -5.08) (xy -2.54 -5.08) (xy 2.54 -5.08) (xy 0 -5.08) (xy 0 -2.54)
+					(xy 0 -1.905) (xy 0 -4.445) (xy -2.54 -4.445) (xy 2.54 -4.445) (xy 0 -4.445) (xy 0 -1.905)
 				)
 				(stroke
 					(width 0)
@@ -4720,7 +5074,7 @@
 				)
 			)
 			(text "OLED"
-				(at 0 0 0)
+				(at 0 0.635 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -4728,7 +5082,25 @@
 				)
 			)
 			(pin input line
-				(at -15.24 6.35 0)
+				(at -15.24 7.62 0)
+				(length 2.54)
+				(name "RST"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "7"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin input line
+				(at -15.24 5.08 0)
 				(length 2.54)
 				(name "SS"
 					(effects
@@ -4746,7 +5118,7 @@
 				)
 			)
 			(pin input line
-				(at -15.24 3.81 0)
+				(at -15.24 2.54 0)
 				(length 2.54)
 				(name "MOSI"
 					(effects
@@ -4764,9 +5136,9 @@
 				)
 			)
 			(pin input line
-				(at -15.24 1.27 0)
+				(at -15.24 0 0)
 				(length 2.54)
-				(name "MISO"
+				(name "DS"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -4782,7 +5154,7 @@
 				)
 			)
 			(pin input line
-				(at -15.24 -1.27 0)
+				(at -15.24 -2.54 0)
 				(length 2.54)
 				(name "SCK"
 					(effects
@@ -4800,7 +5172,7 @@
 				)
 			)
 			(pin power_in line
-				(at -15.24 -3.81 0)
+				(at -15.24 -5.08 0)
 				(length 2.54)
 				(name "VCC"
 					(effects
@@ -4818,7 +5190,7 @@
 				)
 			)
 			(pin power_in line
-				(at -15.24 -6.35 0)
+				(at -15.24 -7.62 0)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -5110,6 +5482,131 @@
 					)
 				)
 				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
+	(symbol "TVS_Diode"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "D"
+			(at 0 2.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "TVS_Diode_0_1"
+			(polyline
+				(pts
+					(xy -1.27 -1.27) (xy -1.27 1.27) (xy -0.762 1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 0) (xy -1.27 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 -1.27) (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)
+				)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "TVS_Diode_1_1"
+			(pin passive line
+				(at -3.81 0 0)
+				(length 2.54)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 3.81 0 180)
+				(length 2.54)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -5959,7 +6456,7 @@
 				)
 			)
 			(pin passive line
-				(at 15.24 6.35 180)
+				(at 15.24 1.27 180)
 				(length 5.08)
 				(name "VBUS"
 					(effects

@@ -9,7 +9,7 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
+			(property "Reference" "DM"
 				(at 0 0 0)
 				(effects
 					(font
@@ -360,7 +360,7 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
+			(property "Reference" "DM"
 				(at 0 0 0)
 				(effects
 					(font
@@ -622,7 +622,7 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
+			(property "Reference" "EN"
 				(at 0 4.064 0)
 				(effects
 					(font
@@ -630,12 +630,13 @@
 					)
 				)
 			)
-			(property "Value" ""
+			(property "Value" "Encoder"
 				(at 0 0 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(hide yes)
 				)
 			)
 			(property "Footprint" ""
@@ -922,10 +923,6 @@
 	(no_connect
 		(at 102.87 132.08)
 		(uuid "f02ff5c5-130e-4a93-ad68-f6dcc22945d4")
-	)
-	(no_connect
-		(at 102.87 129.54)
-		(uuid "f9b8fc19-efb7-42e8-b398-d27f28f91bc0")
 	)
 	(wire
 		(pts
@@ -1332,6 +1329,28 @@
 			(type default)
 		)
 		(uuid "f6c1af4b-8588-451e-bedc-c235eb4d4383")
+	)
+	(global_label "DISPLAY_RST"
+		(shape input)
+		(at 102.87 129.54 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "023a1ea1-5b37-43af-b39b-902800ccfe88")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 117.8295 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
 	)
 	(global_label "D_IN_22"
 		(shape input)
