@@ -3205,7 +3205,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "11ba6cfc-9363-41aa-873d-35db23c9b6fa")
-		(property "Reference" "B17"
+		(property "Reference" "B14"
 			(at 111.76 99.06 0)
 			(effects
 				(font
@@ -3258,7 +3258,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B17")
+					(reference "B14")
 					(unit 1)
 				)
 			)
@@ -3757,7 +3757,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "356a08b0-6b37-4a45-bd99-cef0f0c19d3e")
-		(property "Reference" "B25"
+		(property "Reference" "B22"
 			(at 153.67 147.32 0)
 			(effects
 				(font
@@ -3810,7 +3810,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B25")
+					(reference "B22")
 					(unit 1)
 				)
 			)
@@ -4102,7 +4102,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "512b35fb-3c27-44d1-92b0-0dc62a73a818")
-		(property "Reference" "B18"
+		(property "Reference" "B15"
 			(at 124.46 99.06 0)
 			(effects
 				(font
@@ -4155,7 +4155,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B18")
+					(reference "B15")
 					(unit 1)
 				)
 			)
@@ -4171,7 +4171,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "53d4dc86-5735-40e2-8ba0-993ff70da360")
-		(property "Reference" "B10"
+		(property "Reference" "B25"
 			(at 111.76 147.32 0)
 			(effects
 				(font
@@ -4224,7 +4224,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B10")
+					(reference "B25")
 					(unit 1)
 				)
 			)
@@ -4240,7 +4240,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "599a7542-a286-4cf3-9ad0-aab367786d9e")
-		(property "Reference" "B26"
+		(property "Reference" "B23"
 			(at 142.24 147.32 0)
 			(effects
 				(font
@@ -4293,7 +4293,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B26")
+					(reference "B23")
 					(unit 1)
 				)
 			)
@@ -4378,7 +4378,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5beac3d9-7413-425a-a77a-c76320d18a10")
-		(property "Reference" "B23"
+		(property "Reference" "B20"
 			(at 187.96 99.06 0)
 			(effects
 				(font
@@ -4431,7 +4431,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B23")
+					(reference "B20")
 					(unit 1)
 				)
 			)
@@ -4447,7 +4447,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5e20b110-50ae-4697-ba02-cd870da3b519")
-		(property "Reference" "B21"
+		(property "Reference" "B18"
 			(at 162.56 99.06 0)
 			(effects
 				(font
@@ -4500,7 +4500,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B21")
+					(reference "B18")
 					(unit 1)
 				)
 			)
@@ -4583,7 +4583,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "75b70a2c-0c43-4965-ab17-2390aaa5ae52")
-		(property "Reference" "B19"
+		(property "Reference" "B16"
 			(at 137.16 99.06 0)
 			(effects
 				(font
@@ -4636,7 +4636,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B19")
+					(reference "B16")
 					(unit 1)
 				)
 			)
@@ -4652,7 +4652,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "761c93a7-178b-4443-adee-b1e0ad6ed2ed")
-		(property "Reference" "B13"
+		(property "Reference" "B10"
 			(at 149.86 72.39 0)
 			(effects
 				(font
@@ -4705,7 +4705,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B13")
+					(reference "B10")
 					(unit 1)
 				)
 			)
@@ -5268,7 +5268,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a465e5ee-c6c0-47c4-b669-e770ff0ff855")
-		(property "Reference" "B14"
+		(property "Reference" "B11"
 			(at 137.16 72.39 0)
 			(effects
 				(font
@@ -5321,7 +5321,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B14")
+					(reference "B11")
 					(unit 1)
 				)
 			)
@@ -5741,7 +5741,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b634f9aa-075e-4946-a428-559142f945f6")
-		(property "Reference" "B16"
+		(property "Reference" "B13"
 			(at 111.76 72.39 0)
 			(effects
 				(font
@@ -5794,7 +5794,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B16")
+					(reference "B13")
 					(unit 1)
 				)
 			)
@@ -5947,7 +5947,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cbb552ed-5d78-4155-ab1d-78498c3a3986")
-		(property "Reference" "B15"
+		(property "Reference" "B12"
 			(at 124.46 72.39 0)
 			(effects
 				(font
@@ -6000,7 +6000,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B15")
+					(reference "B12")
 					(unit 1)
 				)
 			)
@@ -6016,7 +6016,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d2daec0f-6770-40a8-80e6-4f2b343c963e")
-		(property "Reference" "B27"
+		(property "Reference" "B24"
 			(at 124.46 147.32 0)
 			(effects
 				(font
@@ -6069,7 +6069,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B27")
+					(reference "B24")
 					(unit 1)
 				)
 			)
@@ -6085,7 +6085,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d7122aac-69d4-4164-b065-f9864794679b")
-		(property "Reference" "B20"
+		(property "Reference" "B17"
 			(at 149.86 99.06 0)
 			(effects
 				(font
@@ -6138,7 +6138,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B20")
+					(reference "B17")
 					(unit 1)
 				)
 			)
@@ -6223,7 +6223,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f13ec2b8-a9d0-4ee5-9218-a3e986cf6dec")
-		(property "Reference" "B24"
+		(property "Reference" "B21"
 			(at 166.37 147.32 0)
 			(effects
 				(font
@@ -6276,7 +6276,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B24")
+					(reference "B21")
 					(unit 1)
 				)
 			)
@@ -6432,7 +6432,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fb5b796f-9595-48e0-a9c2-7b7090bfc022")
-		(property "Reference" "B22"
+		(property "Reference" "B19"
 			(at 175.26 99.06 0)
 			(effects
 				(font
@@ -6485,7 +6485,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B22")
+					(reference "B19")
 					(unit 1)
 				)
 			)

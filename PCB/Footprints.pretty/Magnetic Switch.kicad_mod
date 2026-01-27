@@ -58,7 +58,7 @@
 	(attr smd)
 	(fp_line
 		(start -6.985 -6.985)
-		(end -3 -6.985)
+		(end -5 -6.985)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -78,7 +78,7 @@
 	)
 	(fp_line
 		(start 6.985 -6.985)
-		(end 3 -6.985)
+		(end 5 -6.985)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -146,17 +146,6 @@
 		(layer "Dwgs.User")
 		(uuid "12247b89-09dc-4cfe-82d7-9935b4736e38")
 	)
-	(fp_rect
-		(start -6.6 -6.6)
-		(end 6.6 6.6)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(fill no)
-		(layer "F.CrtYd")
-		(uuid "de9e41f1-7f7b-46ec-91ec-cc9b29581206")
-	)
 	(fp_line
 		(start -6.35 6.35)
 		(end -6.35 -6.35)
@@ -196,17 +185,6 @@
 		)
 		(layer "F.Fab")
 		(uuid "efb1dbd0-12a6-48e4-9991-5e4d29db8560")
-	)
-	(fp_text user "${REFERENCE}"
-		(at -5.05 -8.7 0)
-		(layer "F.Fab")
-		(uuid "e56c4e14-84a0-4f4d-9d15-77292f912bf7")
-		(effects
-			(font
-				(size 0.8 0.8)
-				(thickness 0.12)
-			)
-		)
 	)
 	(pad "" np_thru_hole circle
 		(at -5.08 0)
