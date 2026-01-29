@@ -6175,7 +6175,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "df5f700d-0ecb-4488-9418-ecb44adfbf99")
-		(property "Reference" "U17"
+		(property "Reference" "J5"
 			(at 152.4 63.246 0)
 			(effects
 				(font
@@ -6242,7 +6242,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d"
-					(reference "U17")
+					(reference "J5")
 					(unit 1)
 				)
 			)
