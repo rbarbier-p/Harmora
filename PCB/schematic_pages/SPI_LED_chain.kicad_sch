@@ -3265,7 +3265,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0571fabb-4620-4ae7-93c3-f1269d1e3410")
-		(property "Reference" "C29"
+		(property "Reference" "C71"
 			(at 113.7539 163.83 90)
 			(effects
 				(font
@@ -3317,7 +3317,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "C29")
+					(reference "C71")
 					(unit 1)
 				)
 			)
@@ -3610,7 +3610,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0c5a98a8-674d-40c2-a27e-215b61ee37a2")
-		(property "Reference" "D16"
+		(property "Reference" "D20"
 			(at 130.2386 133.35 0)
 			(effects
 				(font
@@ -3676,7 +3676,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D16")
+					(reference "D20")
 					(unit 1)
 				)
 			)
@@ -4017,7 +4017,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "1b1e89bb-0665-4384-9d88-ac4954398073")
-		(property "Reference" "D17"
+		(property "Reference" "D21"
 			(at 155.6386 133.35 0)
 			(effects
 				(font
@@ -4083,7 +4083,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D17")
+					(reference "D21")
 					(unit 1)
 				)
 			)
@@ -4707,7 +4707,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "36349c26-fc11-401c-a15a-7cb3aad3fa5e")
-		(property "Reference" "D23"
+		(property "Reference" "D16"
 			(at 130.2386 97.79 0)
 			(effects
 				(font
@@ -4773,7 +4773,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D23")
+					(reference "D16")
 					(unit 1)
 				)
 			)
@@ -5352,7 +5352,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "49965d04-7aca-47b6-a079-1f53d53c5e04")
-		(property "Reference" "D19"
+		(property "Reference" "D23"
 			(at 206.4386 133.35 0)
 			(effects
 				(font
@@ -5418,7 +5418,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D19")
+					(reference "D23")
 					(unit 1)
 				)
 			)
@@ -5567,7 +5567,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "51344311-fa5e-43ce-a59c-9e3ff90cb292")
-		(property "Reference" "D15"
+		(property "Reference" "D19"
 			(at 104.8386 133.35 0)
 			(effects
 				(font
@@ -5633,7 +5633,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D15")
+					(reference "D19")
 					(unit 1)
 				)
 			)
@@ -5932,7 +5932,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5f5b0951-9ba4-4a8b-957f-9960d3c5bfe8")
-		(property "Reference" "D18"
+		(property "Reference" "D22"
 			(at 181.0386 133.35 0)
 			(effects
 				(font
@@ -5998,7 +5998,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D18")
+					(reference "D22")
 					(unit 1)
 				)
 			)
@@ -6842,7 +6842,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7ccfb876-9113-4f35-9975-50a78b4d1e4a")
-		(property "Reference" "D22"
+		(property "Reference" "D15"
 			(at 104.8386 97.79 0)
 			(effects
 				(font
@@ -6908,7 +6908,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D22")
+					(reference "D15")
 					(unit 1)
 				)
 			)
@@ -6989,7 +6989,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8656f834-9eff-47aa-9260-cca1e4ef0ead")
-		(property "Reference" "C13"
+		(property "Reference" "C70"
 			(at 61.6839 25.4 90)
 			(effects
 				(font
@@ -7041,7 +7041,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "C13")
+					(reference "C70")
 					(unit 1)
 				)
 			)
@@ -8505,7 +8505,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b910af27-560b-4999-8641-dd26615f85aa")
-		(property "Reference" "D13"
+		(property "Reference" "D17"
 			(at 54.0386 133.35 0)
 			(effects
 				(font
@@ -8571,7 +8571,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D13")
+					(reference "D17")
 					(unit 1)
 				)
 			)
@@ -8655,7 +8655,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bab4aed0-6b71-4223-9ebd-8ce485d47a97")
-		(property "Reference" "C28"
+		(property "Reference" "C72"
 			(at 62.9539 128.27 90)
 			(effects
 				(font
@@ -8707,7 +8707,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "C28")
+					(reference "C72")
 					(unit 1)
 				)
 			)
@@ -8935,7 +8935,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c483dd63-c9bc-457a-a82c-969bfa7ca38e")
-		(property "Reference" "D14"
+		(property "Reference" "D18"
 			(at 79.4386 133.35 0)
 			(effects
 				(font
@@ -9001,7 +9001,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D14")
+					(reference "D18")
 					(unit 1)
 				)
 			)
@@ -9698,7 +9698,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d74e0abb-505b-4c6f-9d97-450f89c1fe56")
-		(property "Reference" "D20"
+		(property "Reference" "D13"
 			(at 54.0386 97.79 0)
 			(effects
 				(font
@@ -9764,7 +9764,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D20")
+					(reference "D13")
 					(unit 1)
 				)
 			)
@@ -10467,7 +10467,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f80942c7-223c-4ac7-8a73-34f07d8a351e")
-		(property "Reference" "D21"
+		(property "Reference" "D14"
 			(at 79.4386 97.79 0)
 			(effects
 				(font
@@ -10533,7 +10533,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8c7f0436-3a68-4f5f-872d-97f6a622412c"
-					(reference "D21")
+					(reference "D14")
 					(unit 1)
 				)
 			)

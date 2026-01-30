@@ -1,13 +1,12 @@
-(footprint "74AC151SC SOIC-16 8:1 MUX"
+(footprint "74AC151SC SOIC-16 8_1 MUX"
 	(version 20241229)
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0 -0.5 0)
+		(at 0 -6.25 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(hide yes)
 		(uuid "f31965b4-dc5c-440a-a507-7265ea0d9997")
 		(effects
 			(font

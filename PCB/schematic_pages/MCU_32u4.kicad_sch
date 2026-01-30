@@ -4317,7 +4317,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0c2f438f-633a-4859-950d-98db7f09ad4a")
-		(property "Reference" "C62"
+		(property "Reference" "C76"
 			(at 131.064 49.784 0)
 			(effects
 				(font
@@ -4371,7 +4371,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "C62")
+					(reference "C76")
 					(unit 1)
 				)
 			)
@@ -4783,7 +4783,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4c82407f-d262-42e2-998e-3ccf76c6f061")
-		(property "Reference" "R23"
+		(property "Reference" "R18"
 			(at 162.052 111.76 0)
 			(effects
 				(font
@@ -4835,7 +4835,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R23")
+					(reference "R18")
 					(unit 1)
 				)
 			)
@@ -5122,7 +5122,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "711b535d-2241-439e-9919-2c5549f629f5")
-		(property "Reference" "C55"
+		(property "Reference" "C77"
 			(at 54.356 84.074 90)
 			(effects
 				(font
@@ -5174,7 +5174,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "C55")
+					(reference "C77")
 					(unit 1)
 				)
 			)
@@ -5189,7 +5189,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "71af7d45-388b-4497-8024-f401aebfbad6")
-		(property "Reference" "R11"
+		(property "Reference" "R19"
 			(at 149.86 107.442 90)
 			(effects
 				(font
@@ -5241,7 +5241,7 @@
 		(instances
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R11")
+					(reference "R19")
 					(unit 1)
 				)
 			)
@@ -5719,7 +5719,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "83ca9946-6ffb-4e09-9748-695e9bc54d3f")
-		(property "Reference" "R19"
+		(property "Reference" "R15"
 			(at 64.262 53.34 0)
 			(effects
 				(font
@@ -5771,7 +5771,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R19")
+					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -6465,7 +6465,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "9f78a294-2695-4341-b58e-0bc2499a300a")
-		(property "Reference" "C56"
+		(property "Reference" "C78"
 			(at 54.356 65.786 90)
 			(effects
 				(font
@@ -6517,7 +6517,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "C56")
+					(reference "C78")
 					(unit 1)
 				)
 			)
@@ -6600,7 +6600,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a7653d97-3df0-453c-ab6c-6efff0afb5b5")
-		(property "Reference" "R16"
+		(property "Reference" "R8"
 			(at 46.99 89.408 90)
 			(effects
 				(font
@@ -6652,7 +6652,7 @@
 		(instances
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R16")
+					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -6667,7 +6667,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a98375e8-1cd4-436c-8f6f-228b8c28b64b")
-		(property "Reference" "R14"
+		(property "Reference" "R12"
 			(at 76.2 94.742 90)
 			(effects
 				(font
@@ -6719,7 +6719,7 @@
 		(instances
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R14")
+					(reference "R12")
 					(unit 1)
 				)
 			)
@@ -6734,7 +6734,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b68247fd-8b90-41e9-8795-5b3a6b6d051f")
-		(property "Reference" "R15"
+		(property "Reference" "R13"
 			(at 76.2 101.092 90)
 			(effects
 				(font
@@ -6786,7 +6786,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R15")
+					(reference "R13")
 					(unit 1)
 				)
 			)
@@ -6997,7 +6997,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "cb6fd59d-66bb-4336-a034-fb1dd7cfeb28")
-		(property "Reference" "C59"
+		(property "Reference" "C75"
 			(at 24.13 134.874 90)
 			(effects
 				(font
@@ -7049,7 +7049,7 @@
 		(instances
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "C59")
+					(reference "C75")
 					(unit 1)
 				)
 			)
@@ -7064,7 +7064,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "cf5cbf1c-c45e-4d00-b2ff-1c1b78e2cc95")
-		(property "Reference" "C57"
+		(property "Reference" "C74"
 			(at 80.01 108.204 0)
 			(effects
 				(font
@@ -7116,7 +7116,7 @@
 		(instances
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "C57")
+					(reference "C74")
 					(unit 1)
 				)
 			)
@@ -7287,7 +7287,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f4db3029-56b9-4228-8d27-19ba283591df")
-		(property "Reference" "R17"
+		(property "Reference" "R9"
 			(at 46.99 96.012 90)
 			(effects
 				(font
@@ -7339,7 +7339,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R17")
+					(reference "R9")
 					(unit 1)
 				)
 			)

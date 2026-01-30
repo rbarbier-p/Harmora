@@ -7,7 +7,6 @@
 		(at -4 -0.5 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(hide yes)
 		(uuid "621a70f7-7a08-49f3-b130-dd389b3fd3c5")
 		(effects
 			(font
@@ -205,17 +204,6 @@
 		)
 		(layer "F.Fab")
 		(uuid "8a834851-cb96-41af-8384-cd3af119a26c")
-	)
-	(fp_text user "${REFERENCE}"
-		(at 0 1.25 90)
-		(layer "F.Fab")
-		(uuid "d42cc2c4-4eaa-4041-8f55-a88e7db188d5")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
 	)
 	(pad "1" thru_hole rect
 		(at 0 -6.37)

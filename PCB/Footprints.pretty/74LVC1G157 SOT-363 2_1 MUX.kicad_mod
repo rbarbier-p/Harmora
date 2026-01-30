@@ -1,13 +1,12 @@
-(footprint "74LVC1G157 SOT-363 2:1 MUX"
+(footprint "74LVC1G157 SOT-363 2_1 MUX"
 	(version 20241229)
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0 -0.5 0)
+		(at 0 -2.25 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(hide yes)
 		(uuid "d72ff58d-76b5-40cc-901f-1f4dc595f55a")
 		(effects
 			(font
@@ -178,17 +177,6 @@
 		(layer "F.Fab")
 		(uuid "175a27dc-4aa3-41e0-81e9-7c643e6ed2e0")
 	)
-	(fp_text user "${REFERENCE}"
-		(at 0 0.000001 90)
-		(layer "F.Fab")
-		(uuid "724e3099-ba33-46db-a0be-030e503b35de")
-		(effects
-			(font
-				(size 0.5 0.5)
-				(thickness 0.075)
-			)
-		)
-	)
 	(pad "1" smd roundrect
 		(at -1.165 -0.649999)
 		(size 1.17 0.4)
@@ -237,12 +225,11 @@
 			"23cf51f4-4503-490c-9137-2b5ef7d29959" "26438cbe-e890-4b4f-9870-8c6ddce9e0ad"
 			"26b8ed81-1eba-4fa7-a774-df09e342d1b3" "398272b6-ccd6-45a6-9e00-aa31a8a20ff0"
 			"4ac23a21-3bbc-4a82-a514-a932ebfc3a0f" "4c2f5c17-78e0-4ad1-97e2-6e68e2a17fb2"
-			"55c81253-e8da-49d8-bbcf-6bc23b524b4c" "724e3099-ba33-46db-a0be-030e503b35de"
-			"7464d743-9d60-41ce-b542-878aa36c4f74" "86d07a22-c2e8-43fa-8eb5-3bf9949bb664"
-			"aa9afa4e-d40b-4eee-a700-c073d9894146" "b4ed647a-5eb3-4cf0-86ff-630b65744133"
-			"bbb65a7f-c18e-400d-a0d3-ce0cf67327d7" "e803a792-816a-4d29-9c02-e3000898514e"
-			"eb9b0e90-d842-4553-9fd5-97f68a08dbf0" "f65be13e-6fc5-4e68-b438-c45cf3640e42"
-			"fd48030e-d7b7-4282-8f46-1065128a4534"
+			"55c81253-e8da-49d8-bbcf-6bc23b524b4c" "7464d743-9d60-41ce-b542-878aa36c4f74"
+			"86d07a22-c2e8-43fa-8eb5-3bf9949bb664" "aa9afa4e-d40b-4eee-a700-c073d9894146"
+			"b4ed647a-5eb3-4cf0-86ff-630b65744133" "bbb65a7f-c18e-400d-a0d3-ce0cf67327d7"
+			"e803a792-816a-4d29-9c02-e3000898514e" "eb9b0e90-d842-4553-9fd5-97f68a08dbf0"
+			"f65be13e-6fc5-4e68-b438-c45cf3640e42" "fd48030e-d7b7-4282-8f46-1065128a4534"
 		)
 	)
 	(embedded_fonts no)
