@@ -19,6 +19,7 @@
 	(property "Value" "ATMEGA328P-AU"
 		(at 0 5.85 0)
 		(layer "F.Fab")
+		(hide yes)
 		(uuid "dcd894b7-9130-434c-8660-5bc93c664ff2")
 		(effects
 			(font
@@ -355,17 +356,6 @@
 		(fill no)
 		(layer "F.Fab")
 		(uuid "3ea99354-7ff2-4226-a6ec-74d7be8257d3")
-	)
-	(fp_text user "${REFERENCE}"
-		(at 0 0 0)
-		(layer "F.Fab")
-		(uuid "7767bea5-0216-47f1-91c4-0eac4f1a9b04")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
 	)
 	(pad "1" smd roundrect
 		(at -4.1625 -2.8)

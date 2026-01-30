@@ -19,6 +19,7 @@
 	(property "Value" "Rotary Potentiometer RK09"
 		(at 0 -9 180)
 		(layer "F.Fab")
+		(hide yes)
 		(uuid "15c3b4e5-7971-4af8-b901-b4188a4aeeb4")
 		(effects
 			(font
@@ -256,17 +257,6 @@
 		(fill no)
 		(layer "F.Fab")
 		(uuid "8ae19f54-8375-4808-b18b-6d8031a107fa")
-	)
-	(fp_text user "${REFERENCE}"
-		(at 0 5.5 180)
-		(layer "F.Fab")
-		(uuid "97b227a7-c919-4b28-b94b-629c1ceab6b4")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
 	)
 	(pad "1" thru_hole rect
 		(at -2.5 7.5 90)

@@ -212,14 +212,14 @@
 				(pin passive line
 					(at 8.89 6.35 180)
 					(length 2.54)
-					(name "I0"
+					(name "I3"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "4"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -229,24 +229,6 @@
 				)
 				(pin passive line
 					(at 8.89 3.81 180)
-					(length 2.54)
-					(name "I1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 8.89 1.27 180)
 					(length 2.54)
 					(name "I2"
 						(effects
@@ -264,16 +246,34 @@
 					)
 				)
 				(pin passive line
-					(at 8.89 -1.27 180)
+					(at 8.89 1.27 180)
 					(length 2.54)
-					(name "I3"
+					(name "I1"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "1"
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 8.89 -1.27 180)
+					(length 2.54)
+					(name "I0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -283,24 +283,6 @@
 				)
 				(pin passive line
 					(at 8.89 -3.81 180)
-					(length 2.54)
-					(name "I4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "15"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 8.89 -6.35 180)
 					(length 2.54)
 					(name "I5"
 						(effects
@@ -318,16 +300,34 @@
 					)
 				)
 				(pin passive line
-					(at 8.89 -8.89 180)
+					(at 8.89 -6.35 180)
 					(length 2.54)
-					(name "I6"
+					(name "I4"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "13"
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 8.89 -8.89 180)
+					(length 2.54)
+					(name "I7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -338,14 +338,14 @@
 				(pin passive line
 					(at 8.89 -11.43 180)
 					(length 2.54)
-					(name "I7"
+					(name "I6"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "12"
+					(number "13"
 						(effects
 							(font
 								(size 1.27 1.27)

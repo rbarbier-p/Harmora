@@ -18,9 +18,10 @@
 		)
 	)
 	(property "Value" "MCP23017 GPIO Expander"
-		(at 0 0 0)
+		(at 0.25 3 0)
 		(unlocked yes)
 		(layer "F.Fab")
+		(hide yes)
 		(uuid "0aad5c85-82bc-4f08-a4fb-2aa48c135cbc")
 		(effects
 			(font
@@ -76,27 +77,15 @@
 	)
 	(fp_poly
 		(pts
-			(xy -6.0198 2.9845) (xy -6.0198 3.3655) (xy -5.7658 3.3655) (xy -5.7658 2.9845)
+			(xy -4.75 -9.0805) (xy -5 -9.5) (xy -4.5 -9.5)
 		)
 		(stroke
-			(width 0)
+			(width 0.1)
 			(type solid)
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "a1113308-fb73-4ca8-bd3d-c8a0013bbe7b")
-	)
-	(fp_poly
-		(pts
-			(xy 6.0198 1.7145) (xy 6.0198 2.0955) (xy 5.7658 2.0955) (xy 5.7658 1.7145)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(fill yes)
-		(layer "F.SilkS")
-		(uuid "27c7d0fd-2392-4cb2-b7d5-3888676dd3bc")
+		(uuid "66b594d4-49a6-4185-86ee-416891fb1f2e")
 	)
 	(fp_line
 		(start -5.7658 -8.7884)
@@ -1388,64 +1377,6 @@
 		)
 		(layer "F.Fab")
 		(uuid "47e7fe57-0b0d-418f-a98d-8e3392ba1995")
-	)
-	(fp_text user "*"
-		(at -4.7752 -9.9568 0)
-		(unlocked yes)
-		(layer "F.SilkS")
-		(uuid "2bc6f00b-af6e-4dbe-a343-5141ad1cdcf6")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(fp_text user "*"
-		(at -4.7752 -9.9568 0)
-		(layer "F.SilkS")
-		(uuid "2dacde41-3b4a-4a64-9cdd-91254381d65e")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(fp_text user "*"
-		(at -3.3655 -8.8773 0)
-		(unlocked yes)
-		(layer "F.Fab")
-		(uuid "2bccb505-0661-4f57-a8de-88cbd412c781")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(fp_text user "${REFERENCE}"
-		(at 0 0 0)
-		(unlocked yes)
-		(layer "F.Fab")
-		(uuid "4b406c6a-f0a4-4ade-b54a-1c594eef0a6d")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(fp_text user "*"
-		(at -3.3655 -8.8773 0)
-		(layer "F.Fab")
-		(uuid "ec569018-b8da-4cba-b535-99a6cac64b54")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
 	)
 	(pad "1" smd rect
 		(at -4.5212 -8.255)

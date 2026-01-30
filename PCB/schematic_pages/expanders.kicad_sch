@@ -1321,6 +1321,18 @@
 		)
 	)
 	(rectangle
+		(start 105.41 143.51)
+		(end 132.715 160.02)
+		(stroke
+			(width 0)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 1bd8a275-f1e2-4cdc-aa41-ae28dc659b4e)
+	)
+	(rectangle
 		(start 176.53 143.51)
 		(end 219.71 160.02)
 		(stroke
@@ -1334,7 +1346,7 @@
 	)
 	(rectangle
 		(start 106.045 15.875)
-		(end 222.25 35.56)
+		(end 195.58 35.56)
 		(stroke
 			(width 0)
 			(type dash)
@@ -1369,8 +1381,8 @@
 		(uuid b0e8fdf6-f14f-4094-a688-43b4ca59ae23)
 	)
 	(rectangle
-		(start 104.775 143.51)
-		(end 132.08 160.02)
+		(start 197.485 16.51)
+		(end 224.79 34.29)
 		(stroke
 			(width 0)
 			(type dash)
@@ -1424,6 +1436,17 @@
 			(justify left)
 		)
 		(uuid "3a90fa56-f976-42fb-aea0-60cb3c0a5937")
+	)
+	(text "MODIFIER"
+		(exclude_from_sim no)
+		(at 106.426 158.242 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5ce51045-1eda-4b6f-bddb-b24c51c4d425")
 	)
 	(text "MODE SELECT"
 		(exclude_from_sim no)
@@ -1493,7 +1516,7 @@
 	)
 	(text "OCTAVE"
 		(exclude_from_sim no)
-		(at 105.664 158.496 0)
+		(at 198.628 18.542 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1533,6 +1556,12 @@
 		(uuid "3610e128-33bd-47b1-ab0e-853a12c80476")
 	)
 	(junction
+		(at 193.04 24.13)
+		(diameter 0)
+		(color 0 0 0 1)
+		(uuid "46879dcd-b535-4255-9fa8-1944e5520321")
+	)
+	(junction
 		(at 180.34 96.52)
 		(diameter 0)
 		(color 0 0 0 1)
@@ -1563,16 +1592,10 @@
 		(uuid "63b16761-a393-459d-a283-1c65a1757196")
 	)
 	(junction
-		(at 218.44 24.13)
+		(at 220.98 24.13)
 		(diameter 0)
 		(color 0 0 0 1)
 		(uuid "6b5d7267-7942-4041-9ca5-b27d5b1de9cd")
-	)
-	(junction
-		(at 193.04 24.13)
-		(diameter 0)
-		(color 0 0 0 1)
-		(uuid "70c74d2e-3a44-45a3-a0c0-d8d00f55461f")
 	)
 	(junction
 		(at 167.64 24.13)
@@ -1585,12 +1608,6 @@
 		(diameter 0)
 		(color 0 0 0 1)
 		(uuid "73f6f81e-909d-4570-aaf1-7f2e5b2a6fd4")
-	)
-	(junction
-		(at 205.74 24.13)
-		(diameter 0)
-		(color 0 0 0 1)
-		(uuid "74d03cf3-c47a-4dbd-a32e-9966c93a4ce7")
 	)
 	(junction
 		(at 180.34 24.13)
@@ -1690,7 +1707,7 @@
 	)
 	(wire
 		(pts
-			(xy 102.87 49.53) (xy 195.58 49.53)
+			(xy 102.87 49.53) (xy 198.12 49.53)
 		)
 		(stroke
 			(width 0)
@@ -1774,7 +1791,7 @@
 	)
 	(wire
 		(pts
-			(xy 208.28 54.61) (xy 208.28 31.75)
+			(xy 210.82 54.61) (xy 210.82 31.75)
 		)
 		(stroke
 			(width 0)
@@ -1805,7 +1822,7 @@
 	)
 	(wire
 		(pts
-			(xy 205.74 24.13) (xy 205.74 31.75)
+			(xy 208.28 24.13) (xy 208.28 31.75)
 		)
 		(stroke
 			(width 0)
@@ -2143,7 +2160,7 @@
 	)
 	(wire
 		(pts
-			(xy 218.44 24.13) (xy 218.44 31.75)
+			(xy 220.98 24.13) (xy 220.98 31.75)
 		)
 		(stroke
 			(width 0)
@@ -2186,7 +2203,7 @@
 	)
 	(wire
 		(pts
-			(xy 195.58 49.53) (xy 195.58 31.75)
+			(xy 198.12 49.53) (xy 198.12 31.75)
 		)
 		(stroke
 			(width 0)
@@ -2346,7 +2363,7 @@
 	)
 	(wire
 		(pts
-			(xy 205.74 24.13) (xy 218.44 24.13)
+			(xy 208.28 24.13) (xy 220.98 24.13)
 		)
 		(stroke
 			(width 0)
@@ -2409,7 +2426,7 @@
 	)
 	(wire
 		(pts
-			(xy 102.87 54.61) (xy 208.28 54.61)
+			(xy 102.87 54.61) (xy 210.82 54.61)
 		)
 		(stroke
 			(width 0)
@@ -2553,17 +2570,6 @@
 			(type default)
 		)
 		(uuid "99109989-522a-4d8f-8084-2a25e6dc0331")
-	)
-	(wire
-		(pts
-			(xy 193.04 24.13) (xy 205.74 24.13)
-		)
-		(stroke
-			(width 0)
-			(type default)
-			(color 0 0 0 1)
-		)
-		(uuid "99a0112a-ba3d-4053-b2ee-b1bff8041411")
 	)
 	(wire
 		(pts
@@ -3683,7 +3689,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:GND")
-		(at 218.44 24.13 180)
+		(at 220.98 24.13 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3692,7 +3698,7 @@
 		(fields_autoplaced yes)
 		(uuid "2ea0f5f5-3ae6-43d9-84e0-fca8dfae1189")
 		(property "Reference" "#PWR0106"
-			(at 218.44 24.13 0)
+			(at 220.98 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3701,7 +3707,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 218.44 19.05 0)
+			(at 220.98 19.05 0)
 			(effects
 				(font
 					(size 1.016 1.016)
@@ -3709,7 +3715,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 218.44 24.13 0)
+			(at 220.98 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3718,7 +3724,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 218.44 24.13 0)
+			(at 220.98 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3727,7 +3733,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 218.44 24.13 0)
+			(at 220.98 24.13 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3959,6 +3965,72 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:GND")
+		(at 193.04 24.13 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "494ee82c-4ce3-4c1a-be78-476296a2ba2c")
+		(property "Reference" "#PWR0107"
+			(at 193.04 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 193.04 19.05 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 193.04 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 193.04 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 193.04 24.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "ff725c4c-a5bb-4d29-9e75-f0f48e935cec")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
+					(reference "#PWR0107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VCC")
 		(at 67.31 127 90)
 		(unit 1)
@@ -4171,7 +4243,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "53d4dc86-5735-40e2-8ba0-993ff70da360")
-		(property "Reference" "B25"
+		(property "Reference" "B4"
 			(at 111.76 147.32 0)
 			(effects
 				(font
@@ -4224,7 +4296,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B25")
+					(reference "B4")
 					(unit 1)
 				)
 			)
@@ -4309,7 +4381,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5af6d911-c733-4cfa-8379-4b97b78e84ab")
-		(property "Reference" "B7"
+		(property "Reference" "B9"
 			(at 187.96 26.67 0)
 			(effects
 				(font
@@ -4362,7 +4434,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B7")
+					(reference "B9")
 					(unit 1)
 				)
 			)
@@ -4845,7 +4917,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:Push_Switch")
-		(at 213.36 31.75 0)
+		(at 215.9 31.75 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4853,8 +4925,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "80353ff2-de84-4900-9c22-729331d77e1d")
-		(property "Reference" "B9"
-			(at 213.36 26.67 0)
+		(property "Reference" "B25"
+			(at 215.9 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4862,7 +4934,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 213.36 31.75 0)
+			(at 215.9 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4871,7 +4943,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:Mechanical Switch"
-			(at 213.36 31.75 0)
+			(at 215.9 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4880,7 +4952,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 213.36 31.75 0)
+			(at 215.9 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4889,7 +4961,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 213.36 31.75 0)
+			(at 215.9 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4906,7 +4978,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B9")
+					(reference "B25")
 					(unit 1)
 				)
 			)
@@ -5878,7 +5950,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c028d7c9-2bf3-422e-9684-893bf598c0a1")
-		(property "Reference" "B4"
+		(property "Reference" "B8"
 			(at 149.86 26.67 0)
 			(effects
 				(font
@@ -5931,7 +6003,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B4")
+					(reference "B8")
 					(unit 1)
 				)
 			)
@@ -6016,7 +6088,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d2daec0f-6770-40a8-80e6-4f2b343c963e")
-		(property "Reference" "B24"
+		(property "Reference" "B7"
 			(at 124.46 147.32 0)
 			(effects
 				(font
@@ -6069,7 +6141,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B24")
+					(reference "B7")
 					(unit 1)
 				)
 			)
@@ -6146,7 +6218,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:Push_Switch")
-		(at 200.66 31.75 0)
+		(at 203.2 31.75 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6154,8 +6226,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "dc7d0830-139c-4fe8-8f35-142f1a5f8de2")
-		(property "Reference" "B8"
-			(at 200.66 26.67 0)
+		(property "Reference" "B24"
+			(at 203.2 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6163,7 +6235,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 200.66 31.75 0)
+			(at 203.2 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6172,7 +6244,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:Mechanical Switch"
-			(at 200.66 31.75 0)
+			(at 203.2 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6181,7 +6253,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 200.66 31.75 0)
+			(at 203.2 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6190,7 +6262,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 200.66 31.75 0)
+			(at 203.2 31.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6207,7 +6279,7 @@
 		(instances
 			(project "MCU_328p"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/8f5845f6-f6f8-4f8f-ac6e-d033b6efee1b"
-					(reference "B8")
+					(reference "B24")
 					(unit 1)
 				)
 			)
