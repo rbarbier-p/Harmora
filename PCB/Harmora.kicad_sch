@@ -2302,6 +2302,16 @@
 	)
 	(wire
 		(pts
+			(xy 82.55 100.33) (xy 92.71 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "447559e1-91d8-4a4f-a5b3-4ccdde100727")
+	)
+	(wire
+		(pts
 			(xy 121.92 105.41) (xy 129.54 105.41)
 		)
 		(stroke
@@ -2509,6 +2519,16 @@
 			(type default)
 		)
 		(uuid "66508935-aec1-43e2-b4a0-34d6fcbe5a22")
+	)
+	(wire
+		(pts
+			(xy 82.55 97.79) (xy 92.71 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67d24d48-ebb7-4e75-b58e-380571197527")
 	)
 	(wire
 		(pts
@@ -2742,16 +2762,6 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 100.33) (xy 92.71 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9a878ae1-0682-4050-a22b-8a5b55a6200c")
-	)
-	(wire
-		(pts
 			(xy 82.55 110.49) (xy 96.52 110.49)
 		)
 		(stroke
@@ -2849,16 +2859,6 @@
 			(type default)
 		)
 		(uuid "b9f96868-7764-4676-a131-536c89dc96e4")
-	)
-	(wire
-		(pts
-			(xy 82.55 97.79) (xy 92.71 97.79)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bc6e38fa-7f9e-43a6-9e6e-05aff22ecef3")
 	)
 	(wire
 		(pts
@@ -3401,7 +3401,7 @@
 		(uuid "a09211b9-ba73-49d1-b0f8-75fa42aa6624")
 	)
 	(label "EXP1_INTB"
-		(at 92.71 100.33 180)
+		(at 92.71 97.79 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3621,7 +3621,7 @@
 		(uuid "fefd478d-1e8f-46a1-8097-effa1c1749a6")
 	)
 	(label "EXP1_INTA"
-		(at 92.71 97.79 180)
+		(at 92.71 100.33 180)
 		(effects
 			(font
 				(size 1.27 1.27)

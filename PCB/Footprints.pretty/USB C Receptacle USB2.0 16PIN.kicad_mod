@@ -18,6 +18,7 @@
 	(property "Value" "USB_C_Receptacle_USB2.0_16P"
 		(at 0 5.1 0)
 		(layer "F.Fab")
+		(hide yes)
 		(uuid "0ca5cf76-e951-4e58-a402-14dc42a864b3")
 		(effects
 			(font
@@ -183,17 +184,6 @@
 		(layer "F.Fab")
 		(uuid "f6b3cf35-21be-4e1f-8c99-3404cfc41d3f")
 	)
-	(fp_text user "${REFERENCE}"
-		(at 0 0 0)
-		(layer "F.Fab")
-		(uuid "9189a13a-f353-4ddb-8257-370c54398cd0")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
 	(pad "" np_thru_hole circle
 		(at -2.89 -2.6)
 		(size 0.65 0.65)
@@ -256,18 +246,6 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(uuid "3795b0f1-50f9-473e-9d26-381fc08b3c2d")
 	)
-	(pad "B1" smd rect
-		(at 3.25 -4.045)
-		(size 0.6 1.45)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-		(uuid "c9e8a0db-2a60-41d9-b783-6c4e64a8fb5d")
-	)
-	(pad "B4" smd rect
-		(at 2.45 -4.045)
-		(size 0.6 1.45)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-		(uuid "51b193ee-c8c2-4ee6-8d8c-14b79a2c1520")
-	)
 	(pad "B5" smd rect
 		(at 1.75 -4.045)
 		(size 0.3 1.45)
@@ -291,18 +269,6 @@
 		(size 0.3 1.45)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(uuid "09bb6e12-e7e5-4788-b43e-4cc6c50a557a")
-	)
-	(pad "B9" smd rect
-		(at -2.45 -4.045)
-		(size 0.6 1.45)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-		(uuid "70539c09-2020-4a42-a156-43d1513170d0")
-	)
-	(pad "B12" smd rect
-		(at -3.25 -4.045)
-		(size 0.6 1.45)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-		(uuid "eda87c04-3a59-4e2c-a9bd-f59ed31672aa")
 	)
 	(pad "S1" thru_hole oval
 		(at -4.32 -3.13)

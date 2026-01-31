@@ -19,6 +19,7 @@
 		(at 0 4.5 0)
 		(unlocked yes)
 		(layer "F.Fab")
+		(hide yes)
 		(uuid "c4ab6551-f22d-4bdc-8324-756ddc73863f")
 		(effects
 			(font
@@ -55,18 +56,18 @@
 	)
 	(attr smd)
 	(fp_line
-		(start -2.5 -1)
-		(end -2.5 1)
+		(start -1.5 -1)
+		(end -1.5 -0.886396)
 		(stroke
 			(width 0.12)
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "c8e7f677-0a60-4d42-b525-bb9199407342")
+		(uuid "2ff44290-3da9-4949-8886-5dc16a261682")
 	)
 	(fp_line
-		(start -2.5 -1)
-		(end 1.6725 -1)
+		(start -1.5 -1)
+		(end 0 -1)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -75,8 +76,18 @@
 		(uuid "07b04186-cbdc-4174-a762-ed30cd102121")
 	)
 	(fp_line
-		(start -2.5 1)
-		(end 1.6725 1)
+		(start -1.5 1)
+		(end -1.5 0.874813)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "e6db3a33-f706-4bcf-856e-0369543ac561")
+	)
+	(fp_line
+		(start -1.5 1)
+		(end 0 1)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -233,18 +244,6 @@
 		)
 		(layer "F.Fab")
 		(uuid "e012cd93-8eb4-49c8-b8a7-ec802728d13d")
-	)
-	(fp_text user "${REFERENCE}"
-		(at 0 2.5 0)
-		(unlocked yes)
-		(layer "F.Fab")
-		(uuid "88947841-1b8d-4311-982c-48f55b310894")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
 	)
 	(pad "1" smd roundrect
 		(at -1.6 0)
