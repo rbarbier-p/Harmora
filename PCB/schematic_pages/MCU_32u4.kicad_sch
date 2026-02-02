@@ -1163,173 +1163,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Symbols:DIN_5_MIDI"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "DIN_5_MIDI_0_1"
-				(circle
-					(center 0 3.81)
-					(radius 0.635)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 0 0)
-					(radius 5.715)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 0 -3.81)
-					(radius 0.635)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 3.175 2.54)
-					(radius 0.635)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 3.175 -2.54)
-					(radius 0.635)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 3.81 0)
-					(radius 0.635)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "DIN_5_MIDI_1_1"
-				(rectangle
-					(start -6.985 6.985)
-					(end 8.89 -6.985)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin passive line
-					(at 11.43 5.08 180)
-					(length 2.54)
-					(name "VCC"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 11.43 -5.08 180)
-					(length 2.54)
-					(name "DATA"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Symbols:GND"
 			(power)
 			(pin_numbers
@@ -1582,6 +1415,109 @@
 						)
 					)
 					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Symbols:JST-EH"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -0.254 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "JST-EH_0_1"
+				(polyline
+					(pts
+						(xy -1.905 0.635) (xy -1.905 0) (xy -0.635 0) (xy -0.635 0.635) (xy 0.635 0.635) (xy 0.635 0)
+						(xy 1.905 0) (xy 1.905 0.635) (xy 2.54 0.635) (xy 2.54 3.81) (xy -2.54 3.81) (xy -2.54 0.635)
+						(xy -1.905 0.635)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "JST-EH_1_1"
+				(pin input line
+					(at -1.27 -2.54 90)
+					(length 2.54)
+					(name "DATA"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 1.27 -2.54 90)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2287,7 +2223,7 @@
 							)
 						)
 					)
-					(number "1"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2305,7 +2241,7 @@
 							)
 						)
 					)
-					(number "3"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2359,7 +2295,7 @@
 							)
 						)
 					)
-					(number "6"
+					(number "4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2377,7 +2313,7 @@
 							)
 						)
 					)
-					(number "4"
+					(number "6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3026,6 +2962,12 @@
 		(uuid "033d7cfc-b67e-4a73-ba30-fe939f07463c")
 	)
 	(junction
+		(at 140.97 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "15372a3d-9dce-4e26-b3a7-f8f8e50783f0")
+	)
+	(junction
 		(at 95.25 55.88)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3098,22 +3040,16 @@
 		(uuid "b530afd2-8ecf-4305-a6e7-19c5b5576614")
 	)
 	(junction
-		(at 138.43 76.2)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c3d58747-224c-4dd4-999e-0c9bae851208")
-	)
-	(junction
 		(at 102.87 160.02)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c7eaa56d-ba99-4ce0-84c9-5591db2d2169")
 	)
 	(junction
-		(at 138.43 78.74)
+		(at 143.51 78.74)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "e24db783-e93b-4306-ba0f-7b5850a100f3")
+		(uuid "cd9e9185-27e0-43d5-acb9-7e7f587cacc6")
 	)
 	(junction
 		(at 50.8 92.71)
@@ -3207,6 +3143,16 @@
 	)
 	(wire
 		(pts
+			(xy 44.45 114.3) (xy 43.18 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "019634f9-e290-4a23-9fbe-3b2a142354f9")
+	)
+	(wire
+		(pts
 			(xy 115.57 44.45) (xy 115.57 49.53)
 		)
 		(stroke
@@ -3217,7 +3163,7 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 107.95) (xy 165.1 109.22)
+			(xy 147.32 111.76) (xy 148.59 111.76)
 		)
 		(stroke
 			(width 0)
@@ -3227,13 +3173,13 @@
 	)
 	(wire
 		(pts
-			(xy 154.94 109.22) (xy 154.94 107.95)
+			(xy 140.97 76.2) (xy 157.48 76.2)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "0f27283d-5642-4311-bd24-2e45013f35a6")
+		(uuid "0f2a048a-f56f-4cf3-ad95-1fa1f4a8f29d")
 	)
 	(wire
 		(pts
@@ -3247,7 +3193,7 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 115.57) (xy 165.1 114.3)
+			(xy 140.97 111.76) (xy 142.24 111.76)
 		)
 		(stroke
 			(width 0)
@@ -3267,7 +3213,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 109.22) (xy 154.94 109.22)
+			(xy 147.32 109.22) (xy 148.59 109.22)
 		)
 		(stroke
 			(width 0)
@@ -3277,7 +3223,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 77.47) (xy 138.43 78.74)
+			(xy 143.51 63.5) (xy 143.51 64.77)
 		)
 		(stroke
 			(width 0)
@@ -3327,7 +3273,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 72.39) (xy 138.43 73.66)
+			(xy 138.43 63.5) (xy 138.43 64.77)
 		)
 		(stroke
 			(width 0)
@@ -3354,6 +3300,26 @@
 			(type default)
 		)
 		(uuid "271439fc-2c5a-4387-b176-c8b09fad412b")
+	)
+	(wire
+		(pts
+			(xy 140.97 69.85) (xy 140.97 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "279bc945-c306-4177-90dd-18b03482d5fe")
+	)
+	(wire
+		(pts
+			(xy 143.51 78.74) (xy 157.48 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ab1d225-1ffc-49c9-8bbb-7405133af674")
 	)
 	(wire
 		(pts
@@ -3397,6 +3363,16 @@
 	)
 	(wire
 		(pts
+			(xy 143.51 69.85) (xy 143.51 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "397d02de-c0f4-4f47-9a42-9c6c13de2f4f")
+	)
+	(wire
+		(pts
 			(xy 68.58 76.2) (xy 80.01 76.2)
 		)
 		(stroke
@@ -3427,16 +3403,6 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 76.2) (xy 157.48 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "42b7f821-8a7a-4ccb-8d6b-e3f4243e71df")
-	)
-	(wire
-		(pts
 			(xy 95.25 55.88) (xy 102.87 55.88)
 		)
 		(stroke
@@ -3447,7 +3413,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 116.84) (xy 66.04 116.84)
+			(xy 54.61 116.84) (xy 66.04 116.84)
 		)
 		(stroke
 			(width 0)
@@ -3524,16 +3490,6 @@
 			(type default)
 		)
 		(uuid "6d86d97c-95c5-472b-99bb-c2f4e46ebad9")
-	)
-	(wire
-		(pts
-			(xy 95.25 54.61) (xy 95.25 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6f339975-8d1e-4701-be07-7343be656f4e")
 	)
 	(wire
 		(pts
@@ -3657,7 +3613,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 74.93) (xy 138.43 76.2)
+			(xy 140.97 63.5) (xy 140.97 64.77)
 		)
 		(stroke
 			(width 0)
@@ -3737,16 +3693,6 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 121.92) (xy 49.53 121.92)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ab9a88ba-b399-4a4b-ae5f-7f5c5151fa0d")
-	)
-	(wire
-		(pts
 			(xy 129.54 73.66) (xy 138.43 73.66)
 		)
 		(stroke
@@ -3757,7 +3703,17 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 109.22) (xy 44.45 109.22)
+			(xy 138.43 69.85) (xy 138.43 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "abb2b4c7-dfe4-4eed-adc7-947a36a5f793")
+	)
+	(wire
+		(pts
+			(xy 49.53 109.22) (xy 44.45 109.22)
 		)
 		(stroke
 			(width 0)
@@ -3857,7 +3813,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 114.3) (xy 63.5 114.3)
+			(xy 54.61 114.3) (xy 63.5 114.3)
 		)
 		(stroke
 			(width 0)
@@ -3877,7 +3833,7 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 76.2) (xy 138.43 76.2)
+			(xy 129.54 76.2) (xy 140.97 76.2)
 		)
 		(stroke
 			(width 0)
@@ -3907,7 +3863,7 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 78.74) (xy 138.43 78.74)
+			(xy 129.54 78.74) (xy 143.51 78.74)
 		)
 		(stroke
 			(width 0)
@@ -3927,13 +3883,13 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 78.74) (xy 157.48 78.74)
+			(xy 44.45 116.84) (xy 43.18 116.84)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "cf93208d-8084-4122-97ca-77f02afbe029")
+		(uuid "cd2fc659-3686-4755-a38a-01adf0de5e7c")
 	)
 	(wire
 		(pts
@@ -3997,7 +3953,7 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 109.22) (xy 147.32 109.22)
+			(xy 129.54 109.22) (xy 142.24 109.22)
 		)
 		(stroke
 			(width 0)
@@ -4108,7 +4064,7 @@
 	)
 	(hierarchical_label "SPI_MOSI"
 		(shape input)
-		(at 138.43 74.93 0)
+		(at 140.97 63.5 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4119,7 +4075,7 @@
 	)
 	(hierarchical_label "SPI_MISO"
 		(shape input)
-		(at 138.43 77.47 0)
+		(at 143.51 63.5 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4130,7 +4086,7 @@
 	)
 	(hierarchical_label "SPI_SCK"
 		(shape input)
-		(at 138.43 72.39 0)
+		(at 138.43 63.5 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4709,6 +4665,144 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 138.43 67.31 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "366e4f10-84df-4b77-aca9-650bfd10d94c")
+		(property "Reference" "R22"
+			(at 133.604 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "330"
+			(at 138.43 68.326 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 138.43 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 138.43 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 138.43 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "f0374839-68ac-44ae-97ce-2c1d268d5631")
+		)
+		(pin "1"
+			(uuid "61991f2d-f53f-4bdf-aee5-14328398bc14")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 140.97 67.31 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "395b18bb-abff-4093-a85b-0beaad775e8b")
+		(property "Reference" "R23"
+			(at 139.192 70.866 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "330"
+			(at 140.97 68.326 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 140.97 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 140.97 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 140.97 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "adad11aa-0b35-4212-8dfa-55bdd15df697")
+		)
+		(pin "1"
+			(uuid "9c735712-3c61-42d5-a0ef-e4a12680ed76")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:GND")
 		(at 157.48 81.28 270)
 		(unit 1)
@@ -4776,15 +4870,15 @@
 	)
 	(symbol
 		(lib_id "Symbols:Resistor 0603")
-		(at 165.1 111.76 180)
+		(at 144.78 111.76 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "4c82407f-d262-42e2-998e-3ccf76c6f061")
-		(property "Reference" "R18"
-			(at 162.052 111.76 0)
+		(property "Reference" "R20"
+			(at 144.78 113.792 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4792,7 +4886,7 @@
 			)
 		)
 		(property "Value" "330"
-			(at 165.1 111.76 90)
+			(at 144.78 111.76 90)
 			(effects
 				(font
 					(size 0.762 0.762)
@@ -4800,7 +4894,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:0603_R"
-			(at 165.1 111.76 0)
+			(at 144.78 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4809,7 +4903,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 165.1 111.76 0)
+			(at 144.78 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4818,7 +4912,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 165.1 111.76 0)
+			(at 144.78 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4835,7 +4929,7 @@
 		(instances
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R18")
+					(reference "R20")
 					(unit 1)
 				)
 			)
@@ -5182,15 +5276,15 @@
 	)
 	(symbol
 		(lib_id "Symbols:Resistor 0603")
-		(at 149.86 109.22 90)
+		(at 144.78 109.22 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "71af7d45-388b-4497-8024-f401aebfbad6")
-		(property "Reference" "R19"
-			(at 149.86 107.442 90)
+		(property "Reference" "R21"
+			(at 144.78 107.442 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5198,7 +5292,7 @@
 			)
 		)
 		(property "Value" "330"
-			(at 149.86 109.22 90)
+			(at 144.78 109.22 90)
 			(effects
 				(font
 					(size 0.762 0.762)
@@ -5206,7 +5300,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:0603_R"
-			(at 149.86 109.22 0)
+			(at 144.78 109.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5215,7 +5309,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 149.86 109.22 0)
+			(at 144.78 109.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5224,7 +5318,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 149.86 109.22 0)
+			(at 144.78 109.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5241,7 +5335,7 @@
 		(instances
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "R19")
+					(reference "R21")
 					(unit 1)
 				)
 			)
@@ -5373,75 +5467,6 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0143")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:DIN_5_MIDI")
-		(at 160.02 96.52 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7bae4dca-e274-45f6-ba8a-c3d1619df75e")
-		(property "Reference" "J4"
-			(at 158.75 93.98 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "DIN 5"
-			(at 157.226 96.52 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Footprints:DIN_5 port"
-			(at 160.02 96.52 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 160.02 96.52 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 160.02 96.52 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "4"
-			(uuid "04d18762-9f96-4824-8f40-8ec66dcfcd0e")
-		)
-		(pin "5"
-			(uuid "d31db246-b92c-4a48-ac4b-87f16ee4f2c0")
-		)
-		(instances
-			(project ""
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -5844,7 +5869,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:USBLC6-2SC6")
-		(at 48.26 114.3 0)
+		(at 49.53 114.3 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5852,7 +5877,7 @@
 		(dnp no)
 		(uuid "8a293d68-445d-408c-b360-ab1345c7cdce")
 		(property "Reference" "U16"
-			(at 51.308 118.872 0)
+			(at 52.578 118.872 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5861,7 +5886,7 @@
 			)
 		)
 		(property "Value" "USBLC6-2SC6"
-			(at 49.022 121.158 0)
+			(at 50.292 121.158 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5870,7 +5895,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:ESD Prot SOT-23-6"
-			(at 49.53 120.65 0)
+			(at 50.8 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5881,7 +5906,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 49.53 122.555 0)
+			(at 50.8 122.555 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5891,7 +5916,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 49.022 101.346 0)
+			(at 50.292 101.346 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5921,6 +5946,76 @@
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "U16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:JST-EH")
+		(at 151.13 110.49 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "91bcd9e3-bedc-414b-b2ba-e9d60ba26908")
+		(property "Reference" "J4"
+			(at 156.21 109.2199 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "JST-EH"
+			(at 156.21 111.7599 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Footprints:JST-EH port"
+			(at 151.13 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 151.13 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 151.13 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "58773e66-995f-4618-944a-110aae35be43")
+		)
+		(pin "2"
+			(uuid "2528b526-458c-4558-ab36-3929076a21a0")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -6246,75 +6341,6 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0135")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:Capacitor 0603")
-		(at 95.25 52.07 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "987fd8d0-98d7-47de-9c5b-6d7c0cc939e8")
-		(property "Reference" "C54"
-			(at 88.392 50.038 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 87.63 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Footprints:0603_C"
-			(at 95.25 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 95.25 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 95.25 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "44fae49f-5e6d-4caa-b376-76eef63be496")
-		)
-		(pin "2"
-			(uuid "c43824a8-6927-4b3e-b785-758b8921e0c4")
-		)
-		(instances
-			(project "Harmora"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "C54")
 					(unit 1)
 				)
 			)
@@ -6859,71 +6885,6 @@
 	)
 	(symbol
 		(lib_id "Symbols:GND")
-		(at 95.25 49.53 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bd4e62e4-6bb8-4e8d-8d13-bbedba19c7a3")
-		(property "Reference" "#PWR0133"
-			(at 95.25 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 95.25 45.466 0)
-			(effects
-				(font
-					(size 1.016 1.016)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 95.25 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 95.25 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 95.25 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin ""
-			(uuid "23a6a2d3-f195-4957-b28a-c81148b9b0ea")
-		)
-		(instances
-			(project "Harmora"
-				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
-					(reference "#PWR0133")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Symbols:GND")
 		(at 50.8 92.71 90)
 		(unit 1)
 		(exclude_from_sim no)
@@ -7124,7 +7085,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:VCC")
-		(at 165.1 115.57 180)
+		(at 140.97 111.76 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7132,7 +7093,7 @@
 		(dnp no)
 		(uuid "d0c051ca-db43-4413-9411-890b846e6b6f")
 		(property "Reference" "#PWR0156"
-			(at 165.1 115.57 0)
+			(at 140.97 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7141,7 +7102,7 @@
 			)
 		)
 		(property "Value" "VCC"
-			(at 165.1 119.38 0)
+			(at 136.652 111.76 90)
 			(effects
 				(font
 					(size 1.016 1.016)
@@ -7149,7 +7110,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 165.1 115.57 0)
+			(at 140.97 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7158,7 +7119,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 165.1 115.57 0)
+			(at 140.97 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7167,7 +7128,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 165.1 115.57 0)
+			(at 140.97 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7409,6 +7370,75 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "C53")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 143.51 67.31 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fd59a1da-f681-49fc-a476-b04260698dba")
+		(property "Reference" "R24"
+			(at 144.272 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "330"
+			(at 143.51 68.326 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 143.51 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 143.51 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 143.51 67.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "ace391b4-4297-412a-a5b0-a449195ddac0")
+		)
+		(pin "1"
+			(uuid "e0ec9695-6ead-4736-8042-9c69f3e8a46f")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R24")
 					(unit 1)
 				)
 			)
