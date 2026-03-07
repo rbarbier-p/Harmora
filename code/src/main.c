@@ -1,19 +1,18 @@
-#include "UART.h"
 #include "I2C.h"
-#include <util/delay.h>
+#include "UART.h"
 #include "display.h"
-#include "sh1106.h"
 #include "display_bus_i2c.h"
+#include "sh1106.h"
 #include "stopwatch.h"
+#include <util/delay.h>
 
-int main(void)
-{
+int main(void) {
   i2c_init();
   UART_init();
   stopwatch_init();
 
   UART_print_str("Starting... \r\n");
-  //51348
+  // 51348
   display_init(&sh1106, &display_bus_i2c, DIRTYPAGES_MODE);
 
   display_clear();
@@ -24,7 +23,7 @@ int main(void)
   display_fill_rect(0, 0, 127, 64);
   // display_draw_rect(0, 0, 127, 64);
   stopwatch_stop();
-  
+
   stopwatch_start();
   display_update();
   stopwatch_stop();
@@ -32,6 +31,6 @@ int main(void)
   _delay_ms(1000);
   display_clear();
   display_update();
-  while (1);
+  while (1)
+    ;
 }
-

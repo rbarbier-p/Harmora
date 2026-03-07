@@ -1,0 +1,42 @@
+[
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/bus/display_bus_i2c.c",
+    "file": "src/display/bus/display_bus_i2c.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/controller/sh1106.c",
+    "file": "src/display/controller/sh1106.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/display_draw.c",
+    "file": "src/display/display_draw.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/display.c",
+    "file": "src/display/display.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/I2C/SoftI2C.c",
+    "file": "src/I2C/SoftI2C.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/I2C/I2C.c",
+    "file": "src/I2C/I2C.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/UART/UART.c",
+    "file": "src/UART/UART.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/main.c",
+    "file": "src/main.c"
+  }
+]

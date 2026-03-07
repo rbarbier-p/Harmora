@@ -4,8 +4,13 @@ CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 PROGRAMMER = arduino
-PORT = /dev/ttyACM0#ttyUSB0
+# Serial port for the middle-man Arduino (change to your device, e.g. /dev/ttyUSB0)
+PORT = /dev/ttyACM0
+# Default baud for serial (used for serial monitor). When using an Arduino as ISP
+# the programmer sketch commonly listens at 19200; targets override this below.
 BAUD = 115200
+# avrdude part id (m328p / m32u4). Default to m328p; overridden by 8p/u4 targets.
+AVRDUDE_PART ?= m328p
 SIZE = avr-s:ize
 SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
@@ -17,16 +22,19 @@ CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os
 CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal
 CFLAGS += -Isrc/I2C
 CFLAGS += -Isrc/UART
+CFLAGS += -Isrc/SPI
 
 # Source files
 include src/display/display.mk
 include src/I2C/I2C.mk
 include src/UART/UART.mk
+include src/SPI/SPI.mk
 
 SRC = src/main.c 
 SRC += $(DISPLAY_SRC)
 SRC += $(I2C_SRC)
 SRC += $(UART_SRC)
+SRC += $(SPI_SRC)
 
 # Output files in build folder
 ELF = $(BUILD_DIR)/program.elf
@@ -50,7 +58,10 @@ $(HEX): $(ELF)
 
 # Flash target: generates HEX if needed, flashes, and prints memory usage
 flash: $(HEX)
-	$(AVRDUDE) -p $(MCU) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(HEX):i
+	# Use avrdude to program target via the configured programmer/port.
+	# For "Arduino as ISP" (Arduino Nano running ArduinoISP) use -c arduino and
+	# a lower baud (commonly 19200). The part id for avrdude is in AVRDUDE_PART.
+	$(AVRDUDE) -p $(AVRDUDE_PART) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(HEX):i
 	#@echo "\033[0;34m-------  Memory usage  --------\033[0m"
 	#@$(MAKE) -s size
 	#@echo "\n"
@@ -76,3 +87,13 @@ re: clean all
 # Declare phony targets
 .PHONY: all flash size clean re screen
 
+# Convenience targets to build+flash for each MCU using an Arduino Nano as ISP
+# Usage: `make 8p` or `make u4` — these call make recursively with the correct
+# MCU/avrdude part and a baud suitable for the ArduinoISP sketch.
+8p:
+	$(MAKE) MCU=atmega328p AVRDUDE_PART=m328p BAUD=19200 PORT=$(PORT) all
+
+u4:
+	$(MAKE) MCU=atmega32u4 AVRDUDE_PART=m32u4 BAUD=19200 PORT=$(PORT) all
+
+.PHONY: 8p u4
