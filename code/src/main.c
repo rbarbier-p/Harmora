@@ -1,8 +1,6 @@
 #include "I2C.h"
 #include "UART.h"
 #include "display.h"
-#include "display_bus_i2c.h"
-#include "sh1106.h"
 #include "stopwatch.h"
 #include <util/delay.h>
 
@@ -12,8 +10,9 @@ int main(void) {
   stopwatch_init();
 
   UART_print_str("Starting... \r\n");
-  // 51348
-  display_init(&sh1106, &display_bus_i2c, DIRTYPAGES_MODE);
+
+  // Initialize display with SH1106 controller over I2C in dirty-pages mode
+  display_init(DISPLAY_SH1106, DISPLAY_BUS_I2C, DISPLAY_MODE_DIRTYPAGES);
 
   display_clear();
   stopwatch_start();

@@ -3,6 +3,7 @@ F_CPU = 16000000UL
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
+AVRDUDE_CONF = $(HOME)/opt/avr/etc/avrdude.conf
 PROGRAMMER = arduino
 # Serial port for the middle-man Arduino (change to your device, e.g. /dev/ttyUSB0)
 PORT = /dev/ttyACM0
@@ -11,7 +12,7 @@ PORT = /dev/ttyACM0
 BAUD = 115200
 # avrdude part id (m328p / m32u4). Default to m328p; overridden by 8p/u4 targets.
 AVRDUDE_PART ?= m328p
-SIZE = avr-s:ize
+SIZE = avr-size
 SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
 
@@ -61,7 +62,7 @@ flash: $(HEX)
 	# Use avrdude to program target via the configured programmer/port.
 	# For "Arduino as ISP" (Arduino Nano running ArduinoISP) use -c arduino and
 	# a lower baud (commonly 19200). The part id for avrdude is in AVRDUDE_PART.
-	$(AVRDUDE) -p $(AVRDUDE_PART) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(HEX):i
+	$(AVRDUDE) -C $(AVRDUDE_CONF) -p $(AVRDUDE_PART) -c $(PROGRAMMER) -P $(PORT) -b $(BAUD) -U flash:w:$(HEX):i
 	#@echo "\033[0;34m-------  Memory usage  --------\033[0m"
 	#@$(MAKE) -s size
 	#@echo "\n"
@@ -95,5 +96,10 @@ re: clean all
 
 u4:
 	$(MAKE) MCU=atmega32u4 AVRDUDE_PART=m32u4 BAUD=19200 PORT=$(PORT) all
+
+.PHONY: arduino
+arduino: $(HEX)
+	# Flash using Arduino Uno bootloader over serial (USB)
+	$(AVRDUDE) -p m328p -c arduino -P $(PORT) -b 115200 -U flash:w:$(HEX):i
 
 .PHONY: 8p u4
