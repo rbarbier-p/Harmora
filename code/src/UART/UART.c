@@ -29,9 +29,10 @@ void UART_print_hex(uint8_t hex) {
   UART_tx(hex_chars[hex >> 4]);
   UART_tx(hex_chars[hex & 0x0F]);
 }
+
 void	UART_print_byte(const uint8_t byte)
 {
-	for (unsigned char i = 7; i >= 0; i--)
+	for (char i = 7; i >= 0; i--)
 		UART_tx(byte & 1 << i);
 }
 

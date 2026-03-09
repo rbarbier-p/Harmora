@@ -34,9 +34,11 @@ static inline void stopwatch_stop(void) {
 // #define PROF_START() uint32_t _prof_t0 = TCNT1
 
 // End measurement, returns elapsed time in microseconds
+/*
 // #define PROF_END_US(var) do {        \
     uint32_t _prof_t1 = TCNT1;       \
     var = (_prof_t1 - _prof_t0) * 4;    \
 } while (0)
+*/
 
 #endif
