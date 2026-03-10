@@ -20,10 +20,14 @@ BUILD_DIR = .build
 
 # Compiler flags
 CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os
-CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal
+#CFLAGS += -ffunction-sections -fdata-sections  # Enable dead code/data removal
+CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/display/fonts
 CFLAGS += -Isrc/I2C
 CFLAGS += -Isrc/UART
 CFLAGS += -Isrc/SPI
+
+# Linker flags
+#LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
 
 # Source files
 include src/display/display.mk
@@ -32,6 +36,9 @@ include src/UART/UART.mk
 include src/SPI/SPI.mk
 
 SRC = src/main.c 
+SRC += src/scheduler.c
+SRC += src/loop_timer.c
+SRC += src/tasks.c
 SRC += $(DISPLAY_SRC)
 SRC += $(I2C_SRC)
 SRC += $(UART_SRC)
@@ -51,7 +58,7 @@ $(BUILD_DIR):
 
 # Compile ELF from sources
 $(ELF): $(SRC) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -o $@ $(SRC)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRC)
 
 # Generate HEX from ELF
 $(HEX): $(ELF)

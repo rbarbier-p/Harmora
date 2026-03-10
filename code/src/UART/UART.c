@@ -35,10 +35,27 @@ void	UART_print_byte(const uint8_t byte)
 		UART_tx(byte & 1 << i);
 }
 
+// Non-recursive version to reduce stack usage
 void	UART_print_num(const uint32_t number)
 {
-	const uint8_t num = number % 10;
-	if (number > 9)
-		UART_print_num(number / 10);
-	UART_tx(num + '0');
+	char buffer[11]; // Max uint32_t is 10 digits + null terminator
+	uint8_t i = 0;
+	uint32_t n = number;
+	
+	// Handle zero case
+	if (n == 0) {
+		UART_tx('0');
+		return;
+	}
+	
+	// Build digits in reverse order
+	while (n > 0) {
+		buffer[i++] = '0' + (n % 10);
+		n /= 10;
+	}
+	
+	// Print in correct order
+	while (i > 0) {
+		UART_tx(buffer[--i]);
+	}
 }

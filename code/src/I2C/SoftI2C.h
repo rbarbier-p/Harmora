@@ -2,6 +2,7 @@
 #define SOFTI2C_H
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <util/delay.h>
 
 #define WRITE 0
@@ -14,7 +15,8 @@ typedef struct {
     uint8_t bit;
 } PinMap;
 
-static const PinMap pinmap[] = {
+// Pin mapping stored in flash to save RAM (140 bytes)
+static const PinMap pinmap[] PROGMEM = {
     // 0–7  → PD0–PD7
     { &DDRD, &PORTD, &PIND, 0 }, // 0 (PD0)
     { &DDRD, &PORTD, &PIND, 1 }, // 1
