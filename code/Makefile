@@ -25,54 +25,22 @@ endif
 
 ATMEGA328P_MCU = atmega328p
 ATMEGA32U4_MCU = atmega32u4
-#COLORS
-RED = \033[1;31m
-GREEN = \033[1;32m
-PURPLE = \033[1;35m
-RESET = \033[0m
-
-UNAME = $(shell uname -s)
-PLATFORM = linux
-# TODO: probably create a script that finds the correct ports
-# also test on linux
-PORT := /dev/ttyACM0
-USB_PORT := /dev/ttyACM0
-
-ifeq ($(UNAME),windows)
-	PLATFORM = windows
-	PORT := COM17
-	USB_PORT := COM18
-else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
-	PLATFORM = windows
-	PORT := COM17
-	USB_PORT := COM18
-endif
-
-
-
-ATMEGA328P_MCU = atmega328p
-ATMEGA32U4_MCU = atmega32u4
 F_CPU = 16000000UL
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
-ATMEGA328P_PROTOCOL = arduino
-ATMEGA32U4_PROTOCOL = avr109 
-ISP_PROTOCOL = arduino #avrisp
 ISP_BAUD = 19200
 ATMEGA328P_PROTOCOL = arduino
 ATMEGA32U4_PROTOCOL = avr109 
 ISP_PROTOCOL = arduino #avrisp
 ISP_BAUD = 19200
 BAUD = 115200
-SIZE = avr-s:ize SRAM = 2048    # ATmega328P RAM in bytes
-SIZE = avr-s:ize SRAM = 2048    # ATmega328P RAM in bytes
+SIZE = avr-size SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
 
 BUILD_DIR = .build
 
 # Compiler flags
-CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror
 CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror
 CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal
 CFLAGS += -Isrc/I2C
@@ -94,12 +62,7 @@ ATMEGA32U4_SRC = src/atmega32u4.c
 
 
 # Output files in build folder
-ATMEGA328P_ELF = $(BUILD_DIR)/atmega328p.elf
-ATMEGA328P_HEX = $(BUILD_DIR)/atmega328p.hex
-ATMEGA32U4_ELF = $(BUILD_DIR)/atmega32u4.elf
-ATMEGA32U4_HEX = $(BUILD_DIR)/atmega32u4.hex
 # Compiled and took from arduino IDE (for atmega32u4)
-ISP_HEX = ArduinoISP/ArduinoISP_harmora.hex
 ATMEGA328P_ELF = $(BUILD_DIR)/atmega328p.elf
 ATMEGA328P_HEX = $(BUILD_DIR)/atmega328p.hex
 ATMEGA32U4_ELF = $(BUILD_DIR)/atmega32u4.elf
@@ -110,23 +73,14 @@ SIZE_TXT = $(BUILD_DIR)/size.txt
 
 MAKEFLAGS += --no-print-directory
 
-MAKEFLAGS += --no-print-directory
-
 # Default target
 all: flash
 
 #Note: using printf instead because it works the same on linux and windows
-
-
-#Note: using printf instead because it works the same on linux and windows
-
-
 # Ensure build directory exists
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
 	@printf "$(GREEN)Creating build directory $(RESET)\n"
-	@mkdir -p $(BUILD_DIR)
-	@printf "$(GREEN)Creating build directory $(RESET)\n"
 
 # Compile ATMEGA328P_ELF from sources
 $(ATMEGA328P_ELF): $(ATMEGA328P_SRC) $(BUILD_DIR)
@@ -137,38 +91,6 @@ $(ATMEGA32U4_ELF): $(ATMEGA32U4_SRC) $(BUILD_DIR)
 	@$(CC) $(CFLAGS) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
 	@printf "$(GREEN)Compiled $< $(RESET)\n"
 
-# Compile ATMEGA328P_ELF from sources
-$(ATMEGA328P_ELF): $(ATMEGA328P_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
-	@printf "$(GREEN)Compiled $< $(RESET)\n"
-
-$(ATMEGA32U4_ELF): $(ATMEGA32U4_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
-	@printf "$(GREEN)Compiled $< $(RESET)\n"
-
-
-# Generate ATMEGA328P_HEX from ATMEGA328P_ELF
-$(ATMEGA328P_HEX): $(ATMEGA328P_ELF)
-	@$(OBJCOPY) -O ihex $< $@
-
-$(ATMEGA32U4_HEX): $(ATMEGA32U4_ELF)
-	@$(OBJCOPY) -O ihex $< $@
-
-
-reset-board-windows:
-	@echo "mode $(USB_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
-
-reset-board-linux:
-	@stty -F $(USB_PORT) 1200 hupcl
-
-reset-board:
-ifeq ($(PLATFORM),windows)
-	@$(MAKE) reset-board-windows
-else
-	@$(MAKE) reset-board-linux
-endif
-	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
-	@sleep 3
 
 # Generate ATMEGA328P_HEX from ATMEGA328P_ELF
 $(ATMEGA328P_HEX): $(ATMEGA328P_ELF)
@@ -211,33 +133,11 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
+# Didn't touch much after this
 #	@echo "\033[0;34m-------  Memory usage  --------\033[0m"
 #	@$(MAKE) -s size
 #	@echo "\n"
 
-# Didn't touch much after this
-# Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
-flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
-	@printf "$(RED)Platform: $(PLATFORM) $(RESET)\n"
-	@printf "$(RED)Port: $(PORT) $(RESET)\n"
-	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"
-
-	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
-	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
-	@printf "$(PURPLE)Waiting 5 seconds for bootloader / USB reset... $(RESET)\n"
-	@sleep 5
-	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
-	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
-	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
-	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
-
-#	@echo "\033[0;34m-------  Memory usage  --------\033[0m"
-#	@$(MAKE) -s size
-#	@echo "\n"
-
-# Didn't touch much after this
 
 # Print flash and RAM usage only (no Program/Data lines)
 size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
@@ -250,11 +150,6 @@ size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
 	END {printf "Flash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 
-#screen:
-#	screen $(PORT) 115200
-#screen:
-#	screen $(PORT) 115200
-	
 # Clean build files
 clean:
 	rm -rf $(BUILD_DIR)
@@ -262,15 +157,5 @@ clean:
 re: clean all
 
 # Declare phony targets
-.PHONY: all flash size clean re screen
+.PHONY: all flash size clean re
 
-# Convenience targets to build+flash for each MCU using an Arduino Nano as ISP
-# Usage: `make 8p` or `make u4` — these call make recursively with the correct
-# MCU/avrdude part and a baud suitable for the ArduinoISP sketch.
-8p:
-	$(MAKE) MCU=atmega328p AVRDUDE_PART=m328p BAUD=19200 PORT=$(PORT) all
-
-u4:
-	$(MAKE) MCU=atmega32u4 AVRDUDE_PART=m32u4 BAUD=19200 PORT=$(PORT) all
-
-.PHONY: 8p u4
