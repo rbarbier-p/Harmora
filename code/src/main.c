@@ -13,6 +13,35 @@
 #define STATS_INTERVAL 1000
 
 int main(void) {
+  UART_print_str("Display test start\r\n");
+
+  // Init display (ensure driver and bus match your wiring)
+  display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_FULL);
+  _delay_ms(50); // give display a moment
+
+  display_clear();
+  display_draw_string(10, 10, "Holaaa");
+  display_update();
+
+  // Keep running: toggle an indicator and periodically redraw so you can see
+  // updates
+  uint8_t toggle = 0;
+  while (1) {
+    _delay_ms(500);
+    if (toggle) {
+      display_draw_rect(0, 0, 10, 10);
+    } else {
+      display_fill_rect(0, 0, 10, 10);
+    }
+    display_update();
+    toggle ^= 1;
+  }
+
+  // never return
+  // return 0;
+}
+
+/*int main(void) {
   // Initialize peripherals
   i2c_init();
   UART_init();
@@ -93,4 +122,4 @@ int main(void) {
       }
     }
   }
-}
+}*/
