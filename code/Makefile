@@ -10,15 +10,18 @@ PLATFORM = linux
 # also test on linux
 PORT := /dev/ttyACM0
 USB_PORT := /dev/ttyACM0
+ISP_PROTOCOL = stk500v1
 
 ifeq ($(UNAME),windows)
 	PLATFORM = windows
 	PORT := COM17
 	USB_PORT := COM18
+	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
 	PORT := COM17
 	USB_PORT := COM18
+	ISP_PROTOCOL = arduino
 endif
 
 
@@ -32,7 +35,6 @@ AVRDUDE = avrdude
 ISP_BAUD = 19200
 ATMEGA328P_PROTOCOL = arduino
 ATMEGA32U4_PROTOCOL = avr109 
-ISP_PROTOCOL = arduino #avrisp
 ISP_BAUD = 19200
 BAUD = 115200
 SIZE = avr-size SRAM = 2048    # ATmega328P RAM in bytes
