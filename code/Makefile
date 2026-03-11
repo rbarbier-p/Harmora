@@ -44,7 +44,7 @@ FLASH = 32768  # ATmega328P Flash in bytes
 BUILD_DIR = .build
 
 # Compiler flags
-CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g
+CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
 CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal
 CFLAGS += -Isrc/I2C
 CFLAGS += -Isrc/UART
@@ -123,6 +123,8 @@ endif
 	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
 	@sleep 3
 
+isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
