@@ -2,6 +2,7 @@
 #define SOFTSPI_H
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include <util/delay.h>
 #include <stdint.h>
 
@@ -15,11 +16,12 @@ typedef struct {
     uint8_t bit;
 } SoftSPI_PinMap;
 
-// Pin mapping table (Arduino-style pin numbers to AVR registers)
+// Pin mapping table stored in flash to save RAM (140 bytes)
+// Arduino-style pin numbers to AVR registers
 // 0-7   = PD0-PD7
 // 8-13  = PB0-PB5
 // 14-19 = PC0-PC5 (A0-A5)
-static const SoftSPI_PinMap softspi_pinmap[] = {
+static const SoftSPI_PinMap softspi_pinmap[] PROGMEM = {
     // 0-7 -> PD0-PD7
     { &DDRD, &PORTD, &PIND, 0 }, // 0 (PD0)
     { &DDRD, &PORTD, &PIND, 1 }, // 1

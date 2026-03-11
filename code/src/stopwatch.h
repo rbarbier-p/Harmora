@@ -30,6 +30,10 @@ static inline void stopwatch_stop(void) {
     UART_print_num(t1 * 4); // convert to microseconds
     UART_print_str(" us\r\n");
 }
+
+static inline uint16_t stopwatch_read(void) {
+    return TCNT1;
+}
 // Start measurement
 // #define PROF_START() uint32_t _prof_t0 = TCNT1
 

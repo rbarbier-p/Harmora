@@ -32,6 +32,7 @@ F_CPU = 16000000UL
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
+AVRDUDE_CONF = $(HOME)/opt/avr/etc/avrdude.conf
 ISP_BAUD = 19200
 ATMEGA328P_PROTOCOL = arduino
 ATMEGA32U4_PROTOCOL = avr109 
@@ -48,6 +49,9 @@ CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display
 CFLAGS += -Isrc/I2C
 CFLAGS += -Isrc/UART
 CFLAGS += -Isrc/SPI
+
+# Linker flags
+#LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
 
 # Source files
 include src/display/display.mk

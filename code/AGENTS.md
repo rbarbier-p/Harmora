@@ -13,11 +13,12 @@ This is a bare-metal AVR C project - no Arduino abstractions.
 ```
 ATmega328P (Main Controller)
 ├── SPI SSD1309 OLED Display
-├── 2 I2C I/O Expanders (MCP23017) → buttons
-├── Analog Mux → Piano (hall sensors) and potentiometers
-├── Digital Mux → Rotary encoders
+├── 2 I2C I/O Expanders (MCP23017) → 32 buttons
+├── Analog Mux → Piano (12 hall sensors) and potentiometers
+├── Digital Mux →  6 Rotary encoders
 ├── SPI Master → 32U4
-└── UART (115200) → Debug
+├── UART (115200) → Debug
+└── Software SPI LED chain (30 leds)
 
 ATmega32U4 (USB/MIDI)
 ├── USB Device (D+/D-)

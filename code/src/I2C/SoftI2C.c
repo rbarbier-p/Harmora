@@ -34,15 +34,16 @@ static inline void SCL_low(void) {
 
 void I2C_init(uint8_t SDA_PIN, uint8_t SCL_PIN)
 {
-    SDA_DDR    = pinmap[SDA_PIN].ddr;
-    SDA_PORT   = pinmap[SDA_PIN].port;
-    SDA_PINREG = pinmap[SDA_PIN].pin;
-    SDA_BIT    = pinmap[SDA_PIN].bit;
+    // Read pinmap from PROGMEM
+    SDA_DDR    = (volatile uint8_t*)pgm_read_word(&pinmap[SDA_PIN].ddr);
+    SDA_PORT   = (volatile uint8_t*)pgm_read_word(&pinmap[SDA_PIN].port);
+    SDA_PINREG = (volatile uint8_t*)pgm_read_word(&pinmap[SDA_PIN].pin);
+    SDA_BIT    = pgm_read_byte(&pinmap[SDA_PIN].bit);
 
-    SCL_DDR    = pinmap[SCL_PIN].ddr; 
-    SCL_PORT   = pinmap[SCL_PIN].port;
-    SCL_PINREG = pinmap[SCL_PIN].pin;
-    SCL_BIT    = pinmap[SCL_PIN].bit;
+    SCL_DDR    = (volatile uint8_t*)pgm_read_word(&pinmap[SCL_PIN].ddr);
+    SCL_PORT   = (volatile uint8_t*)pgm_read_word(&pinmap[SCL_PIN].port);
+    SCL_PINREG = (volatile uint8_t*)pgm_read_word(&pinmap[SCL_PIN].pin);
+    SCL_BIT    = pgm_read_byte(&pinmap[SCL_PIN].bit);
 
     SDA_high();
     SCL_high();
