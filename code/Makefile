@@ -142,8 +142,6 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 # Print flash and RAM usage only (no Program/Data lines)
 size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
 	@$(SIZE) --format=avr --mcu=$(ATMEGA328P_MCU) $(ATMEGA328P_ELF) > $(SIZE_TXT)
-size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
-	@$(SIZE) --format=avr --mcu=$(ATMEGA328P_MCU) $(ATMEGA328P_ELF) > $(SIZE_TXT)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
 	/Program:/ {match($$0,/([0-9]+) bytes/,a); flash=a[1]+0} \
 	/Data:/ {match($$0,/([0-9]+) bytes/,a); ram=a[1]+0} \
