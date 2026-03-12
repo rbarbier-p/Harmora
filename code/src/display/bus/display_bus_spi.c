@@ -5,23 +5,23 @@
 
 // Pin definitions for display control
 // Based on AGENTS.md pin configuration:
-//   PB1 = DISPLAY_SS (chip select for display)
+//   PB1 = DISPLAY_CS (chip select for display)
 //
 // D/C pin (Data/Command) - directly controls display mode
 // Using PD2 for D/C (directly from 328P, adjust as needed)
-#define DISPLAY_SS_DDR DDRD
-#define DISPLAY_SS_PORT PORTD
-#define DISPLAY_SS_PIN PD5
+#define DISPLAY_CS_DDR DDRD
+#define DISPLAY_CS_PORT PORTD
+#define DISPLAY_CS_PIN PD3
 
 // D/C pin for command/data selection
 // D/C = LOW for command, HIGH for data
 #define DC_DDR DDRD
 #define DC_PORT PORTD
-#define DC_PIN PD6
+#define DC_PIN PD0
 
 // Macros for pin control
-#define DISPLAY_CS_LOW() (DISPLAY_SS_PORT &= ~(1 << DISPLAY_SS_PIN))
-#define DISPLAY_CS_HIGH() (DISPLAY_SS_PORT |= (1 << DISPLAY_SS_PIN))
+#define DISPLAY_CS_LOW() (DISPLAY_CS_PORT &= ~(1 << DISPLAY_CS_PIN))
+#define DISPLAY_CS_HIGH() (DISPLAY_CS_PORT |= (1 << DISPLAY_CS_PIN))
 #define DC_COMMAND() (DC_PORT &= ~(1 << DC_PIN))
 #define DC_DATA() (DC_PORT |= (1 << DC_PIN))
 
@@ -45,7 +45,7 @@ void display_bus_spi_init(void) {
   spi_init(SPI_CLK_DIV_2, SPI_MODE_0, SPI_MSB_FIRST);
 
   // Set display SS pin as output and deselect
-  DISPLAY_SS_DDR |= (1 << DISPLAY_SS_PIN);
+  DISPLAY_CS_DDR |= (1 << DISPLAY_CS_PIN);
   DISPLAY_CS_HIGH();
 
   // Set D/C pin as output, default to command mode

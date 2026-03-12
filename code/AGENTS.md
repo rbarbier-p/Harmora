@@ -36,41 +36,44 @@ Inter-MCU Communication:
 
 ### ATmega328P
 
-| Pin | Port  | Function       | Notes                    |
-|-----|-------|----------------|--------------------------|
-| 27  | PC4   | I2C_SDA        | Hardware TWI             |
-| 28  | PC5   | I2C_SCL        | Hardware TWI             |
-| 14  | PB2   | SPI_SS         | Hardware SPI             |
-| 15  | PB3   | SPI_MOSI       | Hardware SPI             |
-| 16  | PB4   | SPI_MISO       | Hardware SPI             |
-| 17  | PB5   | SPI_CLK        | Hardware SPI             |
-| 13  | PB1   | DISPLAY_SS     | SH1106 chip select       |
-| 19  | ADC6  | 32U4_SS        | ATmega32U4 slave select  |
-| 32  | PD2   | 32U4_INT       | Interrupt to ATmega32U4  |
-| 9   | PD5   | MUX_IN_0       | Multiplexer select       |
-| 10  | PD6   | MUX_IN_1       | Multiplexer select       |
-| 11  | PD7   | MUX_IN_2       | Multiplexer select       |
-| 12  | PB0   | MUX_IN_3       | Multiplexer select       |
-| 23  | PC0   | MUX1_OUT       | Multiplexer 1 output     |
-| 31  | PD1   | MUX2_OUT       | Multiplexer 2 output     |
-| 24  | PC1   | EXP1_INTA      | I/O Expander 1 interrupt |
-| 25  | PC2   | EXP1_INTB      | I/O Expander 1 interrupt |
-| 26  | PC3   | EXP2_INTA      | I/O Expander 2 interrupt |
-| 30  | PD0   | EXP2_INTB      | I/O Expander 2 interrupt |
-| 1   | PD3   | Soft_SPI_CLK   | Software SPI (unused?)   |
-| 2   | PD4   | Soft_SPI_MOSI  | Software SPI (unused?)   |
+| Port | Function      | Notes                              |
+|------|---------------|------------------------------------|
+| PB0  | Soft_SPI_MOSI | Software SPI for LEDs              |
+| PB1  | Soft_SPI_CLK  | Software SPI for LEDs              |
+| PB2  | SPI_SS        | Hardware SPI slave select          |
+| PB3  | SPI_MOSI      | Hardware SPI                       |
+| PB4  | SPI_MISO      | Hardware SPI                       |
+| PB5  | SPI_CLK       | Hardware SPI                       |
+| PB6  | XTAL1         | Crystal                            |
+| PB7  | XTAL2         | Crystal                            |
+| PC0  | 32U4_SS       | ATmega32U4 slave select            |
+| PC1  | EXP1_INTA     | Expander 1 interrupt A             |
+| PC2  | EXP1_INTB     | Expander 1 interrupt B             |
+| PC3  | EXP2_INTA     | Expander 2 interrupt A             |
+| PC4  | I2C_SDA       | Hardware TWI                       |
+| PC5  | I2C_SCL       | Hardware TWI                       |
+| PC6  | -             |                                    |
+| PD0  | EXP2_INTB     | Expander 2 interrupt B             |
+| PD1  | DMUX_OUT      | Digital mux output                 |
+| PD2  | 32U4_INT      | Interrupt line to 32U4             |
+| PD3  | DISPLAY_CS    | Display chip select                |
+| PD4  | MUX_S3        | Mux select line 3 (shared)         |
+| PD5  | MUX_S0        | Mux select line 0 (shared)         |
+| PD6  | MUX_S1        | Mux select line 1 (shared)         |
+| PD7  | MUX_S2        | Mux select line 2 (shared)         |
+| ADC6 | -             |                                    |
+| ADC7 | AMUX_OUT      | Analog mux output                  |
 
 ### ATmega32U4
 
-| Pin | Port | Function  | Notes              |
-|-----|------|-----------|--------------------|
-| 3-7 | -    | USB       | D-, D+, GND, VBUS  |
-| 8   | PB0  | SPI_SS    | SPI slave select   |
-| 9   | PB1  | SPI_CLK   | SPI clock          |
-| 10  | PB2  | SPI_MOSI  | SPI data in        |
-| 11  | PB3  | SPI_MISO  | SPI data out       |
-| 21  | PD3  | MIDI_D    | MIDI data output   |
-| 28  | PB4  | MCU_INT   | Interrupt from 328P|
+| Port | Function  | Notes              |
+|------|-----------|--------------------|
+| PB0  | SPI_SS    | SPI slave select   |
+| PB1  | SPI_CLK   | SPI clock          |
+| PB2  | SPI_MOSI  | SPI data in        |
+| PB3  | SPI_MISO  | SPI data out       |
+| PB4  | MCU_INT   | Interrupt from 328P|
+| PD3  | MIDI_D    | MIDI data output   |
 
 ## Build System
 
