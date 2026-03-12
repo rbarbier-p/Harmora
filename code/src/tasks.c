@@ -53,8 +53,8 @@ void task_pot_scan(void) {
 
   // Wait for analog mux to settle before reading
   // Longer delay to allow full voltage stabilization
-  _delay_ms(1);
-
+  adc_read_channel(7);
+  _delay_us(30);
   // Read ADC value from ADC7 (AMUX_OUT) - 8-bit resolution (0-255)
   uint8_t value = adc_read_channel(7);
 

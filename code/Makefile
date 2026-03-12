@@ -14,8 +14,8 @@ ISP_PROTOCOL = stk500v1
 
 ifeq ($(UNAME),Darwin)
 	PLATFORM = mac
-	PORT := /dev/cu.usbmodem1201
-	USB_PORT := /dev/cu.usbmodem1201
+	PORT := /dev/cu.usbmodem101
+	USB_PORT :=  /dev/cu.usbmodem101 #/dev/cu.usbmodem12345673
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
