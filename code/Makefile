@@ -14,10 +14,8 @@ ISP_PROTOCOL = stk500v1
 
 ifeq ($(UNAME),Darwin)
 	PLATFORM = mac
-	# Mac uses /dev/cu.* for USB serial devices
-	# You may need to adjust these device names for your system
-	PORT := /dev/cu.usbmodem14201
-	USB_PORT := /dev/cu.usbmodem14301
+	PORT := /dev/cu.usbmodem1201
+	USB_PORT := /dev/cu.usbmodem1201
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
@@ -45,7 +43,8 @@ ATMEGA328P_PROTOCOL = arduino
 ATMEGA32U4_PROTOCOL = avr109 
 ISP_BAUD = 19200
 BAUD = 115200
-SIZE = avr-size SRAM = 2048    # ATmega328P RAM in bytes
+SIZE = avr-size
+SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
 
 BUILD_DIR = .build
@@ -56,6 +55,8 @@ CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display
 CFLAGS += -Isrc/I2C
 CFLAGS += -Isrc/UART
 CFLAGS += -Isrc/SPI
+CFLAGS += -Isrc/ADC
+CFLAGS += -Isrc/analog_mux
 
 # Linker flags
 #LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
@@ -65,12 +66,19 @@ include src/display/display.mk
 include src/I2C/I2C.mk
 include src/UART/UART.mk
 include src/SPI/SPI.mk
+include src/ADC/adc.mk
+include src/analog_mux/analog_mux.mk
 
 ATMEGA328P_SRC = src/atmega328p.c 
+ATMEGA328P_SRC += src/tasks.c
+ATMEGA328P_SRC += src/scheduler.c
+ATMEGA328P_SRC += src/loop_timer.c
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(UART_SRC)
 ATMEGA328P_SRC += $(SPI_SRC)
+ATMEGA328P_SRC += $(ADC_SRC)
+ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
 ATMEGA32U4_SRC = src/atmega32u4.c

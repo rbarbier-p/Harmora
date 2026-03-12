@@ -1,5 +1,14 @@
 #include "tasks.h"
 #include "UART.h"
+#include "ADC/adc.h"
+#include "analog_mux/analog_mux.h"
+#include "display/display.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+// Pot state
+static uint16_t pot_values[4] = {0, 0, 0, 0};
+static uint8_t current_pot = 0;
 
 // TODO: Implement proper encoder scanning with digital multiplexer
 // For now, just a placeholder that tracks call count
@@ -36,10 +45,45 @@ void task_display_update(void) {
   // Uses dirty-page optimization already implemented in display driver
 }
 
-// TODO: Implement potentiometer scanning with analog multiplexer
+// Pot scanning with analog multiplexer
 void task_pot_scan(void) {
-  // Scan potentiometers via analog multiplexer (shared with hall sensors)
-  // Read ADC values and detect changes
+  // Select the mux channel for the current pot
+  analog_mux_select(current_pot);
+  
+  // Read ADC value from ADC7 (AMUX_OUT)
+  uint16_t value = adc_read_channel(7);
+  
+  // Store the value
+  pot_values[current_pot] = value;
+  
+  // Move to next pot (cycle through 0-3)
+  current_pot = (current_pot + 1) & 0x03;
+  
+  // Update display every time we complete a cycle (when current_pot wraps back to 0)
+  if (current_pot == 0) {
+    display_clear();
+    
+    // Draw pot values on screen
+    char buffer[20];
+    
+    // Pot 0
+    sprintf(buffer, "P0: %4d", pot_values[0]);
+    display_draw_string(0, 0, buffer);
+    
+    // Pot 1
+    sprintf(buffer, "P1: %4d", pot_values[1]);
+    display_draw_string(0, 10, buffer);
+    
+    // Pot 2
+    sprintf(buffer, "P2: %4d", pot_values[2]);
+    display_draw_string(0, 20, buffer);
+    
+    // Pot 3
+    sprintf(buffer, "P3: %4d", pot_values[3]);
+    display_draw_string(0, 30, buffer);
+    
+    display_update();
+  }
 }
 
 // TODO: Implement LED chain update with software SPI
