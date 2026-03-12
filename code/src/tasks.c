@@ -49,18 +49,11 @@ void task_display_update(void) {
 // Pot scanning with analog multiplexer
 void task_pot_scan(void) {
   // Select the mux channel for the current pot
-  analog_mux_select(current_pot);
+  analog_mux_select(8 + current_pot);
 
-  // Wait for analog mux to settle (CD74HC4067M settling time)
-  // The external mux needs time for the signal to propagate
-  _delay_us(100);
-  
-  // Perform a dummy ADC read to clear the sample-and-hold capacitor
-  // This is critical when switching between channels with different voltages
-  adc_read_channel(7);
-  
-  // Small delay before the actual reading
-  _delay_us(50);
+  // Wait for analog mux to settle before reading
+  // Longer delay to allow full voltage stabilization
+  _delay_ms(1);
 
   // Read ADC value from ADC7 (AMUX_OUT) - 8-bit resolution (0-255)
   uint8_t value = adc_read_channel(7);
