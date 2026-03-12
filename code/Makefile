@@ -12,7 +12,14 @@ PORT := /dev/ttyACM0
 USB_PORT := /dev/ttyACM0
 ISP_PROTOCOL = stk500v1
 
-ifeq ($(UNAME),windows)
+ifeq ($(UNAME),Darwin)
+	PLATFORM = mac
+	# Mac uses /dev/cu.* for USB serial devices
+	# You may need to adjust these device names for your system
+	PORT := /dev/cu.usbmodem14201
+	USB_PORT := /dev/cu.usbmodem14301
+	ISP_PROTOCOL = stk500v1
+else ifeq ($(UNAME),windows)
 	PLATFORM = windows
 	PORT := COM17
 	USB_PORT := COM18
@@ -114,9 +121,14 @@ reset-board-windows:
 reset-board-linux:
 	@stty -F $(USB_PORT) 1200 hupcl
 
+reset-board-mac:
+	@stty -f $(USB_PORT) 1200 hupcl
+
 reset-board:
 ifeq ($(PLATFORM),windows)
 	@$(MAKE) reset-board-windows
+else ifeq ($(PLATFORM),mac)
+	@$(MAKE) reset-board-mac
 else
 	@$(MAKE) reset-board-linux
 endif
