@@ -4,3 +4,5 @@ fp-info-cache
 **/*-backups/
 *.bak
 .cache
+*.swp
+*.lck
