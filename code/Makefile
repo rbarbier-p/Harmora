@@ -73,6 +73,7 @@ include src/328p/analog_mux/analog_mux.mk
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c
 ATMEGA328P_SRC += src/328p/scheduler.c
+ATMEGA328P_SRC += src/328p/input_state.c
 # ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)

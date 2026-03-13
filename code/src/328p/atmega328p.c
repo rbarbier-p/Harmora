@@ -2,6 +2,7 @@
 #include "I2C.h"
 #include "analog_mux/analog_mux.h"
 #include "display.h"
+#include "input_state.h"
 #include "scheduler.h"
 #include "stopwatch.h"
 #include <avr/io.h>
@@ -10,7 +11,8 @@ int main(void) {
   i2c_init();
   adc_init();
   analog_mux_init();
-  stopwatch_init(); // Timer1 for execution time measurement
+  stopwatch_init();  // Timer1 for execution time measurement
+  input_state_init(); // Initialize input state tracking
 
   // Initialize display
   display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
