@@ -81,7 +81,7 @@ ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-ATMEGA32U4_SRC = src/atmega32u4.c
+ATMEGA32U4_SRC = src/midi.c
 
 
 # Output files in build folder
@@ -143,8 +143,10 @@ endif
 	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
 	@sleep 3
 
-isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+32u4: $(ATMEGA32U4_HEX) $(BUILD_DIR)
+	@$(MAKE) reset-board
+	@$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
@@ -159,9 +161,7 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	@sleep 5
 	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
 	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
-	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
-	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
+	@$(MAKE) 32u4
 
 # Didn't touch much after this
 #	@echo "\033[0;34m-------  Memory usage  --------\033[0m"

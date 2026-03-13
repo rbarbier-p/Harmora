@@ -1,184 +1,82 @@
-#define F_CPU 16000000UL
+#include "midi.h"
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/wdt.h>
-#include <util/delay.h>
-#include <avr/pgmspace.h>
-#include <stdint.h>
-#include <string.h>
-
-// Disable watchdog at startup
-void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
-void wdt_init(void) {
-    MCUSR = 0;
-    wdt_disable();
-}
-
-// USB Standard Request Codes
-#define GET_STATUS        0
-#define CLEAR_FEATURE     1
-#define SET_FEATURE       3
-#define SET_ADDRESS       5
-#define GET_DESCRIPTOR    6
-#define GET_CONFIGURATION 8
-#define SET_CONFIGURATION 9
-#define GET_INTERFACE     10
-#define SET_INTERFACE     11
-
-// Descriptor Types
-#define DEVICE_DESCRIPTOR        1
-#define CONFIGURATION_DESCRIPTOR 2
-#define STRING_DESCRIPTOR        3
-#define INTERFACE_DESCRIPTOR     4
-#define ENDPOINT_DESCRIPTOR      5
-#define CS_INTERFACE             0x24
-#define CS_ENDPOINT              0x25
-
-// MIDI Endpoints
-#define MIDI_RX_ENDPOINT 1
-#define MIDI_TX_ENDPOINT 2
-
-// LED on PC7
-#define LED_INIT() (DDRC |= (1 << 7))
-#define LED_ON() (PORTC |= (1 << 7))
-#define LED_OFF() (PORTC &= ~(1 << 7))
-#define LED_TOGGLE() (PORTC ^= (1 << 7))
-
-// MIDI Message Types (from version 43)
-#define MIDI_NOTE_OFF       0x80
-#define MIDI_NOTE_ON        0x90
-#define MIDI_AFTERTOUCH     0xA0
-#define MIDI_CC             0xB0
-#define MIDI_PROGRAM_CHANGE 0xC0
-#define MIDI_CHANNEL_PRESSURE 0xD0
-#define MIDI_PITCH_BEND     0xE0
-#define MIDI_SYSEX_START    0xF0
-#define MIDI_SYSEX_END      0xF7
-
-// Common MIDI CC numbers (from version 43)
-#define CC_BANK_SELECT      0
-#define CC_MODULATION       1
-#define CC_VOLUME           7
-#define CC_PAN              10
-#define CC_EXPRESSION       11
-#define CC_SUSTAIN          64
-#define CC_PORTAMENTO       65
-#define CC_SOSTENUTO        66
-#define CC_SOFT_PEDAL       67
-#define CC_REVERB           91
-#define CC_CHORUS           93
-#define CC_DELAY            94
-
-// Mackie Control Universal constants
-#define MCU_SYSEX_ID_1      0x00
-#define MCU_SYSEX_ID_2      0x00
-#define MCU_SYSEX_ID_3      0x66
-#define MCU_DEVICE_ID       0x14
-#define MCU_CHANNEL         0
-
-// MCU Commands
-#define MCU_CMD_DEVICE_QUERY       0x00
-#define MCU_CMD_HOST_CONNECTION    0x01
-#define MCU_CMD_VERSION_REQUEST    0x13
-#define MCU_CMD_VERSION_REPLY      0x14
-#define MCU_CMD_LCD_MESSAGE        0x12
-
-// MCU Control Change numbers
-#define MCU_CC_VPOT_1       0x10
-
-// MCU Button Note numbers
-#define MCU_BTN_REC_RDY_1   0x00
-#define MCU_BTN_SOLO_1      0x08
-#define MCU_BTN_MUTE_1      0x10
-#define MCU_BTN_SELECT_1    0x18
-#define MCU_BTN_VPOT_1      0x20
-#define MCU_BTN_ASSIGN_TRACK   0x28
-#define MCU_BTN_BANK_LEFT      0x2E
-#define MCU_BTN_BANK_RIGHT     0x2F
-#define MCU_BTN_TRACK_LEFT     0x30
-#define MCU_BTN_TRACK_RIGHT    0x31
-#define MCU_BTN_FLIP           0x32
-#define MCU_BTN_F1             0x36
-#define MCU_BTN_F2             0x37
-#define MCU_BTN_F3             0x38
-#define MCU_BTN_F4             0x39
-#define MCU_BTN_F5             0x3A
-#define MCU_BTN_F6             0x3B
-#define MCU_BTN_F7             0x3C
-#define MCU_BTN_F8             0x3D
-#define MCU_BTN_SHIFT          0x46
-#define MCU_BTN_OPTION         0x47
-#define MCU_BTN_CONTROL        0x48
-#define MCU_BTN_ALT            0x49
-#define MCU_BTN_SAVE           0x50
-#define MCU_BTN_UNDO           0x51
-#define MCU_BTN_MARKER         0x54
-#define MCU_BTN_CYCLE          0x56
-#define MCU_BTN_REWIND         0x5B
-#define MCU_BTN_FORWARD        0x5C
-#define MCU_BTN_STOP           0x5D
-#define MCU_BTN_PLAY           0x5E
-#define MCU_BTN_RECORD         0x5F
-#define MCU_BTN_CURSOR_UP      0x60
-#define MCU_BTN_CURSOR_DOWN    0x61
-#define MCU_BTN_CURSOR_LEFT    0x62
-#define MCU_BTN_CURSOR_RIGHT   0x63
-#define MCU_BTN_ZOOM           0x64
-#define MCU_BTN_SCRUB          0x65
 
 // USB Device Descriptor
+// bDeviceClass=0xEF, bDeviceSubClass=0x02, bDeviceProtocol=0x01
+// required for IAD composite devices on Windows
 const uint8_t PROGMEM device_descriptor[] = {
-    18, 0x01, 0x00, 0x02, 0x00, 0x00, 0x00, 0x20,
+    18, 0x01, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x20,
     0x09, 0x12, 0x03, 0x00, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
 };
 
-// USB Configuration Descriptor
+// USB Configuration Descriptor — 175 bytes total, 4 interfaces
+// Layout: [IAD MIDI][iface0 AudioCtrl][iface1 MIDIStream][IAD CDC][iface2 CDC Ctrl][iface3 CDC Data]
 const uint8_t PROGMEM config_descriptor[] = {
-    9, 0x02, 101, 0, 0x02, 0x01, 0x00, 0x80, 0x32,
+    // Configuration header
+    9, 0x02, 175, 0, 4, 1, 0, 0x80, 0x32,
+
+    // IAD: MIDI function (interfaces 0-1, Audio class)
+    8, 0x0B, 0, 2, 0x01, 0x00, 0x00, 0,
+
+    // Interface 0: AudioControl
     9, 0x04, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00,
+    // AudioControl CS header
     9, 0x24, 0x01, 0x00, 0x01, 0x09, 0x00, 0x01, 0x01,
+
+    // Interface 1: MIDIStreaming
     9, 0x04, 0x01, 0x00, 0x02, 0x01, 0x03, 0x00, 0x00,
+    // MIDIStreaming CS header (wTotalLength=65 includes all class-specific descs + CS endpoints)
     7, 0x24, 0x01, 0x00, 0x01, 65, 0,
-    6, 0x24, 0x02, 0x01, 0x01, 0x00,
-    6, 0x24, 0x02, 0x02, 0x02, 0x00,
-    9, 0x24, 0x03, 0x01, 0x03, 0x01, 0x02, 0x01, 0x00,
-    9, 0x24, 0x03, 0x02, 0x04, 0x01, 0x01, 0x01, 0x00,
-    9, 0x05, 0x01, 0x02, 0x20, 0x00, 0x00, 0x00, 0x00,
-    5, 0x25, 0x01, 0x01, 0x01,
-    9, 0x05, 0x82, 0x02, 0x20, 0x00, 0x00, 0x00, 0x00,
-    5, 0x25, 0x01, 0x01, 0x03,
+    6, 0x24, 0x02, 0x01, 0x01, 0x00,                        // MIDI IN Jack 1 (embedded)
+    6, 0x24, 0x02, 0x02, 0x02, 0x00,                        // MIDI IN Jack 2 (external)
+    9, 0x24, 0x03, 0x01, 0x03, 0x01, 0x02, 0x01, 0x00,     // MIDI OUT Jack 1
+    9, 0x24, 0x03, 0x02, 0x04, 0x01, 0x01, 0x01, 0x00,     // MIDI OUT Jack 2
+    9, 0x05, 0x01, 0x02, 0x20, 0x00, 0x00, 0x00, 0x00,     // EP1 OUT bulk
+    5, 0x25, 0x01, 0x01, 0x01,                              // CS EP
+    9, 0x05, 0x82, 0x02, 0x20, 0x00, 0x00, 0x00, 0x00,     // EP2 IN bulk
+    5, 0x25, 0x01, 0x01, 0x03,                              // CS EP
+
+    // IAD: CDC function (interfaces 2-3, CDC ACM)
+    8, 0x0B, 2, 2, 0x02, 0x02, 0x01, 0,
+
+    // Interface 2: CDC Control
+    9, 0x04, 0x02, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00,
+    // CDC functional descriptors
+    5, 0x24, 0x00, 0x10, 0x01,      // Header
+    5, 0x24, 0x01, 0x00, 0x03,      // Call Management (no call mgmt, data iface=3)
+    4, 0x24, 0x02, 0x02,            // ACM (supports Set/Get_Line_Coding, Set_Control_Line_State)
+    5, 0x24, 0x06, 0x02, 0x03,      // Union (ctrl=2, data=3)
+    // EP3 IN interrupt (CDC notifications, 8 bytes, interval 255ms)
+    7, 0x05, 0x83, 0x03, 8, 0x00, 0xFF,
+
+    // Interface 3: CDC Data
+    9, 0x04, 0x03, 0x00, 0x02, 0x0A, 0x00, 0x00, 0x00,
+    // EP4 OUT bulk (host->device, 16 bytes)
+    7, 0x05, 0x04, 0x02, 0x10, 0x00, 0x00,
+    // EP5 IN bulk (device->host, 16 bytes)
+    7, 0x05, 0x85, 0x02, 0x10, 0x00, 0x00,
 };
 
 const uint8_t PROGMEM string0[] = { 4, 0x03, 0x09, 0x04 };
 const uint8_t PROGMEM string1[] = { 14, 0x03, 'M',0, 'a',0, 'c',0, 'k',0, 'i',0, 'e',0 };
-const uint8_t PROGMEM string2[] = { 44, 0x03, 
-    'C', 0, 'o', 0, 'n', 0, 't', 0, 'r', 0, 'o', 0, 'l', 0, ' ', 0,
-    'U', 0, 'n', 0, 'i', 0, 'v', 0, 'e', 0, 'r', 0, 's', 0, 'a', 0, 'l', 0, ' ', 0,
-    'v', 0, '1', 0, '.', 0, '0', 0
+
+const uint8_t PROGMEM string2[] = { 26, 0x03, 
+    'H', 0, 'a', 0, 'r', 0, 'm', 0, 'o', 0, 'r', 0, 'a', 0, ' ', 0, 'v', 0, '1', 0, '.', 0, '0', 0
 };
+
 const uint8_t PROGMEM string3[] = { 16, 0x03, '1',0, '2',0, '3',0, '4',0, '5',0, '6',0, '7',0 };
 
 static uint8_t usb_configuration = 0;
 
-typedef struct {
-    uint8_t bmRequestType;
-    uint8_t bRequest;
-    uint16_t wValue;
-    uint16_t wIndex;
-    uint16_t wLength;
-} usb_setup_t;
+static cdc_line_coding_t cdc_line_coding = {
+    .dwDTERate   = 9600,
+    .bCharFormat = 0,
+    .bParityType = 0,
+    .bDataBits   = 8
+};
 
 static usb_setup_t setup;
 
-// Controller state (from version 43)
-typedef struct {
-    uint8_t current_channel;
-    uint8_t current_program;
-    uint8_t current_bank;
-    uint8_t octave_offset;
-    uint8_t velocity;
-} controller_state_t;
 
 static controller_state_t ctrl_state = {
     .current_channel = 0,
@@ -188,16 +86,22 @@ static controller_state_t ctrl_state = {
     .velocity = 100
 };
 
-// MCU state
-typedef struct {
-    uint8_t fader_position[8];
-    uint8_t vpot_position[8];
-    uint8_t vpot_led_mode[8];
-    char lcd_text[112];
-    uint8_t meter_level[8];
-} mcu_state_t;
-
 static mcu_state_t mcu_state;
+
+
+// Disable watchdog at startup
+void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
+void wdt_init(void) {
+    MCUSR = 0;
+    wdt_disable();
+}
+
+static void jump_to_bootloader(void) {
+    *BOOT_KEY_PTR = BOOT_KEY;
+    wdt_enable(WDTO_15MS);
+    while (1);
+}
+
 
 static void pll_init(void) {
     PLLCSR = (1 << PINDIV);
@@ -239,6 +143,37 @@ static uint8_t midi_ep_init(void) {
     UECFG1X = (1 << EPSIZE1) | (1 << EPSIZE0) | (1 << ALLOC);
     if (!(UESTA0X & (1 << CFGOK))) { UENUM = saved_ep; return 0; }
     
+    UENUM = saved_ep;
+    return 1;
+}
+
+static uint8_t cdc_ep_init(void) {
+    uint8_t saved_ep = UENUM;
+
+    // EP3: CDC notification, interrupt IN, 8 bytes
+    UENUM = CDC_NOTIFICATION_ENDPOINT;
+    UECONX = 0;
+    UECONX = (1 << EPEN);
+    UECFG0X = 0xC1;  // interrupt IN
+    UECFG1X = 0x02;  // 8 bytes, 1 bank, alloc
+    if (!(UESTA0X & (1 << CFGOK))) { UENUM = saved_ep; return 0; }
+
+    // EP4: CDC data, bulk OUT, 16 bytes
+    UENUM = CDC_RX_ENDPOINT;
+    UECONX = 0;
+    UECONX = (1 << EPEN);
+    UECFG0X = 0x80;  // bulk OUT
+    UECFG1X = 0x12;  // 16 bytes, 1 bank, alloc
+    if (!(UESTA0X & (1 << CFGOK))) { UENUM = saved_ep; return 0; }
+
+    // EP5: CDC data, bulk IN, 16 bytes
+    UENUM = CDC_TX_ENDPOINT;
+    UECONX = 0;
+    UECONX = (1 << EPEN);
+    UECFG0X = 0x81;  // bulk IN
+    UECFG1X = 0x12;  // 16 bytes, 1 bank, alloc
+    if (!(UESTA0X & (1 << CFGOK))) { UENUM = saved_ep; return 0; }
+
     UENUM = saved_ep;
     return 1;
 }
@@ -308,10 +243,11 @@ static void handle_get_configuration(void) {
 static void handle_set_configuration(void) {
     usb_configuration = setup.wValue;
     clear_setup();
-    if (usb_configuration) {
+    if (usb_configuration)
+    {
         if (!midi_ep_init()) usb_configuration = 0;
-        LED_ON();
-    } else LED_OFF();
+        if (!cdc_ep_init())  usb_configuration = 0;
+    }
     wait_in();
     clear_in();
 }
@@ -343,26 +279,83 @@ static void handle_feature(void) {
     clear_in();
 }
 
+static void handle_cdc_request(void) {
+    switch (setup.bRequest) {
+        case CDC_SET_LINE_CODING:
+            clear_setup();
+            while (!(UEINTX & (1 << RXOUTI)));
+            cdc_line_coding.dwDTERate  = (uint32_t)read_byte();
+            cdc_line_coding.dwDTERate |= (uint32_t)read_byte() << 8;
+            cdc_line_coding.dwDTERate |= (uint32_t)read_byte() << 16;
+            cdc_line_coding.dwDTERate |= (uint32_t)read_byte() << 24;
+            cdc_line_coding.bCharFormat = read_byte();
+            cdc_line_coding.bParityType = read_byte();
+            cdc_line_coding.bDataBits   = read_byte();
+            clear_out();
+            wait_in();
+            clear_in();
+            break;
+
+        case CDC_GET_LINE_CODING:
+            clear_setup();
+            wait_in();
+            write_byte(cdc_line_coding.dwDTERate & 0xFF);
+            write_byte((cdc_line_coding.dwDTERate >> 8) & 0xFF);
+            write_byte((cdc_line_coding.dwDTERate >> 16) & 0xFF);
+            write_byte((cdc_line_coding.dwDTERate >> 24) & 0xFF);
+            write_byte(cdc_line_coding.bCharFormat);
+            write_byte(cdc_line_coding.bParityType);
+            write_byte(cdc_line_coding.bDataBits);
+            clear_in();
+            break;
+
+        case CDC_SET_CONTROL_LINE_STATE: {
+            uint8_t dtr = setup.wValue & 0x01;
+            clear_setup();
+            wait_in();
+            clear_in();
+            // 1200 baud + DTR dropped = avrdude triggered the bootloader reset
+            if (!dtr && cdc_line_coding.dwDTERate == 1200) {
+                _delay_ms(10);
+                jump_to_bootloader();
+            }
+            break;
+        }
+
+        default:
+            stall();
+            break;
+    }
+}
+
 static void handle_setup(void) {
     setup.bmRequestType = read_byte();
     setup.bRequest = read_byte();
     setup.wValue = read_byte() | (read_byte() << 8);
     setup.wIndex = read_byte() | (read_byte() << 8);
     setup.wLength = read_byte() | (read_byte() << 8);
-    
-    if ((setup.bmRequestType & 0x60) != 0) { stall(); return; }
-    
-    switch (setup.bRequest) {
-        case GET_DESCRIPTOR: handle_get_descriptor(); break;
-        case SET_ADDRESS: handle_set_address(); break;
-        case GET_CONFIGURATION: handle_get_configuration(); break;
-        case SET_CONFIGURATION: handle_set_configuration(); break;
-        case GET_INTERFACE: handle_get_interface(); break;
-        case SET_INTERFACE: handle_set_interface(); break;
-        case GET_STATUS: handle_get_status(); break;
-        case CLEAR_FEATURE:
-        case SET_FEATURE: handle_feature(); break;
-        default: stall(); break;
+
+    uint8_t req_type = setup.bmRequestType & 0x60;
+
+    if (req_type == 0x00) {
+        // Standard requests
+        switch (setup.bRequest) {
+            case GET_DESCRIPTOR: handle_get_descriptor(); break;
+            case SET_ADDRESS: handle_set_address(); break;
+            case GET_CONFIGURATION: handle_get_configuration(); break;
+            case SET_CONFIGURATION: handle_set_configuration(); break;
+            case GET_INTERFACE: handle_get_interface(); break;
+            case SET_INTERFACE: handle_set_interface(); break;
+            case GET_STATUS: handle_get_status(); break;
+            case CLEAR_FEATURE:
+            case SET_FEATURE: handle_feature(); break;
+            default: stall(); break;
+        }
+    } else if (req_type == 0x20) {
+        // Class requests — route CDC requests
+        handle_cdc_request();
+    } else {
+        stall();
     }
 }
 
@@ -371,7 +364,6 @@ ISR(USB_GEN_vect) {
         UDINT &= ~(1 << EORSTI);
         ep0_init();
         usb_configuration = 0;
-        LED_TOGGLE();
     }
 }
 
@@ -381,7 +373,6 @@ ISR(USB_COM_vect) {
     if (UEINTX & (1 << RXOUTI)) UEINTX &= ~(1 << RXOUTI);
 }
 
-// ==================== MIDI FUNCTIONS (from version 43) ====================
 
 // Send raw MIDI message (3 bytes)
 void midi_send_3byte(uint8_t cable, uint8_t b1, uint8_t b2, uint8_t b3) {
@@ -578,6 +569,8 @@ void mcu_send_version_reply(void) {
     midi_send_sysex(sysex, sizeof(sysex));
 }
 
+// MCU Mackie Control Universal
+
 // Update LCD display
 void mcu_lcd_write(uint8_t position, const char *text, uint8_t length) {
     if (position >= 112 || length == 0) return;
@@ -661,6 +654,8 @@ void mcu_send_timecode(const char *timecode) {
     midi_send_sysex(sysex, idx);
 }
 
+
+
 // Generic custom SysEx
 void send_custom_sysex(const uint8_t *data, uint8_t length) {
     if (length > 32) length = 32;
@@ -727,31 +722,22 @@ void midi_debug_value(const char *label, uint16_t value) {
 
 // ==================== MAIN ====================
 
-int main(void) {
+
+int main(void)
+{
     MCUCR = (1 << JTD);
     MCUCR = (1 << JTD);
-    
-    LED_INIT();
-    LED_OFF();
     
     memset(&mcu_state, 0, sizeof(mcu_state));
-    strcpy(mcu_state.lcd_text, "Mackie Control Universal Ready                                                          ");
+    strcpy(mcu_state.lcd_text, "Mackie Control Universal Ready");
     
     UDCON = (1 << DETACH);
     _delay_ms(250);
-    
-    for (uint8_t i = 0; i < 5; i++) {
-        LED_TOGGLE();
-        _delay_ms(100);
-    }
-    LED_OFF();
     
     pll_init();
     usb_hw_init();
     sei();
     
-    uint8_t demo_step = 0;
-    uint16_t counter = 0;
     uint8_t handshake_sent = 0;
     
     while (1) {
@@ -761,76 +747,29 @@ int main(void) {
                 _delay_ms(500);
                 mcu_send_device_query_response();
                 _delay_ms(100);
-                mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
-                mcu_lcd_write(56, "   AVR USB MCU    ", 17);
+                //mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
+                //mcu_lcd_write(56, "   AVR USB MCU    ", 17);
                 midi_debug("MCU ready!");
                 handshake_sent = 1;
-                LED_ON();
             }
             
-            counter++;
-            midi_debug("Hello form AVR!");
+            midi_debug("Hello from AVR!");
+
             
-            if (counter >= 20) {
-                counter = 0;
-                demo_step = (demo_step + 1) % 6;
                 
-                switch (demo_step) {
-                    case 0:
-                        for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_fader(i, (i * 2000) + 2000);
-                        }
-                        mcu_lcd_write(0, "  Fader Demo      ", 17);
-                        break;
-                        
-                    case 1:
-                        for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_vpot_led(i, 1, 6);
-                        }
-                        mcu_lcd_write(0, "  V-Pot Demo      ", 17);
-                        break;
-                        
-                    case 2:
-                        mcu_button(MCU_BTN_PLAY, 1);
-                        mcu_lcd_write(0, "  Transport Play  ", 17);
-                        _delay_ms(100);
-                        mcu_button(MCU_BTN_PLAY, 0);
-                        break;
-                        
-                    case 3:
-                        for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_meter(i, 6 + (i % 4));
-                        }
-                        mcu_lcd_write(0, "  Meter Demo      ", 17);
-                        break;
-                        
-                    case 4:
-                        mcu_send_timecode("12:34:56:78");
-                        mcu_lcd_write(0, "  Timecode Demo   ", 17);
-                        break;
-                        
-                    case 5:
-                        {
-                            uint8_t custom[] = {
-                                MIDI_SYSEX_START,
-                                0x7E, 0x00, 0x06, 0x01,
-                                MIDI_SYSEX_END
-                            };
-                            send_custom_sysex(custom, sizeof(custom));
-                            mcu_lcd_write(0, "  Custom SysEx    ", 17);
-                        }
-                        break;
-                }
-            }
+            uint8_t custom[] = {
+                MIDI_SYSEX_START,
+                0x7E, 0x00, 0x06, 0x01,
+                MIDI_SYSEX_END
+            };
+            send_custom_sysex(custom, sizeof(custom));
             
             _delay_ms(100);
             
         } else {
             handshake_sent = 0;
             _delay_ms(100);
-            LED_TOGGLE();
         }
     }
-    
     return 0;
 }
