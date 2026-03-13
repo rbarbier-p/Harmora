@@ -24,17 +24,21 @@
 #define MR_DATA_NACK 0x58
 
 //===========================> ERRORS
+#define ERR_I2C_NONE 0
 #define ERR_I2C_START 1
 #define ERR_I2C_READ_ACK 2
 #define ERR_I2C_READ_NACK 3
 #define ERR_I2C_SLAW_ACK 4
 #define ERR_I2C_SLAR_ACK 5
 #define ERR_I2C_WRITE_ACK 6
+#define ERR_I2C_TIMEOUT 7
 
 void i2c_init(void);
 void i2c_start(uint8_t addr_rw);
 void i2c_write(uint8_t data);
 void i2c_stop(void);
 uint8_t i2c_read(uint8_t ack);
+uint8_t i2c_get_error(void);
+void i2c_clear_error(void);
 
 #endif

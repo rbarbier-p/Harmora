@@ -1,5 +1,5 @@
 #include "ADC/adc.h"
-#include "I2C.h"
+#include "I2C/I2C.h"
 #include "analog_mux/analog_mux.h"
 #include "display.h"
 #include "gpio_expander/gpio_expander.h"
@@ -8,6 +8,46 @@
 #include "scheduler.h"
 #include "stopwatch.h"
 #include <avr/io.h>
+#include <util/delay.h>
+#include <stdio.h>
+
+// I2C Bus Scanner for debugging
+void i2c_scan(void) {
+  char buf[32];
+  uint8_t found = 0;
+  
+  display_clear();
+  display_draw_string(0, 0, "I2C Scan...");
+  display_update();
+  _delay_ms(500);
+  
+  for (uint8_t addr = 1; addr < 128; addr++) {
+    i2c_clear_error();
+    i2c_start((addr << 1) | WRITE);
+    i2c_stop();
+    
+    if (i2c_get_error() == 0) {
+      // Device found!
+      snprintf(buf, sizeof(buf), "Found: 0x%02X", addr);
+      display_draw_string(0, 8 + (found * 8), buf);
+      display_update();
+      found++;
+      
+      if (found >= 6) break; // Only show first 6 devices
+    }
+  }
+  
+  if (found == 0) {
+    display_draw_string(0, 8, "No devices!");
+    display_update();
+  } else {
+    snprintf(buf, sizeof(buf), "Total: %d", found);
+    display_draw_string(0, 56, buf);
+    display_update();
+  }
+  
+  _delay_ms(3000); // Show scan results for 3 seconds
+}
 
 int main(void) {
   i2c_init();
@@ -22,10 +62,15 @@ int main(void) {
   display_draw_string(0, 0, "Init...");
   display_update();
 
+  // Scan I2C bus to see what's connected
+  i2c_scan();
+
   // Initialize GPIO expanders (must be after i2c_init)
   // This may hang if MCP23017 not connected!
   gpio_expander_init();
   
+  display_clear();
+  display_draw_string(0, 0, "Init...");
   display_draw_string(0, 8, "GPIO OK");
   display_update();
 
