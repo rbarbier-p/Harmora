@@ -2,7 +2,6 @@
 #include "sh1106_regs.h" // for SH1106_ADDR
 #include "I2C.h"
 #include <stdint.h>
-#include "UART.h"
 
 // Using your existing I2C library functions
 // Example: i2c_start(addr), i2c_write(byte), i2c_stop()

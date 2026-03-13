@@ -1,98 +1,104 @@
 #include "scheduler.h"
 #include "stopwatch.h"
-#include <string.h>
+#include "tasks.h"
 
-// Task registry
+// Task function pointer type
+typedef void (*task_func_t)(void);
+
+// Task entry
+typedef struct {
+  task_func_t func;
+  uint8_t divider; // Run every N loops (1 = every loop)
+  uint8_t enabled;
+} task_t;
+
+// Task table
 static task_t tasks[TASK_COUNT];
 
-// Timing statistics
-static uint16_t last_exec_time_us[TASK_COUNT];
-static uint16_t max_exec_time_us[TASK_COUNT];
-static uint16_t total_loop_time_us;
+// Statistics
+static uint16_t last_us[TASK_COUNT];
+static uint16_t max_us[TASK_COUNT];
+static uint16_t loop_time_us;
 
 void scheduler_init(void) {
-  memset(tasks, 0, sizeof(tasks));
-  memset(last_exec_time_us, 0, sizeof(last_exec_time_us));
-  memset(max_exec_time_us, 0, sizeof(max_exec_time_us));
-  total_loop_time_us = 0;
+  // High priority - every loop
+  tasks[TASK_HALL_SCAN] = (task_t){task_hall_scan, 1, 1};
+  tasks[TASK_ENCODER_SCAN] = (task_t){task_encoder_scan, 1, 1};
+  tasks[TASK_MCU_COMM] = (task_t){task_mcu_comm, 1, 1};
+
+  // Medium priority - every 2 loops
+  tasks[TASK_BUTTON_SCAN] = (task_t){task_button_scan, 2, 1};
+  tasks[TASK_POT_SCAN] = (task_t){task_pot_scan, 2, 1};
+
+  // Low priority - every 4 loops
+  tasks[TASK_DISPLAY_UPDATE] = (task_t){task_display_update, 4, 1};
+  tasks[TASK_LED_UPDATE] = (task_t){task_led_update, 4, 1};
+
+  // Clear stats
+  for (uint8_t i = 0; i < TASK_COUNT; i++) {
+    last_us[i] = 0;
+    max_us[i] = 0;
+  }
+  loop_time_us = 0;
 }
 
-void scheduler_register_task(task_id_t id, task_func_t func,
-                             uint16_t period_ms) {
-  if (id >= TASK_COUNT)
-    return;
-
-  tasks[id].func = func;
-  tasks[id].period_ms = period_ms;
-  tasks[id].counter = 0;
-  tasks[id].enabled = 1;
-}
-
-void scheduler_enable_task(task_id_t id, uint8_t enabled) {
-  if (id >= TASK_COUNT)
-    return;
-  tasks[id].enabled = enabled;
-}
-
-void scheduler_run(void) {
+void scheduler_run(uint8_t loop_count) {
   uint16_t loop_start = stopwatch_read();
 
   for (uint8_t i = 0; i < TASK_COUNT; i++) {
-    task_t *task = &tasks[i];
+    task_t *t = &tasks[i];
 
-    // Skip if task not registered or disabled
-    if (!task->func || !task->enabled)
+    if (!t->enabled || !t->func)
       continue;
 
-    // Check if task is due
-    if (task->period_ms == 0 || task->counter >= task->period_ms) {
-      // Execute task and measure time
-      uint16_t task_start = stopwatch_read();
-      task->func();
-      uint16_t task_end = stopwatch_read();
+    // Check if task is due (loop_count % divider == 0)
+    if ((loop_count % t->divider) == 0) {
+      uint16_t t0 = stopwatch_read();
 
-      // Calculate execution time (handle overflow)
-      uint16_t exec_time_us;
-      if (task_end >= task_start) {
-        exec_time_us = (task_end - task_start) * 4; // 4us per tick
-      } else {
-        exec_time_us = (0xFFFF - task_start + task_end) * 4;
+      t->func();
+
+      uint16_t t1 = stopwatch_read();
+      uint16_t elapsed = (t1 >= t0) ? (t1 - t0) : (0xFFFF - t0 + t1);
+      elapsed *= 4; // Convert to microseconds (4us per tick)
+
+      last_us[i] = elapsed;
+      if (elapsed > max_us[i]) {
+        max_us[i] = elapsed;
       }
-
-      // Update statistics
-      last_exec_time_us[i] = exec_time_us;
-      if (exec_time_us > max_exec_time_us[i]) {
-        max_exec_time_us[i] = exec_time_us;
-      }
-
-      // Reset counter
-      task->counter = 0;
     }
-
-    // Increment counter (5ms per loop)
-    task->counter += 5;
   }
 
   uint16_t loop_end = stopwatch_read();
+  uint16_t elapsed = (loop_end >= loop_start)
+                         ? (loop_end - loop_start)
+                         : (0xFFFF - loop_start + loop_end);
+  loop_time_us = elapsed * 4;
+}
 
-  // Calculate total loop time
-  if (loop_end >= loop_start) {
-    total_loop_time_us = (loop_end - loop_start) * 4;
-  } else {
-    total_loop_time_us = (0xFFFF - loop_start + loop_end) * 4;
+void scheduler_set_divider(task_id_t id, uint8_t divider) {
+  if (id < TASK_COUNT && divider > 0) {
+    tasks[id].divider = divider;
   }
 }
 
-uint16_t scheduler_get_last_exec_time_us(task_id_t id) {
-  if (id >= TASK_COUNT)
-    return 0;
-  return last_exec_time_us[id];
+void scheduler_enable(task_id_t id, uint8_t enabled) {
+  if (id < TASK_COUNT) {
+    tasks[id].enabled = enabled ? 1 : 0;
+  }
 }
 
-uint16_t scheduler_get_max_exec_time_us(task_id_t id) {
-  if (id >= TASK_COUNT)
-    return 0;
-  return max_exec_time_us[id];
+uint16_t scheduler_get_last_us(task_id_t id) {
+  return (id < TASK_COUNT) ? last_us[id] : 0;
 }
 
-uint16_t scheduler_get_total_loop_time_us(void) { return total_loop_time_us; }
+uint16_t scheduler_get_max_us(task_id_t id) {
+  return (id < TASK_COUNT) ? max_us[id] : 0;
+}
+
+uint16_t scheduler_get_loop_time_us(void) { return loop_time_us; }
+
+void scheduler_reset_max(void) {
+  for (uint8_t i = 0; i < TASK_COUNT; i++) {
+    max_us[i] = 0;
+  }
+}

@@ -51,31 +51,32 @@ BUILD_DIR = .build
 
 # Compiler flags
 CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
-CFLAGS += -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal
-CFLAGS += -Isrc/I2C
-CFLAGS += -Isrc/UART
-CFLAGS += -Isrc/SPI
-CFLAGS += -Isrc/ADC
-CFLAGS += -Isrc/analog_mux
+CFLAGS += -Isrc/328p
+CFLAGS += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
+CFLAGS += -Isrc/328p/I2C
+# CFLAGS += -Isrc/328p/UART  # No UART for 328P (uses SPI to 32U4)
+CFLAGS += -Isrc/328p/SPI
+CFLAGS += -Isrc/328p/ADC
+CFLAGS += -Isrc/328p/analog_mux
 
 # Linker flags
 #LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
 
 # Source files
-include src/display/display.mk
-include src/I2C/I2C.mk
-include src/UART/UART.mk
-include src/SPI/SPI.mk
-include src/ADC/adc.mk
-include src/analog_mux/analog_mux.mk
+include src/328p/display/display.mk
+include src/328p/I2C/I2C.mk
+# include src/328p/UART/UART.mk  # No UART for 328P
+include src/328p/SPI/SPI.mk
+include src/328p/ADC/adc.mk
+include src/328p/analog_mux/analog_mux.mk
 
-ATMEGA328P_SRC = src/atmega328p.c 
-ATMEGA328P_SRC += src/tasks.c
-ATMEGA328P_SRC += src/scheduler.c
-ATMEGA328P_SRC += src/loop_timer.c
+ATMEGA328P_SRC = src/328p/atmega328p.c 
+ATMEGA328P_SRC += src/328p/tasks.c
+ATMEGA328P_SRC += src/328p/scheduler.c
+# ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
-ATMEGA328P_SRC += $(UART_SRC)
+# ATMEGA328P_SRC += $(UART_SRC)  # No UART for 328P
 ATMEGA328P_SRC += $(SPI_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)

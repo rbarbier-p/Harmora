@@ -1,2 +1,2 @@
 ANALOG_MUX_SRC = \
-		src/analog_mux/analog_mux.c \
+		src/328p/analog_mux/analog_mux.c

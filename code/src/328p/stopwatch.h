@@ -3,15 +3,13 @@
 
 #include <avr/io.h>
 #include <stdint.h>
-#include "UART.h"
 
-/*
+/**
  * Timer1 profiler
  * Prescaler = 64
  * Tick = 4us (at 16MHz clock)
  * Overflow ≈ 262ms
  * Valid for measurements < 262ms
- *
  */
 
 static inline void stopwatch_init(void) {
@@ -23,26 +21,23 @@ static inline void stopwatch_init(void) {
 static inline void stopwatch_start(void) {
     TCNT1 = 0; 
 }
-//what does inline do here? 
-static inline void stopwatch_stop(void) {
-    uint32_t t1 = TCNT1;
-    UART_print_str("Time elapsed: ");
-    UART_print_num(t1 * 4); // convert to microseconds
-    UART_print_str(" us\r\n");
-}
 
 static inline uint16_t stopwatch_read(void) {
     return TCNT1;
 }
-// Start measurement
-// #define PROF_START() uint32_t _prof_t0 = TCNT1
 
-// End measurement, returns elapsed time in microseconds
-/*
-// #define PROF_END_US(var) do {        \
-    uint32_t _prof_t1 = TCNT1;       \
-    var = (_prof_t1 - _prof_t0) * 4;    \
-} while (0)
-*/
+// Convert ticks to microseconds
+static inline uint32_t stopwatch_ticks_to_us(uint16_t ticks) {
+    return (uint32_t)ticks * 4;
+}
+
+// Calculate elapsed time handling overflow
+static inline uint16_t stopwatch_elapsed(uint16_t start, uint16_t end) {
+    if (end >= start) {
+        return end - start;
+    } else {
+        return (0xFFFF - start) + end;
+    }
+}
 
 #endif

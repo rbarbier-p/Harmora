@@ -1,10 +1,9 @@
 DISPLAY_SRC = \
-		src/display/display.c \
-		src/display/display_primitives.c \
-		src/display/display_text.c \
-		src/display/display_images.c \
-		src/display/bus/display_bus_i2c.c \
-		src/display/bus/display_bus_spi.c \
-		src/display/controller/sh1106.c \
-		src/display/controller/ssd1309.c
-
+		src/328p/display/display.c \
+		src/328p/display/display_primitives.c \
+		src/328p/display/display_text.c \
+		src/328p/display/display_images.c \
+		src/328p/display/bus/display_bus_i2c.c \
+		src/328p/display/bus/display_bus_spi.c \
+		src/328p/display/controller/sh1106.c \
+		src/328p/display/controller/ssd1309.c

@@ -1,99 +1,68 @@
 #include "tasks.h"
-#include "ADC/adc.h"
-#include "UART.h"
-#include "analog_mux/analog_mux.h"
-#include "display/display.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <util/delay.h>
 
-// Pot state
-static uint8_t pot_values[4] = {0, 0, 0, 0};
-static uint8_t current_pot = 0;
-
-// TODO: Implement proper encoder scanning with digital multiplexer
-// For now, just a placeholder that tracks call count
-void task_encoder_scan(void) {
-  // Scan 6 rotary encoders via digital multiplexer
-  // This should read MUX2_OUT for each of 16 mux positions
-  // and decode quadrature signals
-}
-
-// TODO: Implement hall sensor scanning with analog multiplexer
 void task_hall_scan(void) {
-  // Scan 12 piano keys via analog multiplexer (MUX1)
-  // Read ADC value for each key
-  // Detect key press/release and eventually velocity
+  // TODO: Implement hall sensor scanning
+  //
+  // - Select mux channel (0-11) via analog_mux_select()
+  // - Read ADC value from ADC7 (AMUX_OUT)
+  // - Compare with threshold to detect key press
+  // - Track timing for velocity calculation
+  // - Queue key events for MCU communication
+  //
+  // Note: May need to scan multiple keys per call for speed,
+  // or use a state machine to distribute work across loops
 }
 
-// TODO: Implement SPI communication with ATmega32U4
+void task_encoder_scan(void) {
+  // TODO: Implement rotary encoder scanning
+  //
+  // - Select mux channel via digital mux
+  // - Read encoder A/B signals from DMUX_OUT
+  // - Decode quadrature to detect rotation direction
+  // - Track rotation count/speed
+  // - Queue encoder events for MCU communication
+}
+
 void task_mcu_comm(void) {
-  // Check if 32U4 has data (MCU_INT pin)
-  // If so, receive screen commands via SPI
-  // Send any pending input events (keys, encoders, pots) via SPI
+  // TODO: Implement SPI communication with ATmega32U4
+  //
+  // - Check MCU_INT pin (PD2) for incoming data from 32U4
+  // - If set, receive display commands via SPI slave
+  // - Send any pending input events (keys, encoders, pots, buttons)
+  // - Protocol TBD
 }
 
-// TODO: Implement button scanning with I2C I/O expanders
 void task_button_scan(void) {
-  // Read 32 buttons from 2x MCP23017 I/O expanders via I2C
-  // Detect button press/release
-  // Queue events for MCU communication
+  // TODO: Implement button scanning via I2C expanders
+  //
+  // - Read GPIO states from MCP23017 #1 (address 0x20)
+  // - Read GPIO states from MCP23017 #2 (address 0x21)
+  // - Compare with previous state to detect changes
+  // - Debounce button presses
+  // - Queue button events for MCU communication
 }
 
-// TODO: Implement display update (only when dirty)
-void task_display_update(void) {
-  // Only update display if framebuffer has changed
-  // Uses dirty-page optimization already implemented in display driver
-}
-
-// Pot scanning with analog multiplexer
 void task_pot_scan(void) {
-  // Select the mux channel for the current pot
-  analog_mux_select(8 + current_pot);
-
-  // Wait for analog mux to settle before reading
-  // Longer delay to allow full voltage stabilization
-  adc_read_channel(7);
-  _delay_us(30);
-  // Read ADC value from ADC7 (AMUX_OUT) - 8-bit resolution (0-255)
-  uint8_t value = adc_read_channel(7);
-
-  // Store the value
-  pot_values[current_pot] = value;
-
-  // Move to next pot (cycle through 0-3)
-  current_pot = (current_pot + 1) & 0x03;
-
-  // Update display every time we complete a cycle (when current_pot wraps back
-  // to 0)
-  if (current_pot == 0) {
-    display_clear();
-
-    // Draw pot values on screen
-    char buffer[20];
-
-    // Pot 0
-    sprintf(buffer, "P0: %3d", pot_values[0]);
-    display_draw_string(0, 0, buffer);
-
-    // Pot 1
-    sprintf(buffer, "P1: %3d", pot_values[1]);
-    display_draw_string(0, 10, buffer);
-
-    // Pot 2
-    sprintf(buffer, "P2: %3d", pot_values[2]);
-    display_draw_string(0, 20, buffer);
-
-    // Pot 3
-    sprintf(buffer, "P3: %3d", pot_values[3]);
-    display_draw_string(0, 30, buffer);
-
-    display_update();
-  }
+  // TODO: Implement potentiometer scanning
+  //
+  // - Select mux channel (12-15) via analog_mux_select()
+  // - Read ADC value from ADC7 (AMUX_OUT)
+  // - Apply smoothing/hysteresis to reduce noise
+  // - Queue pot values for MCU communication (only on change)
 }
 
-// TODO: Implement LED chain update with software SPI
+void task_display_update(void) {
+  // TODO: Implement display update
+  //
+  // - Check if framebuffer has dirty pages
+  // - If so, call display_update() to refresh display
+  // - Display driver handles dirty-page optimization internally
+}
+
 void task_led_update(void) {
-  // Update 30 APA102 LEDs via software SPI
-  // Only update if LED state has changed
+  // TODO: Implement LED chain update
+  //
+  // - Check if LED state has changed
+  // - If so, send new data via software SPI to APA102 LEDs
+  // - 30 LEDs total, each needs 4 bytes (brightness + RGB)
 }
