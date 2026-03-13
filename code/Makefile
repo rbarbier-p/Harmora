@@ -58,6 +58,7 @@ CFLAGS += -Isrc/328p/I2C
 CFLAGS += -Isrc/328p/SPI
 CFLAGS += -Isrc/328p/ADC
 CFLAGS += -Isrc/328p/analog_mux
+CFLAGS += -Isrc/328p/gpio_expander
 
 # Linker flags
 #LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
@@ -69,11 +70,13 @@ include src/328p/I2C/I2C.mk
 include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
 include src/328p/analog_mux/analog_mux.mk
+include src/328p/gpio_expander/gpio_expander.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c
 ATMEGA328P_SRC += src/328p/scheduler.c
 ATMEGA328P_SRC += src/328p/input_state.c
+ATMEGA328P_SRC += src/328p/interrupts.c
 # ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
@@ -81,9 +84,10 @@ ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(SPI_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
+ATMEGA328P_SRC += $(GPIO_EXPANDER_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-ATMEGA32U4_SRC = src/atmega32u4.c
+ATMEGA32U4_SRC = src/32u4/atmega32u4.c
 
 
 # Output files in build folder

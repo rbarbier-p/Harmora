@@ -2,7 +2,9 @@
 #include "ADC/adc.h"
 #include "analog_mux/analog_mux.h"
 #include "display.h"
+#include "gpio_expander/gpio_expander.h"
 #include "input_state.h"
+#include "interrupts.h"
 #include "scheduler.h"
 #include <stdio.h>
 #include <util/delay.h>
@@ -100,24 +102,102 @@ void task_mcu_comm(void) {
 // =============================================================================
 
 void task_button_scan(void) {
-  // TODO: Implement button scanning via I2C expanders
-  //
-  // Example implementation:
-  //
-  // // Read 16 buttons from expander 1 (address 0x20)
-  // uint16_t exp1_state = mcp23017_read_gpio(0x20);
-  //
-  // // Read 16 buttons from expander 2 (address 0x21)
-  // uint16_t exp2_state = mcp23017_read_gpio(0x21);
-  //
-  // // Update button states (0-15 from exp1, 16-31 from exp2)
-  // for (uint8_t i = 0; i < 16; i++) {
-  //     uint8_t pressed1 = (exp1_state & (1 << i)) ? 1 : 0;
-  //     uint8_t pressed2 = (exp2_state & (1 << i)) ? 1 : 0;
-  //
-  //     input_state_update_button(i, pressed1);
-  //     input_state_update_button(i + 16, pressed2);
-  // }
+  // Check interrupt flags set by PCINT ISRs
+  // Only read the specific port(s) that triggered
+
+  static uint8_t last_exp1_a = 0;
+  static uint8_t last_exp1_b = 0;
+  static uint8_t last_exp2_a = 0;
+  static uint8_t last_exp2_b = 0;
+
+  // -------------------------------------------------------------------------
+  // Expander 1 (buttons 0-15)
+  // -------------------------------------------------------------------------
+
+  // Check if port A changed (buttons 0-7)
+  if (g_exp1_interrupt & INT_PORT_A) {
+    g_exp1_interrupt &= ~INT_PORT_A; // Clear flag
+
+    uint8_t current = gpio_expander_read_raw(0, 0); // Expander 0, Port A
+    current = ~current;                             // Invert: buttons are active-low
+
+    uint8_t changed = current ^ last_exp1_a;
+
+    if (changed) {
+      for (uint8_t i = 0; i < 8; i++) {
+        if (changed & (1 << i)) {
+          uint8_t pressed = (current >> i) & 1;
+          input_state_update_button(i, pressed);
+        }
+      }
+      last_exp1_a = current;
+    }
+  }
+
+  // Check if port B changed (buttons 8-14, pin 7 is display_rst)
+  if (g_exp1_interrupt & INT_PORT_B) {
+    g_exp1_interrupt &= ~INT_PORT_B; // Clear flag
+
+    uint8_t current = gpio_expander_read_raw(0, 1); // Expander 0, Port B
+    current |= (1 << 7);                            // Mask out display_rst pin (force high)
+    current = ~current;                             // Invert: buttons are active-low
+
+    uint8_t changed = current ^ last_exp1_b;
+
+    if (changed) {
+      for (uint8_t i = 0; i < 7; i++) { // Only 7 buttons on this port
+        if (changed & (1 << i)) {
+          uint8_t pressed = (current >> i) & 1;
+          input_state_update_button(8 + i, pressed);
+        }
+      }
+      last_exp1_b = current;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Expander 2 (buttons 16-31)
+  // -------------------------------------------------------------------------
+
+  // Check if port A changed (buttons 16-23)
+  if (g_exp2_interrupt & INT_PORT_A) {
+    g_exp2_interrupt &= ~INT_PORT_A; // Clear flag
+
+    uint8_t current = gpio_expander_read_raw(1, 0); // Expander 1, Port A
+    current = ~current;                             // Invert: buttons are active-low
+
+    uint8_t changed = current ^ last_exp2_a;
+
+    if (changed) {
+      for (uint8_t i = 0; i < 8; i++) {
+        if (changed & (1 << i)) {
+          uint8_t pressed = (current >> i) & 1;
+          input_state_update_button(16 + i, pressed);
+        }
+      }
+      last_exp2_a = current;
+    }
+  }
+
+  // Check if port B changed (buttons 24-31)
+  if (g_exp2_interrupt & INT_PORT_B) {
+    g_exp2_interrupt &= ~INT_PORT_B; // Clear flag
+
+    uint8_t current = gpio_expander_read_raw(1, 1); // Expander 1, Port B
+    current = ~current;                             // Invert: buttons are active-low
+
+    uint8_t changed = current ^ last_exp2_b;
+
+    if (changed) {
+      for (uint8_t i = 0; i < 8; i++) {
+        if (changed & (1 << i)) {
+          uint8_t pressed = (current >> i) & 1;
+          input_state_update_button(24 + i, pressed);
+        }
+      }
+      last_exp2_b = current;
+    }
+  }
 }
 
 void task_pot_scan(void) {
@@ -126,12 +206,10 @@ void task_pot_scan(void) {
 
   // Select mux channel (pots are on channels 8-11)
   analog_mux_select(8 + current_pot);
-  adc_read_channel(7);
   _delay_us(30); // Mux settling time
 
-  // Read ADC - get 10-bit value, shift down to 8-bit for pot resolution
-  uint16_t raw = adc_read_channel(7);  // ADC7 = AMUX_OUT
-  uint8_t value = (uint8_t)(raw >> 2); // 10-bit -> 8-bit
+  // Read ADC - already returns 8-bit value (0-255) due to ADLAR
+  uint8_t value = adc_read_channel(7);  // ADC7 = AMUX_OUT
 
   // Update state (only marks dirty if changed by threshold)
   input_state_update_pot(current_pot, value);
@@ -141,7 +219,7 @@ void task_pot_scan(void) {
 }
 
 void task_display_update(void) {
-  // Debug display showing pot values and scheduler statistics
+  // Debug display showing pot values and button states
   static uint8_t update_counter = 0;
 
   // Only update display every 16th call to reduce flicker
@@ -152,29 +230,49 @@ void task_display_update(void) {
 
   display_clear();
 
-  // Title
-  display_draw_string(0, 0, "Harmora Debug");
-
-  // Show pot values
+  // -------------------------------------------------------------------------
+  // Potentiometers (top row)
+  // -------------------------------------------------------------------------
   char buf[20];
-  display_draw_string(0, 16, "Pots:");
+  display_draw_string(0, 0, "Pots:");
   for (uint8_t i = 0; i < POT_COUNT; i++) {
     snprintf(buf, sizeof(buf), "%d:%03d", i, g_input_state.pots.values[i]);
-    display_draw_string(i * 32, 24, buf);
+    display_draw_string(i * 32, 8, buf);
   }
 
-  // Show timing stats
-  display_draw_string(0, 40, "Timing (us):");
-
-  // Loop time
-  uint16_t loop_time = scheduler_get_loop_time_us();
-  snprintf(buf, sizeof(buf), "Loop:%4u", loop_time);
-  display_draw_string(0, 48, buf);
-
-  // Pot scan task time
-  uint16_t pot_time = scheduler_get_last_us(TASK_POT_SCAN);
-  snprintf(buf, sizeof(buf), "Pot:%4u", pot_time);
-  display_draw_string(64, 48, buf);
+  // -------------------------------------------------------------------------
+  // Button Grid (32 buttons in 8x4 grid)
+  // Display is 128x64, leave top 20 pixels for pots
+  // Grid layout: 8 columns x 4 rows, each button is 8x8 pixels
+  // Start at y=24, with spacing
+  // -------------------------------------------------------------------------
+  display_draw_string(0, 20, "Buttons:");
+  
+  const uint8_t grid_x_start = 8;
+  const uint8_t grid_y_start = 32;
+  const uint8_t button_size = 6;   // 6x6 pixel squares
+  const uint8_t button_spacing = 2; // 2 pixel gap
+  const uint8_t button_stride = button_size + button_spacing;  // 8 pixels total
+  
+  for (uint8_t btn = 0; btn < BUTTON_COUNT; btn++) {
+    // Calculate grid position (8 columns x 4 rows)
+    uint8_t col = btn % 8;
+    uint8_t row = btn / 8;
+    
+    uint8_t x = grid_x_start + (col * button_stride);
+    uint8_t y = grid_y_start + (row * button_stride);
+    
+    // Check if button is pressed
+    uint8_t is_pressed = (g_input_state.buttons.pressed >> btn) & 1;
+    
+    if (is_pressed) {
+      // Draw filled square for pressed button
+      display_fill_rect(x, y, button_size, button_size);
+    } else {
+      // Draw outline for unpressed button
+      display_draw_rect(x, y, button_size, button_size);
+    }
+  }
 
   display_update();
 }
