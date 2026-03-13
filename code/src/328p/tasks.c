@@ -157,45 +157,51 @@ void task_button_scan(void) {
 
   // -------------------------------------------------------------------------
   // Expander 2 (buttons 16-31)
+  // PC3 is wired to both INTA and INTB, so we need to read INTF to determine
+  // which port(s) triggered the interrupt
   // -------------------------------------------------------------------------
 
-  // Check if port A changed (buttons 16-23)
-  if (g_exp2_interrupt & INT_PORT_A) {
-    g_exp2_interrupt &= ~INT_PORT_A; // Clear flag
+  if (g_exp2_interrupt) {
+    g_exp2_interrupt = 0; // Clear flag
 
-    uint8_t current = gpio_expander_read_raw(1, 0); // Expander 1, Port A
-    current = ~current;                             // Invert: buttons are active-low
+    // Read INTF registers to determine which port(s) changed
+    uint8_t intf_a = gpio_expander_read_intf(1, 0); // Expander 1, Port A
+    uint8_t intf_b = gpio_expander_read_intf(1, 1); // Expander 1, Port B
 
-    uint8_t changed = current ^ last_exp2_a;
+    // Check if port A changed (buttons 16-23)
+    if (intf_a) {
+      uint8_t current = gpio_expander_read_raw(1, 0); // Read Port A
+      current = ~current;                             // Invert: buttons are active-low
 
-    if (changed) {
-      for (uint8_t i = 0; i < 8; i++) {
-        if (changed & (1 << i)) {
-          uint8_t pressed = (current >> i) & 1;
-          input_state_update_button(16 + i, pressed);
+      uint8_t changed = current ^ last_exp2_a;
+
+      if (changed) {
+        for (uint8_t i = 0; i < 8; i++) {
+          if (changed & (1 << i)) {
+            uint8_t pressed = (current >> i) & 1;
+            input_state_update_button(16 + i, pressed);
+          }
         }
+        last_exp2_a = current;
       }
-      last_exp2_a = current;
     }
-  }
 
-  // Check if port B changed (buttons 24-31)
-  if (g_exp2_interrupt & INT_PORT_B) {
-    g_exp2_interrupt &= ~INT_PORT_B; // Clear flag
+    // Check if port B changed (buttons 24-31)
+    if (intf_b) {
+      uint8_t current = gpio_expander_read_raw(1, 1); // Read Port B
+      current = ~current;                             // Invert: buttons are active-low
 
-    uint8_t current = gpio_expander_read_raw(1, 1); // Expander 1, Port B
-    current = ~current;                             // Invert: buttons are active-low
+      uint8_t changed = current ^ last_exp2_b;
 
-    uint8_t changed = current ^ last_exp2_b;
-
-    if (changed) {
-      for (uint8_t i = 0; i < 8; i++) {
-        if (changed & (1 << i)) {
-          uint8_t pressed = (current >> i) & 1;
-          input_state_update_button(24 + i, pressed);
+      if (changed) {
+        for (uint8_t i = 0; i < 8; i++) {
+          if (changed & (1 << i)) {
+            uint8_t pressed = (current >> i) & 1;
+            input_state_update_button(24 + i, pressed);
+          }
         }
+        last_exp2_b = current;
       }
-      last_exp2_b = current;
     }
   }
 }

@@ -49,13 +49,13 @@ Inter-MCU Communication:
 | PC0  | 32U4_SS       | ATmega32U4 slave select            |
 | PC1  | EXP1_INTA     | Expander 1 interrupt A             |
 | PC2  | EXP1_INTB     | Expander 1 interrupt B             |
-| PC3  | EXP2_INTA     | Expander 2 interrupt A             |
+| PC3  | EXP2_INT      | Expander 2 interrupt (A OR B)      |
 | PC4  | I2C_SDA       | Hardware TWI                       |
 | PC5  | I2C_SCL       | Hardware TWI                       |
 | PC6  | -             |                                    |
-| PD0  | EXP2_INTB     | Expander 2 interrupt B             |
+| PD0  | DISPLAY_DR    | Display data/command select        |
 | PD1  | DMUX_OUT      | Digital mux output                 |
-| PD2  | 32U4_INT      | Interrupt line to 32U4             |
+| PD2  | 32U4_INT      | Interrupt line from 32U4           |
 | PD3  | DISPLAY_CS    | Display chip select                |
 | PD4  | MUX_S3        | Mux select line 3 (shared)         |
 | PD5  | MUX_S0        | Mux select line 0 (shared)         |

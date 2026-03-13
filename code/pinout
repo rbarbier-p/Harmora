@@ -21,12 +21,12 @@ PB7 XTAL2
 PC0 32U4_SS -> 32u4 slave select
 PC1 EXP1_INTA -> expansor 1 interrupt A
 PC2 EXP1_INTB -> expansor 1 interrupt B
-PC3 EXP2_INTA -> expansor 2 interrupt A
+PC3 EXP2_INTA -> expansor 2 interrupts
 PC4 I2C_SDA
 PC5 I2C_SCL
 PC6 -
 
-PD0 EXP2_INTB -> expansor 2 interrupt B
+PD0 DISPLAY_DR
 PD1 DMUX_OUT -> digital mux out
 PD2 32U4_INT -> interrupt line to call 32u4
 PD3 DISPLAY_CS -> display chip select

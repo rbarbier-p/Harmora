@@ -16,8 +16,7 @@ volatile uint8_t g_exp2_interrupt = 0;
 // Expander interrupt pins
 #define EXP1_INTA_PIN  PC1
 #define EXP1_INTB_PIN  PC2
-#define EXP2_INTA_PIN  PC3
-#define EXP2_INTB_PIN  PD0
+#define EXP2_INT_PIN   PC3
 
 // 32U4 interrupt pin
 #define MCU_INT_PIN    PD2
@@ -46,6 +45,7 @@ void interrupts_init(void) {
     // -------------------------------------------------------------------------
     // PCINT1: Expander interrupts on Port C (PC1, PC2, PC3)
     // These pins are already configured as inputs with pull-ups by gpio_expander
+    // PC3 is shared by both ports of expander 2 (INTA and INTB wired together)
     // -------------------------------------------------------------------------
     
     // Enable PCINT1 (covers PCINT8-14, i.e., PC0-PC6)
@@ -53,17 +53,6 @@ void interrupts_init(void) {
     
     // Enable specific pins: PC1=PCINT9, PC2=PCINT10, PC3=PCINT11
     PCMSK1 |= (1 << PCINT9) | (1 << PCINT10) | (1 << PCINT11);
-    
-    // -------------------------------------------------------------------------
-    // PCINT2: Expander interrupt on Port D (PD0)
-    // This pin is already configured as input with pull-up by gpio_expander
-    // -------------------------------------------------------------------------
-    
-    // Enable PCINT2 (covers PCINT16-23, i.e., PD0-PD7)
-    PCICR |= (1 << PCIE2);
-    
-    // Enable specific pin: PD0=PCINT16
-    PCMSK2 |= (1 << PCINT16);
     
     // -------------------------------------------------------------------------
     // Enable global interrupts
@@ -75,16 +64,16 @@ void interrupts_disable(void) {
     // Disable INT0
     EIMSK &= ~(1 << INT0);
     
-    // Disable PCINT1 and PCINT2
-    PCICR &= ~((1 << PCIE1) | (1 << PCIE2));
+    // Disable PCINT1
+    PCICR &= ~(1 << PCIE1);
 }
 
 void interrupts_enable(void) {
     // Re-enable INT0
     EIMSK |= (1 << INT0);
     
-    // Re-enable PCINT1 and PCINT2
-    PCICR |= (1 << PCIE1) | (1 << PCIE2);
+    // Re-enable PCINT1
+    PCICR |= (1 << PCIE1);
 }
 
 // =============================================================================
@@ -92,10 +81,11 @@ void interrupts_enable(void) {
 // =============================================================================
 
 /**
- * PCINT1: Handles PC1, PC2, PC3 (EXP1_INTA, EXP1_INTB, EXP2_INTA)
+ * PCINT1: Handles PC1, PC2, PC3 (EXP1_INTA, EXP1_INTB, EXP2_INT)
  * 
  * MCP23017 interrupt pins are active-low and stay low until GPIO is read.
- * We check which specific pins are low to set the correct port flags.
+ * For expander 2, PC3 is wired to both INTA and INTB (OR'd together),
+ * so we just set a generic flag and let the task read INTF to determine which port.
  */
 ISR(PCINT1_vect) {
     uint8_t pinc = PINC;
@@ -110,19 +100,11 @@ ISR(PCINT1_vect) {
         g_exp1_interrupt |= INT_PORT_B;
     }
     
-    // Check expander 2 port A (PC3 = EXP2_INTA)
-    if (!(pinc & (1 << EXP2_INTA_PIN))) {
-        g_exp2_interrupt |= INT_PORT_A;
+    // Check expander 2 (PC3 = EXP2_INT, both ports OR'd)
+    // Set both flags - task will read INTF to see which port actually changed
+    if (!(pinc & (1 << EXP2_INT_PIN))) {
+        g_exp2_interrupt = 1;  // Just a flag, not port-specific
     }
-}
-
-/**
- * PCINT2: Handles PD0 (EXP2_INTB)
- * 
- * This can only be expander 2, port B.
- */
-ISR(PCINT2_vect) {
-    g_exp2_interrupt |= INT_PORT_B;
 }
 
 /**

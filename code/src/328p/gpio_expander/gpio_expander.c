@@ -15,7 +15,7 @@ static mcp23017_t g_expander[2];
 // =============================================================================
 
 // EXP1_INTA: PC1, EXP1_INTB: PC2
-// EXP2_INTA: PC3, EXP2_INTB: PD0
+// EXP2_INT: PC3 (both INTA and INTB wired together)
 
 static void gpio_expander_init_int_pins(void) {
   // Configure interrupt pins as inputs with pull-ups
@@ -25,11 +25,6 @@ static void gpio_expander_init_int_pins(void) {
   DDRC &= ~((1 << PC1) | (1 << PC2) | (1 << PC3));
   // Enable pull-ups on PC1, PC2, PC3
   PORTC |= (1 << PC1) | (1 << PC2) | (1 << PC3);
-
-  // PD0 as input
-  DDRD &= ~(1 << PD0);
-  // Enable pull-up on PD0
-  PORTD |= (1 << PD0);
 }
 
 // =============================================================================
@@ -125,15 +120,13 @@ uint16_t gpio_expander_read_buttons_exp(uint8_t expander) {
 
 uint8_t gpio_expander_has_interrupt(void) {
   // Check if any interrupt pin is low (active)
-  // EXP1_INTA: PC1, EXP1_INTB: PC2, EXP2_INTA: PC3, EXP2_INTB: PD0
+  // EXP1_INTA: PC1, EXP1_INTB: PC2, EXP2_INT: PC3
 
   if (!(PINC & (1 << PC1)))
     return 1;
   if (!(PINC & (1 << PC2)))
     return 1;
   if (!(PINC & (1 << PC3)))
-    return 1;
-  if (!(PIND & (1 << PD0)))
     return 1;
 
   return 0;
@@ -179,4 +172,12 @@ uint8_t gpio_expander_read_raw(uint8_t expander, uint8_t port) {
   }
 
   return mcp23017_read_port(&g_expander[expander], port);
+}
+
+uint8_t gpio_expander_read_intf(uint8_t expander, uint8_t port) {
+  if (expander > 1) {
+    return 0x00;
+  }
+
+  return mcp23017_read_interrupt_flag(&g_expander[expander], port);
 }

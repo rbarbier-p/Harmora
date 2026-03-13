@@ -18,7 +18,7 @@
  * 
  * Interrupt Pins:
  * - EXP1_INTA (PC1), EXP1_INTB (PC2)
- * - EXP2_INTA (PC3), EXP2_INTB (PD0)
+ * - EXP2_INT (PC3) - both INTA and INTB wired together
  */
 
 // =============================================================================
@@ -123,5 +123,16 @@ void gpio_expander_display_reset_pulse(uint8_t delay_ms);
  * @return          Raw 8-bit port value
  */
 uint8_t gpio_expander_read_raw(uint8_t expander, uint8_t port);
+
+/**
+ * Read interrupt flag register for a port
+ * This shows which pins triggered the interrupt
+ * Reading INTF also clears the interrupt for that port
+ * 
+ * @param expander  0 or 1
+ * @param port      0 for port A, 1 for port B
+ * @return          8-bit flag (bit N set if pin N caused interrupt)
+ */
+uint8_t gpio_expander_read_intf(uint8_t expander, uint8_t port);
 
 #endif // GPIO_EXPANDER_H
