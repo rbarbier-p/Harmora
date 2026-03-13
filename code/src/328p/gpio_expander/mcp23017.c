@@ -1,35 +1,56 @@
 #include "mcp23017.h"
 #include "../I2C/I2C.h"
+#include "../display.h"
+#include <stdio.h>
 
 // =============================================================================
 // Core Functions
 // =============================================================================
 
 void mcp23017_init(mcp23017_t *dev, uint8_t i2c_addr) {
+    char buf[20];
+    
     dev->i2c_addr = i2c_addr;
     dev->iodir_a = 0xFF;  // All inputs by default
     dev->iodir_b = 0xFF;
     dev->olat_a = 0x00;
     dev->olat_b = 0x00;
 
+    snprintf(buf, sizeof(buf), "EXP 0x%02X", i2c_addr);
+    display_draw_string(0, 24, buf);
+    display_update();
+
     // Configure IOCON: sequential operation enabled, INT pins active-low
+    display_draw_string(0, 32, "IOCON...");
+    display_update();
     mcp23017_write_reg(dev, MCP23017_IOCON, 0x00);
 
     // Set all pins as inputs (default state)
+    display_draw_string(0, 40, "IODIR...");
+    display_update();
     mcp23017_write_reg(dev, MCP23017_IODIRA, 0xFF);
     mcp23017_write_reg(dev, MCP23017_IODIRB, 0xFF);
 
     // Disable all pull-ups
+    display_draw_string(0, 48, "GPPU...");
+    display_update();
     mcp23017_write_reg(dev, MCP23017_GPPUA, 0x00);
     mcp23017_write_reg(dev, MCP23017_GPPUB, 0x00);
 
     // Normal polarity
+    display_draw_string(0, 56, "IPOL...");
+    display_update();
     mcp23017_write_reg(dev, MCP23017_IPOLA, 0x00);
     mcp23017_write_reg(dev, MCP23017_IPOLB, 0x00);
 
     // Disable interrupts
+    display_draw_string(64, 32, "GPINT...");
+    display_update();
     mcp23017_write_reg(dev, MCP23017_GPINTENA, 0x00);
     mcp23017_write_reg(dev, MCP23017_GPINTENB, 0x00);
+    
+    display_draw_string(64, 40, "OK!");
+    display_update();
 }
 
 void mcp23017_write_reg(mcp23017_t *dev, uint8_t reg, uint8_t value) {

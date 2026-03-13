@@ -2,7 +2,9 @@
 #include "I2C.h"
 #include "analog_mux/analog_mux.h"
 #include "display.h"
+#include "gpio_expander/gpio_expander.h"
 #include "input_state.h"
+#include "interrupts.h"
 #include "scheduler.h"
 #include "stopwatch.h"
 #include <avr/io.h>
@@ -14,9 +16,23 @@ int main(void) {
   stopwatch_init();  // Timer1 for execution time measurement
   input_state_init(); // Initialize input state tracking
 
-  // Initialize display
+  // Initialize display first (before gpio expander, to see if we get here)
   display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
   display_clear();
+  display_draw_string(0, 0, "Init...");
+  display_update();
+
+  // Initialize GPIO expanders (must be after i2c_init)
+  // This may hang if MCP23017 not connected!
+  gpio_expander_init();
+  
+  display_draw_string(0, 8, "GPIO OK");
+  display_update();
+
+  // Initialize interrupts (must be after gpio_expander_init)
+  interrupts_init();
+
+  display_draw_string(0, 16, "INT OK");
   display_update();
 
   scheduler_init();
