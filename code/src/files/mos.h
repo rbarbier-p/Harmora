@@ -60,6 +60,11 @@ void mos_init(MInitMode mode);
  */
 bool mos_send(MPacket *packet);
 
+/**
+ * Receive a packet on the host (master) side.
+ * Clocks bytes in by sending dummy 0xFF bytes.
+ */
+bool mos_host_receive(MPacket *packet);
 
 /**
  * Receive a packet on the device (slave) side.

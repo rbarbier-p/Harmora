@@ -66,10 +66,5 @@ bool mos_send(MPacket *packet);
  */
 bool mos_host_receive(MPacket *packet);
 
-/**
- * Receive a packet on the device (slave) side.
- * Waits for the master to clock each byte in.
- */
-bool mos_device_receive(MPacket *packet);
 
 #endif // MOS_H

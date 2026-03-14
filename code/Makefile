@@ -49,14 +49,18 @@ BUILD_DIR = .build
 
 # Compiler flags
 CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
-CFLAGS += -Isrc/328p
-CFLAGS += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
-CFLAGS += -Isrc/328p/I2C
-# CFLAGS += -Isrc/328p/UART  # No UART for 328P (uses SPI to 32U4)
-CFLAGS += -Isrc/328p/SPI
-CFLAGS += -Isrc/328p/ADC
-CFLAGS += -Isrc/328p/analog_mux
-CFLAGS += -Isrc/328p/MOS
+328P_INCLUDES = -Isrc/328p
+328P_INCLUDES += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
+328P_INCLUDES += -Isrc/328p/I2C
+328P_INCLUDES += -Isrc/328p/SPI
+328P_INCLUDES += -Isrc/328p/ADC
+328P_INCLUDES += -Isrc/328p/analog_mux
+328P_INCLUDES += -Isrc/328p/MOS
+
+32U4_INCLUDES = -Isrc/32u4
+32U4_INCLUDES += -Isrc/32u4/SPI
+32U4_INCLUDES += -Isrc/32u4/UART
+32U4_INCLUDES += -Isrc/32u4/MOS
 
 # Linker flags
 #LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
@@ -64,29 +68,32 @@ CFLAGS += -Isrc/328p/MOS
 # Source files
 include src/328p/display/display.mk
 include src/328p/I2C/I2C.mk
-# include src/328p/UART/UART.mk  # No UART for 328P
 include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
 include src/328p/analog_mux/analog_mux.mk
-include src/328p/MOS/mos.mk
+include src/328p/MOS/MOS.mk
+
+include src/32u4/MOS/MOS.mk
+include src/32u4/SPI/SPI.mk
+include src/32u4/UART/uart.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c
 ATMEGA328P_SRC += src/328p/scheduler.c
 ATMEGA328P_SRC += src/328p/input_state.c
-# ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
-# ATMEGA328P_SRC += $(UART_SRC)  # No UART for 328P
-ATMEGA328P_SRC += $(SPI_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
-ATMEGA328P_SRC += $(MOS_SRC)
+ATMEGA328P_SRC += $(328P_SPI_SRC)
+ATMEGA328P_SRC += $(328P_MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-ATMEGA32U4_SRC = src/midi.c
-ATMEGA32U4_SRC += $(SPI_SRC)
-ATMEGA32U4_SRC += $(MOS_SRC)
+ATMEGA32U4_SRC = src/32u4/midi.c
+ATMEGA32U4_SRC += $(32U4_SPI_SRC)
+ATMEGA32U4_SRC += $(32U4_MOS_SRC)
+#ATMEGA32U4_SRC += $(UART_SRC) --> not used because code is not correct (register are not 32u4 ones)
+
 
 
 # Output files in build folder
@@ -112,11 +119,11 @@ $(BUILD_DIR):
 
 # Compile ATMEGA328P_ELF from sources
 $(ATMEGA328P_ELF): $(ATMEGA328P_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
+	@$(CC) $(CFLAGS) $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
 	@printf "$(GREEN)Compiled $< $(RESET)\n"
 
 $(ATMEGA32U4_ELF): $(ATMEGA32U4_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
+	@$(CC) $(CFLAGS) $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
 	@printf "$(GREEN)Compiled $< $(RESET)\n"
 
 

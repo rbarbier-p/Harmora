@@ -1,12 +1,5 @@
 #include "SPI.h"
 
-// SPI pin definitions for ATmega328P
-#define SPI_DDR   DDRB
-#define SPI_PORT  PORTB
-#define SPI_SS    PB2
-#define SPI_MOSI  PB3
-#define SPI_MISO  PB4
-#define SPI_SCK   PB5
 
 void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
 {
@@ -88,6 +81,17 @@ void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
     SPSR &= ~(1 << SPI2X);
 }
 
+
+void spi_ss_assert(void)
+{
+    SPI_PORT &= ~(1 << SPI_SS);
+}
+
+void spi_ss_deassert(void)
+{
+    SPI_PORT |= (1 << SPI_SS);
+}
+
 uint8_t spi_transfer(uint8_t data)
 {
   SPDR = data;
@@ -126,7 +130,7 @@ void spi_transfer_buf(const uint8_t *tx_buf, uint8_t *rx_buf, uint16_t len)
   }
 }
 
-uint8_t spi_read_master(void)
+uint8_t spi_read(void)
 {
     SPDR = 0xFF;
     while (!(SPSR & (1 << SPIF)))
@@ -134,10 +138,4 @@ uint8_t spi_read_master(void)
     return (SPDR);
 }
 
-uint8_t spi_read_slave(void)
-{
-    while (!(SPSR & (1 << SPIF)))
-        ;
-    return (SPDR);
-}
 

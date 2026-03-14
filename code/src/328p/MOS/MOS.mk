@@ -1,2 +1,2 @@
-MOS_SRC = \
-                src/MOS/MOS.c 
+328P_MOS_SRC = \
+	src/328p/MOS/mos.c 

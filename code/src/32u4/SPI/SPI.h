@@ -4,20 +4,15 @@
 #include <avr/io.h>
 #include <stdint.h>
 
-// ===========================> SPI Hardware Pins (ATmega328P)
-// PB2 = SS   (must be output for master mode)
-// PB3 = MOSI
-// PB4 = MISO
-// PB5 = SCK
+// ===========================> SPI pin atmega32u4
 
-// SPI pin definitions for ATmega328P
 #define SPI_DDR   DDRB
 #define SPI_PORT  PORTB
 #define SPI_PIN   PINB
-#define SPI_SS    PB2
-#define SPI_MOSI  PB3
-#define SPI_MISO  PB4
-#define SPI_SCK   PB5
+#define SPI_SS    PB0 
+#define SPI_MOSI  PB2  
+#define SPI_MISO  PB3   
+#define SPI_SCK   PB1    
 
 // ===========================> SPI Clock Dividers
 // SPI clock = F_CPU / divider
@@ -51,15 +46,7 @@
  * @param mode     SPI mode (SPI_MODE_x)
  * @param order    Bit order (SPI_MSB_FIRST or SPI_LSB_FIRST)
  */
-void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order);
-
-
-/** Assert SS low (begin transaction). */
-void spi_ss_assert(void);
-
-/** Deassert SS high (end transaction). */
-void spi_ss_deassert(void);
-
+void spi_init(uint8_t mode, uint8_t order);
 
 /**
  * Transfer a single byte (full duplex)
@@ -90,9 +77,8 @@ void spi_send_buf(const uint8_t *buf, uint16_t len);
 void spi_transfer_buf(const uint8_t *tx_buf, uint8_t *rx_buf, uint16_t len);
 
 /**
- * Clock in one byte from slave by sending a dummy 0xFF (master).
+ * Read a single byte
  */
 uint8_t spi_read(void);
-
 
 #endif // SPI_H

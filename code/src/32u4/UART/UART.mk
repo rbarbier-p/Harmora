@@ -1,2 +1,2 @@
 UART_SRC = \
-		src/UART/UART.c
+		src/32u4/UART/UART.c
