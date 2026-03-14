@@ -1,4 +1,5 @@
 #include "midi.h"
+#include "mos.h"
 
 
 // USB Device Descriptor
@@ -6,7 +7,7 @@
 // required for IAD composite devices on Windows
 const uint8_t PROGMEM device_descriptor[] = {
     18, 0x01, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x20,
-    0x09, 0x12, 0x03, 0x00, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
+    0x41, 0x23, 0x36, 0x00, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
 };
 
 // USB Configuration Descriptor — 175 bytes total, 4 interfaces
@@ -31,16 +32,16 @@ const uint8_t PROGMEM config_descriptor[] = {
     6, 0x24, 0x02, 0x02, 0x02, 0x00,                        // MIDI IN Jack 2 (external)
     9, 0x24, 0x03, 0x01, 0x03, 0x01, 0x02, 0x01, 0x00,     // MIDI OUT Jack 1
     9, 0x24, 0x03, 0x02, 0x04, 0x01, 0x01, 0x01, 0x00,     // MIDI OUT Jack 2
-    9, 0x05, 0x01, 0x02, 0x20, 0x00, 0x00, 0x00, 0x00,     // EP1 OUT bulk
+    9, 0x05, 0x01, 0x02, 0x40, 0x00, 0x00, 0x00, 0x00,     // EP1 OUT bulk
     5, 0x25, 0x01, 0x01, 0x01,                              // CS EP
-    9, 0x05, 0x82, 0x02, 0x20, 0x00, 0x00, 0x00, 0x00,     // EP2 IN bulk
+    9, 0x05, 0x82, 0x02, 0x40, 0x00, 0x00, 0x00, 0x00,     // EP2 IN bulk
     5, 0x25, 0x01, 0x01, 0x03,                              // CS EP
 
     // IAD: CDC function (interfaces 2-3, CDC ACM)
     8, 0x0B, 2, 2, 0x02, 0x02, 0x01, 0,
 
     // Interface 2: CDC Control
-    9, 0x04, 0x02, 0x00, 0x01, 0x02, 0x02, 0x01, 0x00,
+    9, 0x04, 0x02, 0x00, 0x01, 0x02, 0x02, 0x01, 0x04,
     // CDC functional descriptors
     5, 0x24, 0x00, 0x10, 0x01,      // Header
     5, 0x24, 0x01, 0x00, 0x03,      // Call Management (no call mgmt, data iface=3)
@@ -64,7 +65,15 @@ const uint8_t PROGMEM string2[] = { 26, 0x03,
     'H', 0, 'a', 0, 'r', 0, 'm', 0, 'o', 0, 'r', 0, 'a', 0, ' ', 0, 'v', 0, '1', 0, '.', 0, '0', 0
 };
 
-const uint8_t PROGMEM string3[] = { 16, 0x03, '1',0, '2',0, '3',0, '4',0, '5',0, '6',0, '7',0 };
+const uint8_t PROGMEM string3[] = {
+    18, 0x03,
+    '0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'1',0
+};
+
+const uint8_t PROGMEM string4[] = {
+    20, 0x03,
+    'C',0,'D',0,'C',0,' ',0,'S',0,'e',0,'r',0,'i',0,'a',0,'l',0
+};
 
 static uint8_t usb_configuration = 0;
 
@@ -114,6 +123,7 @@ static void usb_hw_init(void) {
     USBCON = (1 << USBE) | (1 << FRZCLK);
     USBCON &= ~(1 << FRZCLK);
     USBCON |= (1 << OTGPADE);
+    _delay_ms(300);
     UDCON &= ~(1 << DETACH);
     UDIEN = (1 << EORSTE);
 }
@@ -683,6 +693,28 @@ void midi_debug(const char *msg) {
     midi_send_sysex(sysex, idx);
 }
 
+void midi_debug_packet(MPacket packet) {
+    if (!usb_configuration) return;
+    
+    // Build SysEx message with debug data
+    uint8_t sysex[64];
+    uint8_t idx = 0;
+    
+    sysex[idx++] = MIDI_SYSEX_START;
+    sysex[idx++] = 0x7A;  // Educational/debug manufacturer ID
+    
+    sysex[idx++] = (packet.command);
+    // Add message characters (limit to available space)
+    uint8_t i = 0;
+    while (i < packet.length && idx < (sizeof(sysex) - 1)) {
+        sysex[idx++] = packet.data[i++];
+    }
+    
+    sysex[idx++] = MIDI_SYSEX_END;
+    
+    midi_send_sysex(sysex, idx);
+}
+
 // Debug with formatted value (helper for debugging numbers)
 void midi_debug_value(const char *label, uint16_t value) {
     char buf[32];
@@ -737,7 +769,8 @@ int main(void)
     pll_init();
     usb_hw_init();
     sei();
-    
+
+    mos_init(M_INIT_DEVICE);
     uint8_t handshake_sent = 0;
     
     while (1) {
@@ -753,8 +786,26 @@ int main(void)
                 handshake_sent = 1;
             }
             
-            midi_debug("Hello from AVR!");
 
+            MPacket packet;
+            // HERE: i think behavior is receive is blocking 
+            if (mos_device_receive(&packet))
+                midi_debug("Received something over mos!");
+            else
+                midi_debug("Not mos data!");
+
+
+            midi_debug("TEST!");
+
+            // process packet
+            switch (packet.command)
+            {
+                case M_CMD_DEBUG_PRINT:
+                    midi_debug_packet(packet);
+                    break;
+                default:
+                    break;
+            }
             
                 
             uint8_t custom[] = {

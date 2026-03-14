@@ -9,6 +9,7 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <util/delay.h>
+#include "mos.h"
 
 // Statistics printing interval (every 1000 loops = 5 seconds)
 #define STATS_INTERVAL 1000
@@ -43,17 +44,17 @@
 
 int main(void) {
   // Initialize peripherals
-  i2c_init();
-  adc_init();
-  analog_mux_init();
+  //i2c_init();
+  //adc_init();
+  //analog_mux_init();
   // stopwatch_init();
 
-  display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
-  display_clear();
-  display_update();
+  //display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
+  //display_clear();
+  //display_update();
 
   // Initialize scheduler
-  scheduler_init();
+  //scheduler_init();
 
   // Register tasks with their periods (0 = every loop)
   // scheduler_register_task(TASK_ENCODER_SCAN, task_encoder_scan, 0);
@@ -63,19 +64,24 @@ int main(void) {
   //                         10); // Every 2 loops
   // scheduler_register_task(TASK_DISPLAY_UPDATE, task_display_update,
   //                         10);                               // Every 2 loops
-  scheduler_register_task(TASK_POT_SCAN, task_pot_scan, 0); // Every 2 loops
+  //scheduler_register_task(TASK_POT_SCAN, task_pot_scan, 0); // Every 2 loops
   // scheduler_register_task(TASK_LED_UPDATE, task_led_update,
   //                         20); // Every 4 loops
 
   // Initialize loop timer (5ms period)
-  loop_timer_init();
+  //loop_timer_init();
+  
+  mos_init(M_INIT_HOST);
 
+  MPacket packet = {M_CMD_DEBUG_PRINT, 18, "MOS debug message"};
   // Main loop
   while (1) {
+      mos_send(&packet);
+      _delay_ms(100);
     // Wait for 5ms tick
-    if (loop_timer_tick()) {
+    //if (loop_timer_tick()) {
       // Run all scheduled tasks
-      scheduler_run();
+      //scheduler_run();
 
       // loop_count++;
 
@@ -112,6 +118,6 @@ int main(void) {
       //
       //   loop_count = 0;
       // }
-    }
+    //}
   }
 }

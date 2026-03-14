@@ -72,4 +72,10 @@ void spi_send_buf(const uint8_t *buf, uint16_t len);
  */
 void spi_transfer_buf(const uint8_t *tx_buf, uint8_t *rx_buf, uint16_t len);
 
+/**
+ * Read a single byte
+ */
+uint8_t spi_read_master(void);
+uint8_t spi_read_slave(void);
+
 #endif // SPI_H

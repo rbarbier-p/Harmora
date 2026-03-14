@@ -42,7 +42,7 @@ static void spi_data(const uint8_t *buf, uint16_t len) {
 void display_bus_spi_init(void) {
   // Initialize hardware SPI
   // Mode 0, MSB first, fastest clock (F_CPU/2 = 8MHz)
-  spi_init(SPI_CLK_DIV_2, SPI_MODE_0, SPI_MSB_FIRST);
+  spi_init_master(SPI_CLK_DIV_2, SPI_MODE_0, SPI_MSB_FIRST);
 
   // Set display SS pin as output and deselect
   DISPLAY_CS_DDR |= (1 << DISPLAY_CS_PIN);

@@ -19,17 +19,15 @@ ifeq ($(UNAME),Darwin)
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
-	PORT := COM17
+	PORT := COM3
 	USB_PORT := COM18
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
-	PORT := COM17
+	PORT := COM3
 	USB_PORT := COM18
 	ISP_PROTOCOL = arduino
 endif
-
-
 
 ATMEGA328P_MCU = atmega328p
 ATMEGA32U4_MCU = atmega32u4
@@ -57,6 +55,7 @@ CFLAGS += -Isrc/UART
 CFLAGS += -Isrc/SPI
 CFLAGS += -Isrc/ADC
 CFLAGS += -Isrc/analog_mux
+CFLAGS += -Isrc/MOS
 
 # Linker flags
 #LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
@@ -68,6 +67,7 @@ include src/UART/UART.mk
 include src/SPI/SPI.mk
 include src/ADC/adc.mk
 include src/analog_mux/analog_mux.mk
+include src/MOS/mos.mk
 
 ATMEGA328P_SRC = src/atmega328p.c 
 ATMEGA328P_SRC += src/tasks.c
@@ -79,9 +79,12 @@ ATMEGA328P_SRC += $(UART_SRC)
 ATMEGA328P_SRC += $(SPI_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
+ATMEGA328P_SRC += $(MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
 ATMEGA32U4_SRC = src/midi.c
+ATMEGA32U4_SRC += $(SPI_SRC)
+ATMEGA32U4_SRC += $(MOS_SRC)
 
 
 # Output files in build folder
@@ -150,6 +153,7 @@ endif
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
+
 	@printf "$(RED)Platform: $(PLATFORM) $(RESET)\n"
 	@printf "$(RED)Port: $(PORT) $(RESET)\n"
 	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"

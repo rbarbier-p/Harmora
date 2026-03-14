@@ -16,9 +16,6 @@ void midiCallback(double deltatime, std::vector<unsigned char> *message, void *u
         return;
 
     (void)deltatime;
-    /*
-    std::cout << "dt=" << deltatime << "  ";
-    */
 
     unsigned char status = message->at(0);
     unsigned char debug = message->at(1);
@@ -27,27 +24,29 @@ void midiCallback(double deltatime, std::vector<unsigned char> *message, void *u
     if (status == 0xF0)
     {
         if (debug == 0x7D)
+        {
             std::cout << PURPLE << "Debug: " << RESET;
+            for (size_t i = 2; i < message->size(); i++)
+            {
+                unsigned char c = message->at(i);
+                if (c >= 32 && c <= 126)
+                    std::cout << (char)c;
+            }
+        }
+        else if (debug == 0xFA)
+        {
+            std::cout << PURPLE << "MOS Packet: " << RESET << std::endl;
+            std::cout << "CMD: " << message->at(2) << std::endl;
+            for (size_t i = 3; i < message->size(); i++)
+            {
+                unsigned char c = message->at(i);
+                if (c >= 32 && c <= 126)
+                    std::cout << (char)c;
+            }
+        }
         else
             std::cout << "SysEx: ";
-        /*
-        {
-            std::cout << std::hex << std::setw(2) << std::setfill('0')
-                      << (int)b << " ";
-        }
 
-        std::cout << std::dec;
-
-        // Attempt ASCII decode (useful for debug logs)
-        std::cout << " | ";
-        */
-
-        for (size_t i = 2; i < message->size(); i++)
-        {
-            unsigned char c = message->at(i);
-            if (c >= 32 && c <= 126)
-                std::cout << (char)c;
-        }
 
         std::cout << std::endl;
         return;
