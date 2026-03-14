@@ -8,24 +8,28 @@ UNAME = $(shell uname -s)
 PLATFORM = linux
 # TODO: probably create a script that finds the correct ports
 # also test on linux
-PORT := /dev/ttyACM0
+# USB_PORT: Port when 32U4 is running application firmware (USB device mode)
+# BOOTLOADER_PORT: Port when 32U4 is in bootloader mode (programmable)
 USB_PORT := /dev/ttyACM0
+BOOTLOADER_PORT := /dev/ttyACM0
 ISP_PROTOCOL = stk500v1
 
 ifeq ($(UNAME),Darwin)
 	PLATFORM = mac
-	PORT := /dev/cu.usbmodem101
-	USB_PORT :=  /dev/cu.usbmodem101 #/dev/cu.usbmodem12345673
+	# After reset, the 32U4 re-enumerates with a different port number
+    #Run 'ls /dev/cu.usbmodem*' after reset to find the correct bootloader port
+	USB_PORT := /dev/cu.usbmodem12345673
+	BOOTLOADER_PORT := /dev/cu.usbmodem101
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
-	PORT := COM17
-	USB_PORT := COM18
+	USB_PORT := COM17
+	BOOTLOADER_PORT := COM18
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
-	PORT := COM17
-	USB_PORT := COM18
+	USB_PORT := COM17
+	BOOTLOADER_PORT := COM18
 	ISP_PROTOCOL = arduino
 endif
 
@@ -58,6 +62,7 @@ CFLAGS += -Isrc/328p/I2C
 CFLAGS += -Isrc/328p/SPI
 CFLAGS += -Isrc/328p/ADC
 CFLAGS += -Isrc/328p/analog_mux
+CFLAGS += -Isrc/328p/digital_mux
 CFLAGS += -Isrc/328p/gpio_expander
 
 # Linker flags
@@ -70,6 +75,7 @@ include src/328p/I2C/I2C.mk
 include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
 include src/328p/analog_mux/analog_mux.mk
+include src/328p/digital_mux/digital_mux.mk
 include src/328p/gpio_expander/gpio_expander.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
@@ -84,6 +90,7 @@ ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(SPI_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
+ATMEGA328P_SRC += $(DIGITAL_MUX_SRC)
 ATMEGA328P_SRC += $(GPIO_EXPANDER_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
@@ -130,44 +137,50 @@ $(ATMEGA32U4_HEX): $(ATMEGA32U4_ELF)
 
 
 reset-board-windows:
-	@echo "mode $(USB_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
+	@echo "mode $(RESET_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
 
 reset-board-linux:
-	@stty -F $(USB_PORT) 1200 hupcl
+	@stty -F $(RESET_PORT) 1200 hupcl
 
 reset-board-mac:
-	@stty -f $(USB_PORT) 1200 hupcl
+	@stty -f $(RESET_PORT) 1200 hupcl
 
+# Reset the board using the specified port (defaults to USB_PORT)
+# Usage: make reset-board RESET_PORT=/dev/cu.usbmodemXXXX
 reset-board:
+	@$(eval RESET_PORT ?= $(USB_PORT))
 ifeq ($(PLATFORM),windows)
-	@$(MAKE) reset-board-windows
+	@$(MAKE) reset-board-windows RESET_PORT=$(RESET_PORT)
 else ifeq ($(PLATFORM),mac)
-	@$(MAKE) reset-board-mac
+	@$(MAKE) reset-board-mac RESET_PORT=$(RESET_PORT)
 else
-	@$(MAKE) reset-board-linux
+	@$(MAKE) reset-board-linux RESET_PORT=$(RESET_PORT)
 endif
-	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
+	@printf "$(PURPLE)\nResetting board on $(RESET_PORT)! $(RESET)\n"
 	@sleep 3
 
 isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	@printf "$(RED)Platform: $(PLATFORM) $(RESET)\n"
-	@printf "$(RED)Port: $(PORT) $(RESET)\n"
 	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"
+	@printf "$(RED)Bootloader Port: $(BOOTLOADER_PORT) $(RESET)\n"
 
-	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
-	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
-	@printf "$(PURPLE)Waiting 5 seconds for bootloader / USB reset... $(RESET)\n"
+	@printf "$(PURPLE)Step 1: Resetting 32U4 to enter bootloader... $(RESET)\n"
+	@$(MAKE) reset-board RESET_PORT=$(USB_PORT)
+	@printf "$(PURPLE)Step 2: Flashing ArduinoISP to 32U4... $(RESET)\n"
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
+	@printf "$(PURPLE)Step 3: Waiting for ArduinoISP to initialize... $(RESET)\n"
 	@sleep 5
-	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
-	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
-	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
-	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
+	@printf "$(PURPLE)Step 4: Flashing 328P via ArduinoISP... $(RESET)\n"
+	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
+	@printf "$(PURPLE)Step 5: Resetting 32U4 to enter bootloader again... $(RESET)\n"
+	@$(MAKE) reset-board RESET_PORT=$(BOOTLOADER_PORT)
+	@printf "$(PURPLE)Step 6: Flashing 32U4 application code... $(RESET)\n"
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	@printf "$(GREEN)All done! Both MCUs flashed successfully! $(RESET)\n"
 
 # Didn't touch much after this
 #	@echo "\033[0;34m-------  Memory usage  --------\033[0m"

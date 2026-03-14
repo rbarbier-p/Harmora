@@ -33,47 +33,7 @@ Inter-MCU Communication:
 ```
 
 ## Pin Configuration
-
-### ATmega328P
-
-| Port | Function      | Notes                              |
-|------|---------------|------------------------------------|
-| PB0  | Soft_SPI_MOSI | Software SPI for LEDs              |
-| PB1  | Soft_SPI_CLK  | Software SPI for LEDs              |
-| PB2  | SPI_SS        | Hardware SPI slave select          |
-| PB3  | SPI_MOSI      | Hardware SPI                       |
-| PB4  | SPI_MISO      | Hardware SPI                       |
-| PB5  | SPI_CLK       | Hardware SPI                       |
-| PB6  | XTAL1         | Crystal                            |
-| PB7  | XTAL2         | Crystal                            |
-| PC0  | 32U4_SS       | ATmega32U4 slave select            |
-| PC1  | EXP1_INTA     | Expander 1 interrupt A             |
-| PC2  | EXP1_INTB     | Expander 1 interrupt B             |
-| PC3  | EXP2_INT      | Expander 2 interrupt (A OR B)      |
-| PC4  | I2C_SDA       | Hardware TWI                       |
-| PC5  | I2C_SCL       | Hardware TWI                       |
-| PC6  | -             |                                    |
-| PD0  | DISPLAY_DR    | Display data/command select        |
-| PD1  | DMUX_OUT      | Digital mux output                 |
-| PD2  | 32U4_INT      | Interrupt line from 32U4           |
-| PD3  | DISPLAY_CS    | Display chip select                |
-| PD4  | MUX_S3        | Mux select line 3 (shared)         |
-| PD5  | MUX_S0        | Mux select line 0 (shared)         |
-| PD6  | MUX_S1        | Mux select line 1 (shared)         |
-| PD7  | MUX_S2        | Mux select line 2 (shared)         |
-| ADC6 | -             |                                    |
-| ADC7 | AMUX_OUT      | Analog mux output                  |
-
-### ATmega32U4
-
-| Port | Function  | Notes              |
-|------|-----------|--------------------|
-| PB0  | SPI_SS    | SPI slave select   |
-| PB1  | SPI_CLK   | SPI clock          |
-| PB2  | SPI_MOSI  | SPI data in        |
-| PB3  | SPI_MISO  | SPI data out       |
-| PB4  | MCU_INT   | Interrupt from 328P|
-| PD3  | MIDI_D    | MIDI data output   |
+- For the pinout configuration, check the code/pinout file.
 
 ## Build System
 

@@ -135,8 +135,7 @@ void gpio_expander_init(void) {
   display_draw_string(0, 24, "EXP done!");
   display_update();
 
-  // Note: Not clearing interrupts here to avoid I2C hang if devices aren't ready
-  // Interrupts will be cleared automatically on first button read in task_button_scan()
+  // Interrupts will be cleared on first button scan task run
 }
 
 // =============================================================================

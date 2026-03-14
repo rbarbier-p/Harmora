@@ -85,7 +85,7 @@ void interrupts_enable(void) {
  * 
  * MCP23017 interrupt pins are active-low and stay low until GPIO is read.
  * For expander 2, PC3 is wired to both INTA and INTB (OR'd together),
- * so we just set a generic flag and let the task read INTF to determine which port.
+ * so we set a generic flag and let the task read INTF to determine which port.
  */
 ISR(PCINT1_vect) {
     uint8_t pinc = PINC;
@@ -101,9 +101,8 @@ ISR(PCINT1_vect) {
     }
     
     // Check expander 2 (PC3 = EXP2_INT, both ports OR'd)
-    // Set both flags - task will read INTF to see which port actually changed
     if (!(pinc & (1 << EXP2_INT_PIN))) {
-        g_exp2_interrupt = 1;  // Just a flag, not port-specific
+        g_exp2_interrupt = 1;
     }
 }
 
