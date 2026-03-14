@@ -19,17 +19,15 @@ ifeq ($(UNAME),Darwin)
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
-	PORT := COM17
+	PORT := COM3
 	USB_PORT := COM18
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
-	PORT := COM17
+	PORT := COM3
 	USB_PORT := COM18
 	ISP_PROTOCOL = arduino
 endif
-
-
 
 ATMEGA328P_MCU = atmega328p
 ATMEGA32U4_MCU = atmega32u4
@@ -58,6 +56,7 @@ CFLAGS += -Isrc/328p/I2C
 CFLAGS += -Isrc/328p/SPI
 CFLAGS += -Isrc/328p/ADC
 CFLAGS += -Isrc/328p/analog_mux
+CFLAGS += -Isrc/328p/MOS
 
 # Linker flags
 #LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
@@ -69,6 +68,7 @@ include src/328p/I2C/I2C.mk
 include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
 include src/328p/analog_mux/analog_mux.mk
+include src/328p/MOS/mos.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c
@@ -81,9 +81,12 @@ ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(SPI_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
+ATMEGA328P_SRC += $(MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-ATMEGA32U4_SRC = src/atmega32u4.c
+ATMEGA32U4_SRC = src/midi.c
+ATMEGA32U4_SRC += $(SPI_SRC)
+ATMEGA32U4_SRC += $(MOS_SRC)
 
 
 # Output files in build folder
@@ -145,11 +148,14 @@ endif
 	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
 	@sleep 3
 
-isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+32u4: $(ATMEGA32U4_HEX) $(BUILD_DIR)
+	@$(MAKE) reset-board
+	@$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
+
 	@printf "$(RED)Platform: $(PLATFORM) $(RESET)\n"
 	@printf "$(RED)Port: $(PORT) $(RESET)\n"
 	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"
@@ -161,9 +167,7 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	@sleep 5
 	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
 	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
-	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
-	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
+	@$(MAKE) 32u4
 
 # Didn't touch much after this
 #	@echo "\033[0;34m-------  Memory usage  --------\033[0m"

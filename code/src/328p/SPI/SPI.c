@@ -125,3 +125,19 @@ void spi_transfer_buf(const uint8_t *tx_buf, uint8_t *rx_buf, uint16_t len)
       rx_buf[i] = SPDR;
   }
 }
+
+uint8_t spi_read_master(void)
+{
+    SPDR = 0xFF;
+    while (!(SPSR & (1 << SPIF)))
+        ;
+    return (SPDR);
+}
+
+uint8_t spi_read_slave(void)
+{
+    while (!(SPSR & (1 << SPIF)))
+        ;
+    return (SPDR);
+}
+

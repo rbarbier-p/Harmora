@@ -3,43 +3,57 @@
 #include <vector>
 #include <rtmidi/RtMidi.h>
 
+const std::string RESET = "\033[0m";
+const std::string RED = "\033[31m";
+const std::string GREEN = "\033[32m";
+const std::string BLUE = "\033[34m";
+const std::string YELLOW = "\033[33m";
+const std::string PURPLE = "\033[35m";
+
 void midiCallback(double deltatime, std::vector<unsigned char> *message, void *userData)
 {
-    std::cout << "dt=" << deltatime << "  ";
-
     if (message->size() == 0)
         return;
 
+    (void)deltatime;
+
     unsigned char status = message->at(0);
+    unsigned char debug = message->at(1);
 
     // Detect SysEx
     if (status == 0xF0)
     {
-        std::cout << "SysEx: ";
-
-        for (unsigned char b : *message)
+        if (debug == 0x7D)
         {
-            std::cout << std::hex << std::setw(2) << std::setfill('0')
-                      << (int)b << " ";
+            std::cout << PURPLE << "Debug: " << RESET;
+            for (size_t i = 2; i < message->size(); i++)
+            {
+                unsigned char c = message->at(i);
+                if (c >= 32 && c <= 126)
+                    std::cout << (char)c;
+            }
         }
-
-        std::cout << std::dec;
-
-        // Attempt ASCII decode (useful for debug logs)
-        std::cout << " | ";
-
-        for (size_t i = 1; i < message->size(); i++)
+        else if (debug == 0xFA)
         {
-            unsigned char c = message->at(i);
-            if (c >= 32 && c <= 126)
-                std::cout << (char)c;
+            std::cout << PURPLE << "MOS Packet: " << RESET << std::endl;
+            std::cout << "CMD: " << message->at(2) << std::endl;
+            for (size_t i = 3; i < message->size(); i++)
+            {
+                unsigned char c = message->at(i);
+                if (c >= 32 && c <= 126)
+                    std::cout << (char)c;
+            }
         }
+        else
+            std::cout << "SysEx: ";
+
 
         std::cout << std::endl;
         return;
     }
 
     // Regular MIDI message
+    /*
     std::cout << "MIDI: ";
 
     for (unsigned char b : *message)
@@ -49,6 +63,7 @@ void midiCallback(double deltatime, std::vector<unsigned char> *message, void *u
     }
 
     std::cout << std::dec << std::endl;
+    */
 }
 
 int main()
@@ -59,11 +74,12 @@ int main()
 
     if (ports == 0)
     {
-        std::cout << "No MIDI input devices found.\n";
+        std::cout << "No MIDI input devices found." << std::endl;
+        std::cout << RED << "Try unplugging and plugging back your device, then wait 10 seconds." << RESET << std::endl; 
         return 0;
     }
 
-    std::cout << "Available MIDI inputs:\n";
+    std::cout << "Available MIDI inputs: " << std::endl;
 
     for (unsigned int i = 0; i < ports; i++)
     {

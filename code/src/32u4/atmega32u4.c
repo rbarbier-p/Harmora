@@ -199,11 +199,11 @@ const uint8_t PROGMEM config_descriptor[] = {
 
 const uint8_t PROGMEM string0[] = { 4, 0x03, 0x09, 0x04 };
 const uint8_t PROGMEM string1[] = { 14, 0x03, 'M',0, 'a',0, 'c',0, 'k',0, 'i',0, 'e',0 };
-const uint8_t PROGMEM string2[] = { 44, 0x03, 
-    'C', 0, 'o', 0, 'n', 0, 't', 0, 'r', 0, 'o', 0, 'l', 0, ' ', 0,
-    'U', 0, 'n', 0, 'i', 0, 'v', 0, 'e', 0, 'r', 0, 's', 0, 'a', 0, 'l', 0, ' ', 0,
-    'v', 0, '1', 0, '.', 0, '0', 0
+
+const uint8_t PROGMEM string2[] = { 26, 0x03, 
+    'H', 0, 'a', 0, 'r', 0, 'm', 0, 'o', 0, 'r', 0, 'a', 0, ' ', 0, 'v', 0, '1', 0, '.', 0, '0', 0
 };
+
 const uint8_t PROGMEM string3[] = { 16, 0x03, '1',0, '2',0, '3',0, '4',0, '5',0, '6',0, '7',0 };
 
 static uint8_t usb_configuration = 0;
@@ -735,6 +735,7 @@ void mcu_send_version_reply(void) {
     midi_send_sysex(sysex, sizeof(sysex));
 }
 
+/*
 // Update LCD display
 void mcu_lcd_write(uint8_t position, const char *text, uint8_t length) {
     if (position >= 112 || length == 0) return;
@@ -761,7 +762,9 @@ void mcu_lcd_write(uint8_t position, const char *text, uint8_t length) {
     
     midi_send_sysex(sysex, idx);
 }
+*/
 
+/*
 // Send button press/release
 void mcu_button(uint8_t button, uint8_t pressed) {
     midi_send_3byte(0x09, MIDI_NOTE_ON | MCU_CHANNEL, button, pressed ? 0x7F : 0x00);
@@ -817,11 +820,70 @@ void mcu_send_timecode(const char *timecode) {
     sysex[idx++] = MIDI_SYSEX_END;
     midi_send_sysex(sysex, idx);
 }
+*/
 
 // Generic custom SysEx
 void send_custom_sysex(const uint8_t *data, uint8_t length) {
     if (length > 32) length = 32;
     midi_send_sysex(data, length);
+}
+
+// Debug SysEx message sender
+void midi_debug(const char *msg) {
+    if (!usb_configuration || !msg) return;
+    
+    // Build SysEx message with debug data
+    uint8_t sysex[64];
+    uint8_t idx = 0;
+    
+    sysex[idx++] = MIDI_SYSEX_START;
+    sysex[idx++] = 0x7D;  // Educational/debug manufacturer ID
+    
+    // Add message characters (limit to available space)
+    while (*msg && idx < (sizeof(sysex) - 1)) {
+        sysex[idx++] = *msg++;
+    }
+    
+    sysex[idx++] = MIDI_SYSEX_END;
+    
+    midi_send_sysex(sysex, idx);
+}
+
+// Debug with formatted value (helper for debugging numbers)
+void midi_debug_value(const char *label, uint16_t value) {
+    char buf[32];
+    uint8_t idx = 0;
+    
+    // Copy label
+    while (*label && idx < 20) {
+        buf[idx++] = *label++;
+    }
+    
+    buf[idx++] = ':';
+    buf[idx++] = ' ';
+    
+    // Convert value to string (simple itoa)
+    char num[6];
+    uint8_t num_idx = 0;
+    uint16_t temp = value;
+    
+    if (temp == 0) {
+        num[num_idx++] = '0';
+    } else {
+        while (temp > 0 && num_idx < 5) {
+            num[num_idx++] = '0' + (temp % 10);
+            temp /= 10;
+        }
+    }
+    
+    // Reverse number string
+    for (int8_t i = num_idx - 1; i >= 0; i--) {
+        buf[idx++] = num[i];
+    }
+    
+    buf[idx] = '\0';
+    
+    midi_debug(buf);
 }
 
 // ==================== MAIN ====================
@@ -830,20 +892,12 @@ int main(void) {
     MCUCR = (1 << JTD);
     MCUCR = (1 << JTD);
     
-    LED_INIT();
-    LED_OFF();
     
     memset(&mcu_state, 0, sizeof(mcu_state));
-    strcpy(mcu_state.lcd_text, "Mackie Control Universal Ready                                                          ");
+    strcpy(mcu_state.lcd_text, "Mackie Control Universal Ready");
     
     UDCON = (1 << DETACH);
     _delay_ms(250);
-    
-    for (uint8_t i = 0; i < 5; i++) {
-        LED_TOGGLE();
-        _delay_ms(100);
-    }
-    LED_OFF();
     
     pll_init();
     usb_hw_init();
@@ -856,16 +910,19 @@ int main(void) {
     while (1) {
         if (usb_configuration) {
             if (!handshake_sent) {
+                midi_debug("MCU initializing...");
                 _delay_ms(500);
                 mcu_send_device_query_response();
                 _delay_ms(100);
-                mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
-                mcu_lcd_write(56, "   AVR USB MCU    ", 17);
+                //mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
+                //mcu_lcd_write(56, "   AVR USB MCU    ", 17);
+                midi_debug("MCU ready!");
                 handshake_sent = 1;
                 LED_ON();
             }
             
             counter++;
+            midi_debug("Hello from AVR!");
 
             
             if (counter >= 20) {
@@ -875,35 +932,35 @@ int main(void) {
                 switch (demo_step) {
                     case 0:
                         for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_fader(i, (i * 2000) + 2000);
+                            ///mcu_set_fader(i, (i * 2000) + 2000);
                         }
-                        mcu_lcd_write(0, "  Fader Demo      ", 17);
+                        //mcu_lcd_write(0, "  Fader Demo      ", 17);
                         break;
                         
                     case 1:
                         for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_vpot_led(i, 1, 6);
+                            //mcu_set_vpot_led(i, 1, 6);
                         }
-                        mcu_lcd_write(0, "  V-Pot Demo      ", 17);
+                        //mcu_lcd_write(0, "  V-Pot Demo      ", 17);
                         break;
                         
                     case 2:
-                        mcu_button(MCU_BTN_PLAY, 1);
-                        mcu_lcd_write(0, "  Transport Play  ", 17);
+                        //mcu_button(MCU_BTN_PLAY, 1);
+                        //mcu_lcd_write(0, "  Transport Play  ", 17);
                         _delay_ms(100);
-                        mcu_button(MCU_BTN_PLAY, 0);
+                        //mcu_button(MCU_BTN_PLAY, 0);
                         break;
                         
                     case 3:
                         for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_meter(i, 6 + (i % 4));
+                            //mcu_set_meter(i, 6 + (i % 4));
                         }
-                        mcu_lcd_write(0, "  Meter Demo      ", 17);
+                        //mcu_lcd_write(0, "  Meter Demo      ", 17);
                         break;
                         
                     case 4:
-                        mcu_send_timecode("12:34:56:78");
-                        mcu_lcd_write(0, "  Timecode Demo   ", 17);
+                        //mcu_send_timecode("12:34:56:78");
+                        //mcu_lcd_write(0, "  Timecode Demo   ", 17);
                         break;
                         
                     case 5:
@@ -914,7 +971,7 @@ int main(void) {
                                 MIDI_SYSEX_END
                             };
                             send_custom_sysex(custom, sizeof(custom));
-                            mcu_lcd_write(0, "  Custom SysEx    ", 17);
+                            //mcu_lcd_write(0, "  Custom SysEx    ", 17);
                         }
                         break;
                 }
