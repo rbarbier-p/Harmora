@@ -10,8 +10,7 @@ void digital_mux_init(void) {
   // Set PD1 as input
   DDRD &= ~(1 << DMUX_OUT);
   
-  // Enable pull-up (optional, depends on your hardware)
-  // Encoders typically have their own pull-ups, but this doesn't hurt
+  // Enable pull-up 
   PORTD |= (1 << DMUX_OUT);
 }
 

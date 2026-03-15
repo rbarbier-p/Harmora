@@ -11,6 +11,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdio.h>
+#include <avr/interrupt.h>
 
 // I2C Bus Scanner for debugging
 void i2c_scan(void) {
@@ -61,9 +62,9 @@ int main(void) {
   // Initialize display first (before gpio expander, to see if we get here)
   display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
   display_clear();
-  display_draw_string(0, 0, "Init...");
+  display_draw_string(0, 0, "ready");
   display_update();
-
+  //while (1);
   // Scan I2C bus to see what's connected
   i2c_scan();
 
@@ -84,61 +85,135 @@ int main(void) {
   _delay_ms(1000);
   
   // ==========================================================================
-  // DEBUG MODE: Test EN2 encoder only
+  // DEBUG MODE: Scan all 6 encoders
   // ==========================================================================
   display_clear();
-  display_draw_string(0, 0, "EN2 Test");
+  display_draw_string(0, 0, "6 Encoders");
   display_update();
   _delay_ms(500);
   
   char buf[32];
   
-  // Quadrature decoding state
-  uint8_t last_state = 0;
-  int16_t counter = 0;
+  // Encoder channel mapping from pinout file:
+  // EN1: AI3(A), AI2(B)  = channels 3, 2
+  // EN2: AI1(A), AI0(B)  = channels 1, 0
+  // EN3: AI5(A), AI4(B)  = channels 5, 4
+  // EN4: AI6(A), AI7(B)  = channels 6, 7
+  // EN5: BI2(A), BI3(B)  = channels 10, 11
+  // EN6: BI4(A), BI5(B)  = channels 12, 13
+  
+  static const uint8_t encoder_channels[6][2] = {
+    {3, 2},   // EN1: A=ch3, B=ch2
+    {1, 0},   // EN2: A=ch1, B=ch0
+    {5, 4},   // EN3: A=ch5, B=ch4
+    {6, 7},   // EN4: A=ch6, B=ch7
+    {10, 11}, // EN5: A=ch10, B=ch11
+    {12, 13}  // EN6: A=ch12, B=ch13
+  };
+  
+  // State for each encoder
+  uint8_t last_state[6] = {0};
+  int16_t step_counter[6] = {0};
+  int16_t click_counter[6] = {0};
+  int16_t last_click_value[6] = {0};
   
   // Transition table for quadrature decoding
   static const int8_t transition_table[16] = {
-    0, -1, +1, 0,   // previous=00
-    +1, 0, 0, -1,   // previous=01
-    -1, 0, 0, +1,   // previous=10
-    0, +1, -1, 0    // previous=11
+     0, -1, +1,  0,   // previous=00
+    +1,  0,  0, -1,   // previous=01
+    -1,  0,  0, +1,   // previous=10
+     0, +1, -1,  0    // previous=11
   };
   
+  // Read initial states for all encoders
+  for (uint8_t i = 0; i < 6; i++) {
+    analog_mux_select(encoder_channels[i][0]);
+    _delay_us(10);
+    uint8_t a = digital_mux_read();
+    
+    analog_mux_select(encoder_channels[i][1]);
+    _delay_us(10);
+    uint8_t b = digital_mux_read();
+    
+    last_state[i] = (a << 1) | b;
+  }
+  
+  uint8_t display_update_needed = 1;
+  cli();  // Disable interrupts for deterministic timing
+  
   while (1) {
-    display_clear();
+    // =======================================================================
+    // FAST ENCODER SCANNING - Poll all 6 encoders as quickly as possible
+    // =======================================================================
+    uint8_t any_change = 0;
     
-    // Read EN2 encoder pins (CH0=A, CH1=B)
-    analog_mux_select(2);
-    _delay_us(5);
-    uint8_t en2_a = digital_mux_read();
+    for (uint8_t i = 0; i < 6; i++) {
+      // Read encoder A pin
+      analog_mux_select(encoder_channels[i][0]);
+      _delay_us(10);
+      uint8_t a = digital_mux_read();
+      
+      // Read encoder B pin
+      analog_mux_select(encoder_channels[i][1]);
+      _delay_us(10);
+      uint8_t b = digital_mux_read();
+      
+      // Current state (2 bits: AB)
+      uint8_t current = (a << 1) | b;
+      
+      // Only process if state changed
+      if (current != last_state[i]) {
+        uint8_t index = (last_state[i] << 2) | current;
+        int8_t delta = transition_table[index];
+        
+        if (delta != 0) {
+          step_counter[i] += delta;
+          
+          // Calculate clicks (4 steps per detent/click)
+          int16_t new_click_value = step_counter[i] / 4;
+          
+          if (new_click_value != last_click_value[i]) {
+            click_counter[i] += (new_click_value - last_click_value[i]);
+            last_click_value[i] = new_click_value;
+            any_change = 1;
+          }
+        }
+        
+        last_state[i] = current;
+      }
+    }
     
-    analog_mux_select(3);
-    _delay_us(5);
-    uint8_t en2_b = digital_mux_read();
+    // =======================================================================
+    // DISPLAY UPDATE - Only when values changed (minimizes overhead)
+    // =======================================================================
+    if (any_change || display_update_needed) {
+      display_clear();
+      
+      // Display 6 encoders in 3 rows of 2 columns
+      // Format: "EN1:12  EN2:-3" (compact)
+      
+      // Row 1: EN1, EN2
+      snprintf(buf, sizeof(buf), "EN1:%4d EN2:%4d", click_counter[0], click_counter[1]);
+      display_draw_string(0, 0, buf);
+      
+      // Row 2: EN3, EN4
+      snprintf(buf, sizeof(buf), "EN3:%4d EN4:%4d", click_counter[2], click_counter[3]);
+      display_draw_string(0, 16, buf);
+      
+      // Row 3: EN5, EN6
+      snprintf(buf, sizeof(buf), "EN5:%4d EN6:%4d", click_counter[4], click_counter[5]);
+      display_draw_string(0, 32, buf);
+      
+      // Show scanning status
+      snprintf(buf, sizeof(buf), "Scanning...");
+      display_draw_string(0, 48, buf);
+      
+      display_update();
+      display_update_needed = 0;
+    }
     
-    // Current state (2 bits: AB)
-    uint8_t current = (en2_a << 1) | en2_b;
-    
-    // Decode quadrature
-    uint8_t index = (last_state << 2) | current;
-    int8_t delta = transition_table[index];
-    counter += delta;
-    
-    last_state = current;
-    
-    // Display - simple and clean
-    snprintf(buf, sizeof(buf), "A: %d", en2_a);
-    display_draw_string(0, 10, buf);
-    
-    snprintf(buf, sizeof(buf), "B: %d", en2_b);
-    display_draw_string(0, 25, buf);
-    
-    snprintf(buf, sizeof(buf), "Count: %d", counter);
-    display_draw_string(0, 45, buf);
-    
-    display_update();
-    //_delay_ms(20);  // 50Hz update
+    // TODO: Add delay here to simulate other tasks
+     _delay_ms(2);  // Simulate 1ms of other tasks
   }
   
   /* DISABLED FOR DEBUG

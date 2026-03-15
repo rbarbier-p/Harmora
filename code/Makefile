@@ -66,7 +66,7 @@ CFLAGS += -Isrc/328p/digital_mux
 CFLAGS += -Isrc/328p/gpio_expander
 
 # Linker flags
-#LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
+LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
 
 # Source files
 include src/328p/display/display.mk
