@@ -42,6 +42,7 @@ void display_update(void);
 void display_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 void display_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 void display_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
+void display_clear_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
 // ============================================================================
 // TEXT RENDERING (display_text.c)

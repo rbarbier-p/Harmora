@@ -14,6 +14,7 @@
 #include <avr/interrupt.h>
 
 // I2C Bus Scanner for debugging
+/*
 void i2c_scan(void) {
   char buf[32];
   uint8_t found = 0;
@@ -49,7 +50,7 @@ void i2c_scan(void) {
   }
   
   _delay_ms(3000); // Show scan results for 3 seconds
-}
+} */
 
 int main(void) {
   i2c_init();
@@ -66,23 +67,13 @@ int main(void) {
   display_update();
   //while (1);
   // Scan I2C bus to see what's connected
-  i2c_scan();
 
   // Initialize GPIO expanders (must be after i2c_init)
   // This may hang if MCP23017 not connected!
   gpio_expander_init();
-  
-  display_clear();
-  display_draw_string(0, 0, "Init...");
-  display_draw_string(0, 8, "GPIO OK");
-  display_update();
 
   // Initialize interrupts (must be after gpio_expander_init)
   interrupts_init();
-
-  display_draw_string(0, 16, "INT OK");
-  display_update();
-  _delay_ms(1000);
   
   // ==========================================================================
   // DEBUG MODE: Scan all 6 encoders
@@ -92,7 +83,7 @@ int main(void) {
   display_update();
   _delay_ms(500);
   
-  char buf[32];
+  char buf[4][20];
   
   // Encoder channel mapping from pinout file:
   // EN1: AI3(A), AI2(B)  = channels 3, 2
@@ -140,7 +131,8 @@ int main(void) {
   
   uint8_t display_update_needed = 1;
   cli();  // Disable interrupts for deterministic timing
-  
+  uint16_t update_time_us = 0;
+  stopwatch_start();
   while (1) {
     // =======================================================================
     // FAST ENCODER SCANNING - Poll all 6 encoders as quickly as possible
@@ -182,38 +174,39 @@ int main(void) {
         last_state[i] = current;
       }
     }
-    
     // =======================================================================
     // DISPLAY UPDATE - Only when values changed (minimizes overhead)
     // =======================================================================
-    if (any_change || display_update_needed) {
-      display_clear();
+    if (any_change || display_update_needed) {  
+      //start timer to measure display update time
       
       // Display 6 encoders in 3 rows of 2 columns
       // Format: "EN1:12  EN2:-3" (compact)
       
       // Row 1: EN1, EN2
-      snprintf(buf, sizeof(buf), "EN1:%4d EN2:%4d", click_counter[0], click_counter[1]);
-      display_draw_string(0, 0, buf);
-      
-      // Row 2: EN3, EN4
-      snprintf(buf, sizeof(buf), "EN3:%4d EN4:%4d", click_counter[2], click_counter[3]);
-      display_draw_string(0, 16, buf);
+      snprintf(buf[0], sizeof(buf[0]), "E1:%4d E2:%4d", click_counter[0], click_counter[1]);
       
       // Row 3: EN5, EN6
-      snprintf(buf, sizeof(buf), "EN5:%4d EN6:%4d", click_counter[4], click_counter[5]);
-      display_draw_string(0, 32, buf);
+      snprintf(buf[1], sizeof(buf[1]), "EN5:%4d EN6:%4d", click_counter[4], click_counter[5]);
       
       // Show scanning status
-      snprintf(buf, sizeof(buf), "Scanning...");
-      display_draw_string(0, 48, buf);
-      
+
+      snprintf(buf[3], sizeof(buf[3]), "update: %3dus", update_time_us);
+
+      display_clear();
       display_update();
+      display_draw_string(0, 0, buf[0]);
+      display_draw_string(0, 48, buf[1]);
+      display_draw_string(0, 57, buf[3]);
+      uint16_t update_start = stopwatch_read();
+      display_update();
+      uint16_t update_end = stopwatch_read();
       display_update_needed = 0;
+      update_time_us = stopwatch_ticks_to_us(update_end - update_start);
     }
     
     // TODO: Add delay here to simulate other tasks
-     _delay_ms(2);  // Simulate 1ms of other tasks
+    _delay_ms(3);  // Simulate 1ms of other tasks
   }
   
   /* DISABLED FOR DEBUG

@@ -189,11 +189,12 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 
 
 # Print flash and RAM usage only (no Program/Data lines)
+# Uses POSIX-compatible awk (works on both GNU awk and BSD awk on macOS)
 size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
 	@$(SIZE) --format=avr --mcu=$(ATMEGA328P_MCU) $(ATMEGA328P_ELF) > $(SIZE_TXT)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
-	/Program:/ {match($$0,/([0-9]+) bytes/,a); flash=a[1]+0} \
-	/Data:/ {match($$0,/([0-9]+) bytes/,a); ram=a[1]+0} \
+	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
+	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
 	END {printf "Flash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 
