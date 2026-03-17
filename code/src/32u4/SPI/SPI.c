@@ -1,6 +1,6 @@
 #include "SPI.h"
 
-void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
+void spi_init(uint8_t mode, uint8_t order)
 {
     // MISO as output; MOSI, SCK, SS as inputs
     SPI_DDR |=  (1 << SPI_MISO);

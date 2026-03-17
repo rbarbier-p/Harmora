@@ -6,6 +6,7 @@ void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
   // Set MOSI, SCK, SS as outputs
   // SS must be output for master mode (even if not used)
   SPI_DDR |= (1 << SPI_MOSI) | (1 << SPI_SCK) | (1 << SPI_SS);
+  DDRC |= (1 << PC0);
 
   // MISO as input (default, but be explicit)
   SPI_DDR &= ~(1 << SPI_MISO);
@@ -81,15 +82,17 @@ void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
     SPSR &= ~(1 << SPI2X);
 }
 
-
+// might not be usefull because 328P SS is connected to 5V 
 void spi_ss_assert(void)
 {
-    SPI_PORT &= ~(1 << SPI_SS);
+//    SPI_PORT &= ~(1 << SPI_SS);
+    PORTC &= ~(1 << PC0);
 }
 
 void spi_ss_deassert(void)
 {
-    SPI_PORT |= (1 << SPI_SS);
+//    SPI_PORT |= (1 << SPI_SS);
+    PORTC |= (1 << PC0);
 }
 
 uint8_t spi_transfer(uint8_t data)

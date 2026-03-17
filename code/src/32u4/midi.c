@@ -704,6 +704,11 @@ void midi_debug_packet(MPacket packet) {
     sysex[idx++] = 0x7A;  // Educational/debug manufacturer ID
     
     sysex[idx++] = (packet.command);
+    sysex[idx++] = (packet.device);
+    sysex[idx++] = (packet.deviceId);
+    sysex[idx++] = (packet.deviceValue);
+    sysex[idx++] = (packet.length);
+
     // Add message characters (limit to available space)
     uint8_t i = 0;
     while (i < packet.length && idx < (sizeof(sysex) - 1)) {
@@ -771,6 +776,7 @@ int main(void)
     sei();
 
     mos_init(M_INIT_DEVICE);
+    //spi_init(SPI_MODE_0, SPI_MSB_FIRST);
     uint8_t handshake_sent = 0;
     
     while (1) {
@@ -786,16 +792,20 @@ int main(void)
                 handshake_sent = 1;
             }
             
+            /*
+            char buffer[10] = {"SPI: "};
+            buffer[5] = spi_read();
+            buffer[6] = '\0';
+            midi_debug(buffer);
+            */
 
             MPacket packet;
             // HERE: i think behavior is receive is blocking 
-            if (mos_device_receive(&packet))
+            if (mos_receive_packet(&packet))
                 midi_debug("Received something over mos!");
             else
-                midi_debug("Not mos data!");
+                midi_debug("Not mos data.");
 
-
-            midi_debug("TEST!");
 
             // process packet
             switch (packet.command)
@@ -803,6 +813,16 @@ int main(void)
                 case M_CMD_DEBUG_PRINT:
                     midi_debug_packet(packet);
                     break;
+                case M_CMD_UPDATE_DATA:
+                    midi_debug_packet(packet);
+                    break;
+                case M_CMD_REQUEST_DATA:
+                {
+                    // HERE
+                    packet = (MPacket){M_CMD_UPDATE_DATA, M_DEVICE_DISPLAY, 0, M_DISPLAY_DRAW_CHAR, 5, {'A', 0, 0, 0, 0}};
+                    mos_send_packet(&packet);
+                    break;
+                }
                 default:
                     break;
             }

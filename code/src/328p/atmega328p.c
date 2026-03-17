@@ -6,8 +6,13 @@
 #include "scheduler.h"
 #include "stopwatch.h"
 #include <avr/io.h>
+#include <util/delay.h>
+#include "mos.h"
+
+#define MSG "MOS debug message"
 
 int main(void) {
+    /*
   i2c_init();
   adc_init();
   analog_mux_init();
@@ -31,9 +36,27 @@ int main(void) {
   // scheduler_enable(TASK_LED_UPDATE, 0);
 
   uint8_t loop_count = 0;
+  */
+
+  mos_init(M_INIT_HOST);
+  MPacket packet1 = {M_CMD_DEBUG_PRINT, M_DEVICE_EMPTY, 0, M_VALUE_EMPTY, sizeof(MSG), MSG};
+  MPacket packet2 = {M_CMD_UPDATE_DATA, M_DEVICE_SWITCH, 1, M_SWITCH_PRESSED, 0, {0}};
+  MPacket requestPacket = {M_CMD_REQUEST_DATA, M_DEVICE_DISPLAY, 0, M_VALUE_EMPTY, 0, {0}};
+  MPacket receivedPacket = {0};
+    //spi_init(SPI_CLK_DIV_16, SPI_MODE_0, SPI_MSB_FIRST);
 
   while (1) {
+      /*
     scheduler_run(loop_count);
     loop_count++; // Wraps at 255
+      */
+         mos_send_packet(&packet1);
+    //      spi_send('A');
+      _delay_ms(250);
+      mos_send_packet(&packet2);
+      _delay_ms(250);
+      mos_send_packet(&requestPacket);
+      mos_receive_packet(&receivedPacket);
+
   }
 }

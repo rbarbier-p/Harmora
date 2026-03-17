@@ -5,7 +5,25 @@ void mos_init(MInitMode mode)
     spi_init(SPI_MODE_0, SPI_MSB_FIRST);
 }
 
-bool mos_send(MPacket *packet)
+bool mos_send(MCommand command, MDevice device, MDeviceId deviceId, MDeviceValue deviceValue, uint8_t length, uint8_t *data)
+{
+    if (length > M_MAX_DATA_LEN)
+        return (false);
+
+    spi_send(M_START_OF_FRAME);
+    spi_send(command);
+    spi_send(device);
+    spi_send(deviceId);
+    spi_send(deviceValue);
+    spi_send(length);
+    for (uint8_t i = 0; i < length; i++)
+        spi_send(data[i]);
+    spi_send(M_END_OF_FRAME);
+
+    return (true);
+}
+
+bool mos_send_packet(MPacket *packet)
 {
     if (packet->length > M_MAX_DATA_LEN)
         return (false);
@@ -14,8 +32,11 @@ bool mos_send(MPacket *packet)
     // The caller must assert a handshake GPIO before each spi_send_slave
     // call so the master knows to start clocking.
     spi_send(M_START_OF_FRAME);
-    spi_send(packet->length);
     spi_send(packet->command);
+    spi_send(packet->device);
+    spi_send(packet->deviceId);
+    spi_send(packet->deviceValue);
+    spi_send(packet->length);
     for (uint8_t i = 0; i < packet->length; i++)
         spi_send(packet->data[i]);
     spi_send(M_END_OF_FRAME);
@@ -24,16 +45,19 @@ bool mos_send(MPacket *packet)
 }
 
 
-bool mos_device_receive(MPacket *packet)
+bool mos_receive_packet(MPacket *packet)
 {
     if (spi_read() != M_START_OF_FRAME)
         return (false);
 
+    packet->command = spi_read();
+    packet->device = spi_read();
+    packet->deviceId = spi_read();
+    packet->deviceValue = spi_read();
+
     packet->length = spi_read();
     if (packet->length > M_MAX_DATA_LEN)
         return (false);
-
-    packet->command = spi_read();
 
     for (uint8_t i = 0; i < packet->length; i++)
         packet->data[i] = spi_read();

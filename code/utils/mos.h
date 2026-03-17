@@ -7,7 +7,7 @@
 
 // for multiple packets in a row either send a packet with the length of the packets array M_CMD_PACKET_ARRAY -> with length
 
-#include "SPI.h"
+//#include "SPI.h"
 #include <stdbool.h>
 
 #define M_START_OF_FRAME  0xAA
