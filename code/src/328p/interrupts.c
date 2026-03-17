@@ -1,4 +1,5 @@
 #include "interrupts.h"
+#include "pins.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
@@ -10,18 +11,6 @@ volatile uint8_t g_exp1_interrupt = 0;
 volatile uint8_t g_exp2_interrupt = 0;
 
 // =============================================================================
-// Pin Definitions (for readability)
-// =============================================================================
-
-// Expander interrupt pins
-#define EXP1_INTA_PIN  PC1
-#define EXP1_INTB_PIN  PC2
-#define EXP2_INT_PIN   PC3
-
-// 32U4 interrupt pin
-#define MCU_INT_PIN    PD2
-
-// =============================================================================
 // Initialization
 // =============================================================================
 
@@ -31,9 +20,9 @@ void interrupts_init(void) {
     // Falling edge trigger - 32U4 pulls low when it has data
     // -------------------------------------------------------------------------
     
-    // PD2 as input with pull-up (32U4 drives it low when active)
-    DDRD &= ~(1 << MCU_INT_PIN);
-    PORTD |= (1 << MCU_INT_PIN);
+    // Set MCU_INT pin as input with pull-up
+    GPIO_SET_INPUT(PIN_MCU_INT);
+    GPIO_ENABLE_PULLUP(PIN_MCU_INT);
     
     // Falling edge trigger (ISC01=1, ISC00=0)
     EICRA |= (1 << ISC01);
@@ -81,27 +70,29 @@ void interrupts_enable(void) {
 // =============================================================================
 
 /**
- * PCINT1: Handles PC1, PC2, PC3 (EXP1_INTA, EXP1_INTB, EXP2_INT)
+ * PCINT1: Port C Pin Change Interrupt
  * 
- * MCP23017 interrupt pins are active-low and stay low until GPIO is read.
- * For expander 2, PC3 is wired to both INTA and INTB (OR'd together),
- * so we set a generic flag and let the task read INTF to determine which port.
+ * Handles GPIO expander interrupts (active LOW):
+ * - PC1 (EXP1_INTA): Expander 1 Port A
+ * - PC2 (EXP1_INTB): Expander 1 Port B
+ * - PC3 (EXP2_INT): Expander 2 (both ports OR'd)
  */
 ISR(PCINT1_vect) {
+    // Read all port C pins once to avoid race conditions
     uint8_t pinc = PINC;
     
-    // Check expander 1 port A (PC1 = EXP1_INTA)
-    if (!(pinc & (1 << EXP1_INTA_PIN))) {
+    // Check expander 1 port A (PC1 = EXP1_INTA) - active LOW
+    if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTA))) {
         g_exp1_interrupt |= INT_PORT_A;
     }
     
-    // Check expander 1 port B (PC2 = EXP1_INTB)
-    if (!(pinc & (1 << EXP1_INTB_PIN))) {
+    // Check expander 1 port B (PC2 = EXP1_INTB) - active LOW
+    if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTB))) {
         g_exp1_interrupt |= INT_PORT_B;
     }
     
-    // Check expander 2 (PC3 = EXP2_INT, both ports OR'd)
-    if (!(pinc & (1 << EXP2_INT_PIN))) {
+    // Check expander 2 (PC3 = EXP2_INT, both ports OR'd) - active LOW
+    if (!(pinc & GPIO_BIT_MASK(PIN_EXP2_INT))) {
         g_exp2_interrupt = 1;
     }
 }

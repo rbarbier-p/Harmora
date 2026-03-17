@@ -1,29 +1,14 @@
 #include "display_bus_spi.h"
 #include "SPI.h"
+#include "../../pins.h"
 #include <avr/io.h>
 #include <stdint.h>
 
-// Pin definitions for display control
-// Based on AGENTS.md pin configuration:
-//   PB1 = DISPLAY_CS (chip select for display)
-//
-// D/C pin (Data/Command) - directly controls display mode
-// Using PD2 for D/C (directly from 328P, adjust as needed)
-#define DISPLAY_CS_DDR DDRD
-#define DISPLAY_CS_PORT PORTD
-#define DISPLAY_CS_PIN PD3
-
-// D/C pin for command/data selection
-// D/C = LOW for command, HIGH for data
-#define DC_DDR DDRD
-#define DC_PORT PORTD
-#define DC_PIN PD0
-
-// Macros for pin control
-#define DISPLAY_CS_LOW() (DISPLAY_CS_PORT &= ~(1 << DISPLAY_CS_PIN))
-#define DISPLAY_CS_HIGH() (DISPLAY_CS_PORT |= (1 << DISPLAY_CS_PIN))
-#define DC_COMMAND() (DC_PORT &= ~(1 << DC_PIN))
-#define DC_DATA() (DC_PORT |= (1 << DC_PIN))
+// Macros for pin control using pin abstraction
+#define DISPLAY_CS_LOW()  GPIO_SET_LOW(PIN_DISPLAY_CS)
+#define DISPLAY_CS_HIGH() GPIO_SET_HIGH(PIN_DISPLAY_CS)
+#define DC_COMMAND()      GPIO_SET_LOW(PIN_DISPLAY_DC)
+#define DC_DATA()         GPIO_SET_HIGH(PIN_DISPLAY_DC)
 
 static void spi_cmd(uint8_t byte) {
   DC_COMMAND();
@@ -44,13 +29,12 @@ void display_bus_spi_init(void) {
   // Mode 0, MSB first, fastest clock (F_CPU/2 = 8MHz)
   spi_init(SPI_CLK_DIV_2, SPI_MODE_0, SPI_MSB_FIRST);
 
-  // Set display SS pin as output and deselect
-  DISPLAY_CS_DDR |= (1 << DISPLAY_CS_PIN);
-  DISPLAY_CS_HIGH();
-
-  // Set D/C pin as output, default to command mode
-  DC_DDR |= (1 << DC_PIN);
-  DC_COMMAND();
+  // Set display CS and DC pins as outputs and set initial states
+  GPIO_SET_OUTPUT(PIN_DISPLAY_CS);
+  GPIO_SET_OUTPUT(PIN_DISPLAY_DC);
+  
+  DISPLAY_CS_HIGH();  // Deselect display
+  DC_COMMAND();       // Default to command mode
 }
 
 display_bus_t display_bus_spi = {.cmd = spi_cmd, .data = spi_data};

@@ -1,21 +1,16 @@
 #include "SPI.h"
-
-// SPI pin definitions for ATmega328P
-#define SPI_DDR   DDRB
-#define SPI_PORT  PORTB
-#define SPI_SS    PB2
-#define SPI_MOSI  PB3
-#define SPI_MISO  PB4
-#define SPI_SCK   PB5
+#include "../pins.h"
 
 void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
 {
-  // Set MOSI, SCK, SS as outputs
+  // Set MOSI, CLK, SS as outputs
   // SS must be output for master mode (even if not used)
-  SPI_DDR |= (1 << SPI_MOSI) | (1 << SPI_SCK) | (1 << SPI_SS);
+  GPIO_SET_OUTPUT(PIN_SPI_MOSI);
+  GPIO_SET_OUTPUT(PIN_SPI_CLK);
+  GPIO_SET_OUTPUT(PIN_SPI_SS);
 
   // MISO as input (default, but be explicit)
-  SPI_DDR &= ~(1 << SPI_MISO);
+  GPIO_SET_INPUT(PIN_SPI_MISO);
 
   // Build SPCR register value
   uint8_t spcr = (1 << SPE) | (1 << MSTR);  // Enable SPI, Master mode

@@ -1,4 +1,5 @@
 #include "I2C.h"
+#include "../pins.h"
 
 // Global error status (0 = no error, non-zero = error code)
 static uint8_t g_i2c_error = 0;
@@ -8,8 +9,12 @@ static uint8_t g_i2c_error = 0;
 #define I2C_TIMEOUT 10000
 
 void i2c_init(void) {
-  DDRC &= ~((1 << PC4) | (1 << PC5));
-  PORTC |= (1 << PC4) | (1 << PC5);
+  // Configure SDA and SCL as inputs with pull-ups (let I2C hardware control them)
+  GPIO_SET_INPUT(PIN_I2C_SDA);
+  GPIO_SET_INPUT(PIN_I2C_SCL);
+  GPIO_ENABLE_PULLUP(PIN_I2C_SDA);
+  GPIO_ENABLE_PULLUP(PIN_I2C_SCL);
+  
   TWSR = 0;
   TWBR = 12;// 400kHz! 72; // 100kHz
   g_i2c_error = 0;

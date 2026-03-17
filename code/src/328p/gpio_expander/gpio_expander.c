@@ -2,6 +2,7 @@
 #include "mcp23017.h"
 #include "../I2C/I2C.h"
 #include "../display.h"
+#include "../pins.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdio.h>
@@ -10,6 +11,7 @@
 // Debug Helper
 // =============================================================================
 
+__attribute__((unused))
 static void debug_i2c_error(const char *operation, uint8_t addr) {
   uint8_t error = i2c_get_error();
   if (error != 0) {
@@ -39,10 +41,14 @@ static void gpio_expander_init_int_pins(void) {
   // Configure interrupt pins as inputs with pull-ups
   // (MCP23017 INT pins are open-drain by default)
 
-  // PC1, PC2, PC3 as inputs
-  DDRC &= ~((1 << PC1) | (1 << PC2) | (1 << PC3));
-  // Enable pull-ups on PC1, PC2, PC3
-  PORTC |= (1 << PC1) | (1 << PC2) | (1 << PC3);
+  // Configure EXP1_INTA, EXP1_INTB, EXP2_INT as inputs with pull-ups
+  GPIO_SET_INPUT(PIN_EXP1_INTA);
+  GPIO_SET_INPUT(PIN_EXP1_INTB);
+  GPIO_SET_INPUT(PIN_EXP2_INT);
+  
+  GPIO_ENABLE_PULLUP(PIN_EXP1_INTA);
+  GPIO_ENABLE_PULLUP(PIN_EXP1_INTB);
+  GPIO_ENABLE_PULLUP(PIN_EXP2_INT);
 }
 
 // =============================================================================
@@ -53,86 +59,39 @@ void gpio_expander_init(void) {
   // Initialize interrupt input pins
   gpio_expander_init_int_pins();
 
-  display_draw_string(0, 24, "Init EXP1...");
-  display_update();
-
   // Initialize expander 1 (buttons 0-15 + display reset)
   mcp23017_init(&g_expander[0], GPIO_EXP1_ADDR);
-  debug_i2c_error("EXP1 init", GPIO_EXP1_ADDR);
-
-  display_draw_string(0, 24, "Init EXP2...");
-  display_update();
-
   // Initialize expander 2 (buttons 16-31)
   mcp23017_init(&g_expander[1], GPIO_EXP2_ADDR);
-  debug_i2c_error("EXP2 init", GPIO_EXP2_ADDR);
-
-  display_draw_string(0, 24, "Cfg EXP1...");
-  display_update();
 
   // Configure expander 1:
   // - Port A: All inputs (buttons 0-7)
   // - Port B: Pin 7 output (display_rst), pins 0-6 inputs (buttons 8-14)
   mcp23017_set_direction(&g_expander[0], MCP23017_PORT_A, 0xFF); // All inputs
-  debug_i2c_error("EXP1 dirA", GPIO_EXP1_ADDR);
-  
-  mcp23017_set_direction(&g_expander[0], MCP23017_PORT_B,
-                         0x7F); // Pin 7 output, rest inputs
-  debug_i2c_error("EXP1 dirB", GPIO_EXP1_ADDR);
+  mcp23017_set_direction(&g_expander[0], MCP23017_PORT_B, 0x7F); // Pin 7 output, rest inputs
 
   // Enable pull-ups for button inputs
   mcp23017_set_pullups(&g_expander[0], MCP23017_PORT_A, 0xFF); // All pull-ups
-  debug_i2c_error("EXP1 puA", GPIO_EXP1_ADDR);
-  
-  mcp23017_set_pullups(&g_expander[0], MCP23017_PORT_B,
-                       0x7F); // Pull-ups except pin 7
-  debug_i2c_error("EXP1 puB", GPIO_EXP1_ADDR);
+  mcp23017_set_pullups(&g_expander[0], MCP23017_PORT_B, 0x7F); // Pull-ups except pin 7
 
   // Set display reset high (inactive, since it's active-low)
   mcp23017_write_pin(&g_expander[0], MCP23017_PORT_B, DISPLAY_RST_PIN, 1);
-  debug_i2c_error("EXP1 RST", GPIO_EXP1_ADDR);
-
-  display_draw_string(0, 24, "Cfg EXP2...");
-  display_update();
 
   // Configure expander 2:
-  // - Port A: All inputs (buttons 16-23)
-  // - Port B: All inputs (buttons 24-31)
+  // set All inputs
   mcp23017_set_direction(&g_expander[1], MCP23017_PORT_A, 0xFF);
-  debug_i2c_error("EXP2 dirA", GPIO_EXP2_ADDR);
-  
   mcp23017_set_direction(&g_expander[1], MCP23017_PORT_B, 0xFF);
-  debug_i2c_error("EXP2 dirB", GPIO_EXP2_ADDR);
-
   // Enable pull-ups for all buttons
   mcp23017_set_pullups(&g_expander[1], MCP23017_PORT_A, 0xFF);
-  debug_i2c_error("EXP2 puA", GPIO_EXP2_ADDR);
-  
   mcp23017_set_pullups(&g_expander[1], MCP23017_PORT_B, 0xFF);
-  debug_i2c_error("EXP2 puB", GPIO_EXP2_ADDR);
-
-  display_draw_string(0, 24, "Cfg INT...");
-  display_update();
 
   // Configure interrupt-on-change for all button pins
   // Compare to previous value (detect any change)
-  mcp23017_configure_interrupt(&g_expander[0], MCP23017_PORT_A, 0xFF, 0x00,
-                               0x00);
-  debug_i2c_error("EXP1 intA", GPIO_EXP1_ADDR);
-  
-  mcp23017_configure_interrupt(&g_expander[0], MCP23017_PORT_B, 0x7F, 0x00,
-                               0x00); // Exclude pin 7
-  debug_i2c_error("EXP1 intB", GPIO_EXP1_ADDR);
-  
-  mcp23017_configure_interrupt(&g_expander[1], MCP23017_PORT_A, 0xFF, 0x00,
-                               0x00);
-  debug_i2c_error("EXP2 intA", GPIO_EXP2_ADDR);
-  
-  mcp23017_configure_interrupt(&g_expander[1], MCP23017_PORT_B, 0xFF, 0x00,
-                               0x00);
-  debug_i2c_error("EXP2 intB", GPIO_EXP2_ADDR);
+  mcp23017_configure_interrupt(&g_expander[0], MCP23017_PORT_A, 0xFF, 0x00, 0x00);
+  mcp23017_configure_interrupt(&g_expander[0], MCP23017_PORT_B, 0x7F, 0x00, 0x00); // Exclude pin 7
+  mcp23017_configure_interrupt(&g_expander[1], MCP23017_PORT_A, 0xFF, 0x00, 0x00);
+  mcp23017_configure_interrupt(&g_expander[1], MCP23017_PORT_B, 0xFF, 0x00, 0x00);
 
-  display_draw_string(0, 24, "EXP done!");
   display_update();
 
   // Interrupts will be cleared on first button scan task run
@@ -152,8 +111,7 @@ uint32_t gpio_expander_read_buttons(void) {
 
   // Mask out the display reset pin from expander 1 port B
   // Port B is in high byte, mask bit 7
-  exp1_raw |=
-      (1 << (8 + DISPLAY_RST_PIN)); // Force bit high (as if not pressed)
+  exp1_raw |= (1 << (8 + DISPLAY_RST_PIN)); // Force bit high (as if not pressed)
 
   // Invert: buttons are active-low, we want 1 = pressed
   buttons_low = ~exp1_raw;
@@ -183,13 +141,13 @@ uint16_t gpio_expander_read_buttons_exp(uint8_t expander) {
 
 uint8_t gpio_expander_has_interrupt(void) {
   // Check if any interrupt pin is low (active)
-  // EXP1_INTA: PC1, EXP1_INTB: PC2, EXP2_INT: PC3
+  // EXP1_INTA, EXP1_INTB, EXP2_INT are all active LOW
 
-  if (!(PINC & (1 << PC1)))
+  if (!GPIO_READ(PIN_EXP1_INTA))
     return 1;
-  if (!(PINC & (1 << PC2)))
+  if (!GPIO_READ(PIN_EXP1_INTB))
     return 1;
-  if (!(PINC & (1 << PC3)))
+  if (!GPIO_READ(PIN_EXP2_INT))
     return 1;
 
   return 0;
@@ -206,13 +164,11 @@ void gpio_expander_clear_interrupts(void) {
 // =============================================================================
 
 void gpio_expander_display_reset_assert(void) {
-  mcp23017_write_pin(&g_expander[DISPLAY_RST_EXPANDER], DISPLAY_RST_PORT,
-                     DISPLAY_RST_PIN, 0); // Active low
+  mcp23017_write_pin(&g_expander[DISPLAY_RST_EXPANDER], DISPLAY_RST_PORT, DISPLAY_RST_PIN, 0); // Active low
 }
 
 void gpio_expander_display_reset_release(void) {
-  mcp23017_write_pin(&g_expander[DISPLAY_RST_EXPANDER], DISPLAY_RST_PORT,
-                     DISPLAY_RST_PIN, 1); // Inactive (high)
+  mcp23017_write_pin(&g_expander[DISPLAY_RST_EXPANDER], DISPLAY_RST_PORT, DISPLAY_RST_PIN, 1); // Inactive (high)
 }
 
 void gpio_expander_display_reset_pulse(uint8_t delay_ms) {

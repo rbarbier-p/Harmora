@@ -1,32 +1,52 @@
 #include "analog_mux.h"
-#include <avr/io.h>
+#include "../pins.h"
 
-// Pin definitions from pinout file:
-// PD4 -> MUX_S3
-// PD5 -> MUX_S0
-// PD6 -> MUX_S1
-// PD7 -> MUX_S2
-
-#define MUX_S0 PD5
-#define MUX_S1 PD6
-#define MUX_S2 PD7
-#define MUX_S3 PD4
+/**
+ * Analog Multiplexer Driver (CD74HC4067M)
+ * 
+ * Controls 16:1 analog mux for hall sensors and potentiometers
+ * Select lines: MUX_S[3:0] = 4-bit channel select (0-15)
+ */
 
 void analog_mux_init(void) {
-  // Set PD4, PD5, PD6, PD7 as outputs
-  DDRD |= (1 << MUX_S0) | (1 << MUX_S1) | (1 << MUX_S2) | (1 << MUX_S3);
+  // Set all mux select pins as outputs
+  GPIO_SET_OUTPUT(PIN_MUX_S0);
+  GPIO_SET_OUTPUT(PIN_MUX_S1);
+  GPIO_SET_OUTPUT(PIN_MUX_S2);
+  GPIO_SET_OUTPUT(PIN_MUX_S3);
   
-  // Initialize to channel 0
-  PORTD &= ~((1 << MUX_S0) | (1 << MUX_S1) | (1 << MUX_S2) | (1 << MUX_S3));
+  // Initialize to channel 0 (all select lines LOW)
+  GPIO_SET_LOW(PIN_MUX_S0);
+  GPIO_SET_LOW(PIN_MUX_S1);
+  GPIO_SET_LOW(PIN_MUX_S2);
+  GPIO_SET_LOW(PIN_MUX_S3);
 }
 
 void analog_mux_select(uint8_t channel) {
-  // Clear the select bits first
-  PORTD &= ~((1 << MUX_S0) | (1 << MUX_S1) | (1 << MUX_S2) | (1 << MUX_S3));
+  // Set select lines based on channel bits
+  // S0 = LSB, S3 = MSB
   
-  // Set the appropriate bits based on the channel
-  if (channel & 0x01) PORTD |= (1 << MUX_S0);
-  if (channel & 0x02) PORTD |= (1 << MUX_S1);
-  if (channel & 0x04) PORTD |= (1 << MUX_S2);
-  if (channel & 0x08) PORTD |= (1 << MUX_S3);
+  if (channel & 0x01) {
+    GPIO_SET_HIGH(PIN_MUX_S0);
+  } else {
+    GPIO_SET_LOW(PIN_MUX_S0);
+  }
+  
+  if (channel & 0x02) {
+    GPIO_SET_HIGH(PIN_MUX_S1);
+  } else {
+    GPIO_SET_LOW(PIN_MUX_S1);
+  }
+  
+  if (channel & 0x04) {
+    GPIO_SET_HIGH(PIN_MUX_S2);
+  } else {
+    GPIO_SET_LOW(PIN_MUX_S2);
+  }
+  
+  if (channel & 0x08) {
+    GPIO_SET_HIGH(PIN_MUX_S3);
+  } else {
+    GPIO_SET_LOW(PIN_MUX_S3);
+  }
 }
