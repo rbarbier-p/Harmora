@@ -27,6 +27,7 @@ typedef struct {
 typedef struct {
     key_event_t events[MAX_KEY_EVENTS];
     uint8_t count;        // Number of events pending
+    uint16_t pressed;     // Bit field: current state of all 12 keys (1=pressed, 0=released)
 } key_state_t;
 
 // =============================================================================

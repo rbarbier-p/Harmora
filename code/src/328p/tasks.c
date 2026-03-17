@@ -18,39 +18,63 @@
  */
 
 void task_hall_scan(void) {
-  // TODO: Implement hall sensor scanning
-  //
-  // Example implementation:
-  //
-  // static uint16_t last_raw[12];
-  // static uint8_t last_pressed[12];
-  //
-  // for (uint8_t i = 0; i < 12; i++) {
-  //     // Select mux channel
-  //     analog_mux_select(i);
-  //     _delay_us(10);  // Mux settling time
-  //
-  //     // Read ADC
-  //     uint16_t raw = adc_read_channel(7);  // ADC7 = AMUX_OUT
-  //
-  //     // Detect press/release by threshold
-  //     uint8_t is_pressed = (raw > PRESS_THRESHOLD);
-  //
-  //     // Detect state change
-  //     if (is_pressed && !last_pressed[i]) {
-  //         // Key pressed - calculate velocity from attack time
-  //         uint16_t attack_time = raw - last_raw[i];  // Simplified
-  //         uint8_t velocity = calculate_velocity(attack_time);
-  //         input_state_add_key_event(i, velocity, 1);
-  //     }
-  //     else if (!is_pressed && last_pressed[i]) {
-  //         // Key released
-  //         input_state_add_key_event(i, 0, 0);
-  //     }
-  //
-  //     last_raw[i] = raw;
-  //     last_pressed[i] = is_pressed;
-  // }
+  // Scan 12 hall effect sensors for piano keys via analog multiplexer
+  // Each key has a magnetic hall sensor that outputs analog voltage
+  // When a key is pressed, the magnet approaches the sensor
+  // 
+  // Channel mapping: Keys 0-7 → channels 0-7, Keys 8-11 → channels 12-15
+  // (Channels 8-11 are reserved for potentiometers)
+  // ADC reads 8-bit values (0-255) from AMUX_OUT on ADC7
+  
+  // Per-key press thresholds (8-bit, 0-255)
+  // Adjust these values per key to compensate for sensor variations
+  // Key is considered PRESSED when ADC value < threshold (hall sensor goes LOW when magnet near)
+  static uint8_t press_threshold[12] = {
+    85, 97, 84, 90,  // Keys 0-3
+    82, 89, 86, 87,  // Keys 4-7
+    83, 89, 95, 80   // Keys 8-11
+  };
+  
+  // Previous key states (1 bit per key: 1=pressed, 0=released)
+  // Using bit field to save RAM (2 bytes instead of 12)
+  static uint16_t last_pressed = 0;
+  
+  // Channel mapping array (12 bytes in FLASH)
+  static const uint8_t key_to_channel[12] = {
+    0, 1, 2, 3, 4, 5, 6, 7,  // Keys 0-7 → channels 0-7
+    12, 13, 14, 15            // Keys 8-11 → channels 12-15
+  };
+  
+  // Scan all 12 keys
+  adc_select_channel(7); // Select ADC7 (AMUX_OUT) once at the start to save time
+  for (uint8_t key = 0; key < 12; key++) {
+    // Select mux channel
+    analog_mux_select(key_to_channel[key]);
+    _delay_us(10);  // Mux settling time (CD74HC4067M typical: 5-10us)
+    // Read 8-bit ADC value from ADC7 (AMUX_OUT)
+    uint8_t value = adc_read();
+    
+    // Determine if key is currently pressed (hall sensor goes LOW when pressed)
+    uint8_t is_pressed = (value < press_threshold[key]);
+    
+    // Check previous state
+    uint8_t was_pressed = (last_pressed & (1 << key)) ? 1 : 0;
+    
+    // Detect state change
+    if (is_pressed != was_pressed) {
+      if (is_pressed) {
+        // Key pressed - send with velocity 64 (no velocity detection yet)
+        input_state_add_key_event(key, 64, 1);
+        last_pressed |= (1 << key);
+        g_input_state.keys.pressed |= (1 << key);  // Update global state
+      } else {
+        // Key released - send with velocity 0
+        input_state_add_key_event(key, 0, 0);
+        last_pressed &= ~(1 << key);
+        g_input_state.keys.pressed &= ~(1 << key);  // Update global state
+      }
+    }
+  }
 }
 
 void task_encoder_scan(void) {
@@ -59,12 +83,13 @@ void task_encoder_scan(void) {
   // 
   // Encoder to channel mapping (from pinout):
   // EN1: CH2=A, CH3=B
-  // EN2: CH0=A, CH1=B  (only one soldered for now)
+  // EN2: CH0=A, CH1=B
   // EN3: CH4=A, CH5=B
   // EN4: CH6=A, CH7=B
   // EN5: CH10=A, CH11=B
   // EN6: CH12=A, CH13=B
   
+  // Encoder channel mapping (8 bytes)
   static const uint8_t encoder_channels[ENCODER_COUNT][2] = {
     {2, 3},   // EN1: A=CH2, B=CH3
     {0, 1},   // EN2: A=CH0, B=CH1
@@ -74,67 +99,68 @@ void task_encoder_scan(void) {
     {12, 13}  // EN6: A=CH12, B=CH13
   };
   
-  // Store previous state for each encoder (2 bits per encoder: AB)
-  static uint8_t last_state[ENCODER_COUNT] = {0, 0, 0, 0, 0, 0};
+  // Quadrature decoding lookup table (16 bytes in FLASH)
+  // Index = (previous_state << 2) | current_state
+  // Value = step delta (-1, 0, +1)
+  // Standard quadrature Gray code sequence:
+  //   CW:  00 -> 01 -> 11 -> 10 -> 00 (4 steps per click)
+  //   CCW: 00 -> 10 -> 11 -> 01 -> 00
+  static const int8_t transition_table[16] = {
+     0, -1, +1,  0,   // previous=00
+    +1,  0,  0, -1,   // previous=01
+    -1,  0,  0, +1,   // previous=10
+     0, +1, -1,  0    // previous=11
+  };
+  
+  // Per-encoder state (12 bytes total):
+  // - last_state: previous AB pins (6 bytes, 2 bits used per byte)
+  // - step_counter: internal step accumulator (6 bytes, -128 to +127)
+  static uint8_t last_state[ENCODER_COUNT] = {0};
+  static int8_t step_counter[ENCODER_COUNT] = {0};
   
   // Scan all encoders
   for (uint8_t enc = 0; enc < ENCODER_COUNT; enc++) {
     // Read A pin
     analog_mux_select(encoder_channels[enc][0]);
-    _delay_us(5);  // Mux settling time
+    _delay_us(10);  // Mux settling time
     uint8_t a = digital_mux_read();
     
     // Read B pin
     analog_mux_select(encoder_channels[enc][1]);
-    _delay_us(5);  // Mux settling time
+    _delay_us(10);  // Mux settling time
     uint8_t b = digital_mux_read();
     
     // Current state (2 bits: AB)
     uint8_t current = (a << 1) | b;
-    uint8_t previous = last_state[enc];
     
-    // Quadrature decoding using Gray code state machine
-    // Standard quadrature encoder outputs Gray code sequence:
-    // CW:  00 -> 01 -> 11 -> 10 -> 00
-    // CCW: 00 -> 10 -> 11 -> 01 -> 00
-    //
-    // We detect direction by looking at transitions:
-    int8_t delta = 0;
-    
-    // Lookup table approach (more compact than if-else chain)
-    // Index = (previous << 2) | current
-    // Value = delta (-1, 0, +1)
-    static const int8_t transition_table[16] = {
-      // previous=00
-       0,  // 00->00: no change
-      -1,  // 00->01: CCW
-      +1,  // 00->10: CW
-       0,  // 00->11: invalid (should not happen with good encoder)
-      // previous=01
-      +1,  // 01->00: CW
-       0,  // 01->01: no change
-       0,  // 01->10: invalid
-      -1,  // 01->11: CCW
-      // previous=10
-      -1,  // 10->00: CCW
-       0,  // 10->01: invalid
-       0,  // 10->10: no change
-      +1,  // 10->11: CW
-      // previous=11
-       0,  // 11->00: invalid
-      +1,  // 11->01: CW
-      -1,  // 11->10: CCW
-       0   // 11->11: no change
-    };
-    
-    uint8_t index = (previous << 2) | current;
-    delta = transition_table[index];
-    
-    if (delta != 0) {
-      input_state_update_encoder(enc, delta);
+    // Only process if state changed (saves CPU and reduces noise)
+    if (current != last_state[enc]) {
+      // Look up transition delta
+      uint8_t index = (last_state[enc] << 2) | current;
+      int8_t delta = transition_table[index];
+      
+      if (delta != 0) {
+        // Accumulate internal steps
+        int8_t new_steps = step_counter[enc] + delta;
+        
+        // Check if we've completed a full click (4 steps)
+        // Using division to handle both CW and CCW correctly:
+        //   CW:  0->1->2->3->4  => (4/4=1) - (0/4=0) = +1 click
+        //   CCW: 0->-1->-2->-3->-4 => (-4/4=-1) - (0/4=0) = -1 click
+        int8_t old_clicks = step_counter[enc] / 4;
+        int8_t new_clicks = new_steps / 4;
+        
+        if (new_clicks != old_clicks) {
+          // We crossed a click boundary - update global state
+          int8_t click_delta = new_clicks - old_clicks;
+          input_state_update_encoder(enc, click_delta);
+        }
+        
+        step_counter[enc] = new_steps;
+      }
+      
+      last_state[enc] = current;
     }
-    
-    last_state[enc] = current;
   }
 }
 
@@ -157,10 +183,6 @@ void task_mcu_comm(void) {
   //     input_state_clear_dirty();
   // }
 }
-
-// =============================================================================
-// Medium Priority Tasks
-// =============================================================================
 
 void task_button_scan(void) {
   // Interrupt-driven button scanning
@@ -291,64 +313,37 @@ void task_pot_scan(void) {
 }
 
 void task_display_update(void) {
-  // Debug display showing raw register values, pots, and encoders
-  static uint8_t update_counter = 0;
-
-  // Only update display every 16th call to reduce flicker
-  if (++update_counter < 16) {
-    return;
+  // Debug display: just call display_update() to flush framebuffer
+  // The scheduler writes timing values directly to framebuffer after each task
+  // We only need to draw static labels once on first run
+  
+  static uint8_t first_run = 1;
+  
+  if (first_run) {
+    first_run = 0;
+    display_clear();
+    
+    // Draw static labels (task names) - one per page (8 pixels each)
+    // Format: "Name:      " where value will be written by scheduler
+    display_draw_string(0, 0,  "Hall:");   // Page 0
+    display_draw_string(0, 8,  "Enc:");    // Page 1
+    display_draw_string(0, 16, "MCU:");    // Page 2
+    display_draw_string(0, 24, "Btn:");    // Page 3
+    display_draw_string(0, 32, "Pot:");    // Page 4
+    display_draw_string(0, 40, "Disp:");   // Page 5
+    display_draw_string(0, 48, "LED:");    // Page 6
+    display_draw_string(0, 56, "Loop:");   // Page 7 (total loop time)
   }
-  update_counter = 0;
-
-  display_clear();
-
-  char buf[20];
   
-  // -------------------------------------------------------------------------
-  // Raw expander register values
-  // -------------------------------------------------------------------------
-  uint8_t raw_1a = gpio_expander_read_raw(0, 0);
-  uint8_t raw_1b = gpio_expander_read_raw(0, 1);
-  uint8_t raw_2a = gpio_expander_read_raw(1, 0);
-  uint8_t raw_2b = gpio_expander_read_raw(1, 1);
-  
-  snprintf(buf, sizeof(buf), "EXP1 A:%02X B:%02X", raw_1a, raw_1b);
-  display_draw_string(0, 0, buf);
-  snprintf(buf, sizeof(buf), "EXP2 A:%02X B:%02X", raw_2a, raw_2b);
-  display_draw_string(0, 8, buf);
-
-  // -------------------------------------------------------------------------
-  // DEBUG: Show raw EN2 pins (CH0=A, CH1=B)
-  // -------------------------------------------------------------------------
-  analog_mux_select(0);
-  _delay_us(10);
-  uint8_t en2_a = digital_mux_read();
-  
-  analog_mux_select(1);
-  _delay_us(10);
-  uint8_t en2_b = digital_mux_read();
-  
-  snprintf(buf, sizeof(buf), "EN2: A=%d B=%d", en2_a, en2_b);
-  display_draw_string(0, 16, buf);
-
-  // -------------------------------------------------------------------------
-  // Encoders (deltas)
-  // -------------------------------------------------------------------------
-  for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
-    snprintf(buf, sizeof(buf), "E%d:%+4d", i, g_input_state.encoders.delta[i]);
-    display_draw_string((i % 3) * 42, 24 + ((i / 3) * 8), buf);
-  }
-
-  // -------------------------------------------------------------------------
-  // Potentiometers
-  // -------------------------------------------------------------------------
-  for (uint8_t i = 0; i < POT_COUNT; i++) {
-    snprintf(buf, sizeof(buf), "P%d:%03d", i, g_input_state.pots.values[i]);
-    display_draw_string((i % 2) * 64, 40 + ((i / 2) * 8), buf);
-  }
-
+  // Flush framebuffer to display
   display_update();
 }
+
+/* Previous display task - commented out for debug mode
+void task_display_update_normal(void) {
+  // ... old implementation ...
+}
+*/
 
 void task_led_update(void) {
   // TODO: Implement LED chain update

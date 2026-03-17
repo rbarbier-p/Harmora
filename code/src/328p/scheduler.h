@@ -29,16 +29,19 @@ void scheduler_enable(task_id_t id, uint8_t enabled);
 
 // --- Statistics (always available, stored for display) ---
 
-// Get last execution time in microseconds
+// Note: In debug mode, timing is written directly to framebuffer by scheduler
+// These functions are deprecated but kept for compatibility
+
+// Get last execution time in microseconds (deprecated - returns 0)
 uint16_t scheduler_get_last_us(task_id_t id);
 
-// Get max execution time in microseconds
+// Get max execution time in microseconds (deprecated - returns 0)
 uint16_t scheduler_get_max_us(task_id_t id);
 
-// Get total loop time (last full scheduler_run call) in microseconds
+// Get total loop time (deprecated - returns 0)
 uint16_t scheduler_get_loop_time_us(void);
 
-// Reset max stats
+// Reset max stats (deprecated - does nothing)
 void scheduler_reset_max(void);
 
 #endif // SCHEDULER_H

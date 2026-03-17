@@ -1,6 +1,8 @@
 #include "scheduler.h"
 #include "stopwatch.h"
 #include "tasks.h"
+#include "display.h"
+#include <stdio.h>
 
 // Task function pointer type
 typedef void (*task_func_t)(void);
@@ -15,10 +17,24 @@ typedef struct {
 // Task table
 static task_t tasks[TASK_COUNT];
 
-// Statistics
-static uint16_t last_us[TASK_COUNT];
-static uint16_t max_us[TASK_COUNT];
-static uint16_t loop_time_us;
+// Y position for each task (1 page = 8 pixels per task)
+// Page 0: Hall, Page 1: Encoder, Page 2: MCU, Page 3: Button
+// Page 4: Pot, Page 5: Display, Page 6: LED, Page 7: Loop total
+#define TASK_Y(id) ((id) * 8)
+#define VALUE_X 42  // X position where numeric value starts (after "Name: ")
+
+// Shared buffer for snprintf (reused across all timing writes)
+static char time_buf[8];
+
+// Write timing value to framebuffer (no display_update, just framebuffer write)
+static void write_task_time(uint8_t task_id, uint16_t time_us) {
+  uint8_t y = TASK_Y(task_id);
+  // Clear only the value area (5 chars worth = 30 pixels)
+  display_clear_rect(VALUE_X, y, 30, 8);
+  // Write new value
+  snprintf(time_buf, sizeof(time_buf), "%5d", time_us);
+  display_draw_string(VALUE_X, y, time_buf);
+}
 
 void scheduler_init(void) {
   // High priority - every loop
@@ -33,13 +49,6 @@ void scheduler_init(void) {
   // Low priority - every 4 loops
   tasks[TASK_DISPLAY_UPDATE] = (task_t){task_display_update, 4, 1};
   tasks[TASK_LED_UPDATE] = (task_t){task_led_update, 4, 1};
-
-  // Clear stats
-  for (uint8_t i = 0; i < TASK_COUNT; i++) {
-    last_us[i] = 0;
-    max_us[i] = 0;
-  }
-  loop_time_us = 0;
 }
 
 void scheduler_run(uint8_t loop_count) {
@@ -61,18 +70,24 @@ void scheduler_run(uint8_t loop_count) {
       uint16_t elapsed = (t1 >= t0) ? (t1 - t0) : (0xFFFF - t0 + t1);
       elapsed *= 4; // Convert to microseconds (4us per tick)
 
-      last_us[i] = elapsed;
-      if (elapsed > max_us[i]) {
-        max_us[i] = elapsed;
+      // Write timing directly to framebuffer (except for display task itself)
+      if (i != TASK_DISPLAY_UPDATE) {
+        write_task_time(i, elapsed);
       }
     }
   }
 
+  // Write loop total time
   uint16_t loop_end = stopwatch_read();
   uint16_t elapsed = (loop_end >= loop_start)
                          ? (loop_end - loop_start)
                          : (0xFFFF - loop_start + loop_end);
-  loop_time_us = elapsed * 4;
+  elapsed *= 4;
+  
+  // Write loop time at page 7 (y=56)
+  display_clear_rect(VALUE_X, 56, 30, 8);
+  snprintf(time_buf, sizeof(time_buf), "%5d", elapsed);
+  display_draw_string(VALUE_X, 56, time_buf);
 }
 
 void scheduler_set_divider(task_id_t id, uint8_t divider) {
@@ -87,18 +102,8 @@ void scheduler_enable(task_id_t id, uint8_t enabled) {
   }
 }
 
-uint16_t scheduler_get_last_us(task_id_t id) {
-  return (id < TASK_COUNT) ? last_us[id] : 0;
-}
-
-uint16_t scheduler_get_max_us(task_id_t id) {
-  return (id < TASK_COUNT) ? max_us[id] : 0;
-}
-
-uint16_t scheduler_get_loop_time_us(void) { return loop_time_us; }
-
-void scheduler_reset_max(void) {
-  for (uint8_t i = 0; i < TASK_COUNT; i++) {
-    max_us[i] = 0;
-  }
-}
+// Deprecated functions - kept for compatibility
+uint16_t scheduler_get_last_us(task_id_t id) { return 0; }
+uint16_t scheduler_get_max_us(task_id_t id) { return 0; }
+uint16_t scheduler_get_loop_time_us(void) { return 0; }
+void scheduler_reset_max(void) { }

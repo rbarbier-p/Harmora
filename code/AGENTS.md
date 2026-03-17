@@ -40,8 +40,6 @@ Inter-MCU Communication:
 ```bash
 make all      # Build and flash (default)
 make flash    # Flash to target MCU using configured programmer (default: Arduino as ISP)
-make 8p       # Build and flash ATmega328P using Arduino as ISP (Arduino Nano middle-man)
-make u4       # Build and flash ATmega32U4 using Arduino as ISP (Arduino Nano middle-man)
 make size     # Show Flash/RAM usage
 make screen   # Open serial monitor (115200 baud)
 make clean    # Remove build artifacts
