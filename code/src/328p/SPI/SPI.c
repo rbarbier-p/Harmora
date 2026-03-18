@@ -3,13 +3,9 @@
 
 void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
 {
-  // Set MOSI, CLK, SS as outputs
-  // SS must be output for master mode (even if not used)
   GPIO_SET_OUTPUT(PIN_SPI_MOSI);
   GPIO_SET_OUTPUT(PIN_SPI_CLK);
   GPIO_SET_OUTPUT(PIN_SPI_SS);
-
-  // MISO as input (default, but be explicit)
   GPIO_SET_INPUT(PIN_SPI_MISO);
 
   // Build SPCR register value
@@ -48,10 +44,8 @@ void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
   switch (clk_div) {
     case SPI_CLK_DIV_2:
       spi2x = 1;
-      // SPR1=0, SPR0=0
       break;
     case SPI_CLK_DIV_4:
-      // SPR1=0, SPR0=0
       break;
     case SPI_CLK_DIV_8:
       spi2x = 1;
@@ -59,16 +53,6 @@ void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
       break;
     case SPI_CLK_DIV_16:
       spcr |= (1 << SPR0);
-      break;
-    case SPI_CLK_DIV_32:
-      spi2x = 1;
-      spcr |= (1 << SPR1);
-      break;
-    case SPI_CLK_DIV_64:
-      spcr |= (1 << SPR1);
-      break;
-    case SPI_CLK_DIV_128:
-      spcr |= (1 << SPR1) | (1 << SPR0);
       break;
     default:
       // Default to div4
@@ -86,16 +70,15 @@ void spi_init(uint8_t clk_div, uint8_t mode, uint8_t order)
 uint8_t spi_transfer(uint8_t data)
 {
   SPDR = data;
-  while (!(SPSR & (1 << SPIF)))
-    ;
+  while (!(SPSR & (1 << SPIF)));
+
   return SPDR;
 }
 
 void spi_send(uint8_t data)
 {
   SPDR = data;
-  while (!(SPSR & (1 << SPIF)))
-    ;
+  while (!(SPSR & (1 << SPIF)));
 }
 
 void spi_send_buf(const uint8_t *buf, uint16_t len)
@@ -103,8 +86,7 @@ void spi_send_buf(const uint8_t *buf, uint16_t len)
   for (uint16_t i = 0; i < len; i++)
   {
     SPDR = buf[i];
-    while (!(SPSR & (1 << SPIF)))
-      ;
+    while (!(SPSR & (1 << SPIF)));
   }
 }
 

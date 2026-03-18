@@ -11,8 +11,7 @@ void input_state_init(void) {
   memset(&g_input_state, 0, sizeof(input_state_t));
 }
 
-uint8_t input_state_add_key_event(uint8_t note, uint8_t velocity,
-                                  uint8_t is_pressed) {
+uint8_t input_state_add_key_event(uint8_t note, uint8_t velocity, uint8_t is_pressed) {
   key_state_t *keys = &g_input_state.keys;
 
   // Check if buffer full

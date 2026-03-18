@@ -33,9 +33,6 @@ uint8_t adc_read(void) {
 }
 
 uint8_t adc_read_channel(uint8_t channel) {
-  // Select the channel
   adc_select_channel(channel);
-  
-  // Read and return the value
   return adc_read();
 }

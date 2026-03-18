@@ -4,9 +4,7 @@
 #include <string.h>
 #include <avr/pgmspace.h>
 
-// ============================================================================
 // INTERNAL STATE
-// ============================================================================
 
 static display_state_t state = {
     .ctrl = NULL,
@@ -15,14 +13,11 @@ static display_state_t state = {
     .framebuffer = {0}
 };
 
-display_state_t* display_get_state(void)
-{
+display_state_t* display_get_state(void) {
     return &state;
 }
 
-// ============================================================================
 // CORE DISPLAY FUNCTIONS
-// ============================================================================
 
 void display_init(display_driver_t driver, display_bus_type_t bus, display_mode_t mode)
 {
@@ -86,12 +81,9 @@ void display_update(void)
     state.dirty_pages = 0;
 }
 
-// ============================================================================
 // LOW-LEVEL PIXEL MANIPULATION
-// ============================================================================
 
 // Bit mask lookup table in RAM for fast access (critical for text rendering performance)
-// Moved from PROGMEM: pgm_read_byte() was causing ~4.5µs per pixel access
 static const uint8_t bit_mask[8] = {
     0x01, 0x02, 0x04, 0x08,
     0x10, 0x20, 0x40, 0x80

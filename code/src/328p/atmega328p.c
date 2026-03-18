@@ -1,9 +1,8 @@
 #include "ADC/adc.h"
 #include "./I2C/I2C.h"
-#include "analog_mux/analog_mux.h"
-#include "digital_mux/digital_mux.h"
+#include "multiplexer/multiplexer.h"
 #include "display.h"
-#include "gpio_expander/gpio_expander.h"
+#include "expander/expander.h"
 #include "input_state.h"
 #include "interrupts.h"
 #include "scheduler.h"
@@ -17,12 +16,11 @@
 int main(void) {
   i2c_init();
   adc_init();
-  analog_mux_init();
-  digital_mux_init();
+  mux_init();
   stopwatch_init();
   input_state_init();
   display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
-  gpio_expander_init();
+  expander_init();
   interrupts_init();
   scheduler_init();
   

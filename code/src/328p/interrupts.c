@@ -7,8 +7,7 @@
 // Interrupt Flags
 // =============================================================================
 
-volatile uint8_t g_exp1_interrupt = 0;
-volatile uint8_t g_exp2_interrupt = 0;
+volatile uint8_t g_exp_interrupt = 0;
 
 // =============================================================================
 // Initialization
@@ -83,17 +82,17 @@ ISR(PCINT1_vect) {
     
     // Check expander 1 port A (PC1 = EXP1_INTA) - active LOW
     if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTA))) {
-        g_exp1_interrupt |= INT_PORT_A;
+        g_exp_interrupt |= INT_EXP1_PORT_A;
     }
     
     // Check expander 1 port B (PC2 = EXP1_INTB) - active LOW
     if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTB))) {
-        g_exp1_interrupt |= INT_PORT_B;
+        g_exp_interrupt |= INT_EXP1_PORT_B;
     }
     
     // Check expander 2 (PC3 = EXP2_INT, both ports OR'd) - active LOW
     if (!(pinc & GPIO_BIT_MASK(PIN_EXP2_INT))) {
-        g_exp2_interrupt = 1;
+        g_exp_interrupt |= INT_EXP2_PORTS;
     }
 }
 
