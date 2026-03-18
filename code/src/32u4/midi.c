@@ -792,41 +792,34 @@ int main(void)
                 handshake_sent = 1;
             }
             
-            /*
-            char buffer[10] = {"SPI: "};
-            buffer[5] = spi_read();
-            buffer[6] = '\0';
-            midi_debug(buffer);
-            */
 
             MPacket packet;
-            // HERE: i think behavior is receive is blocking 
-            if (mos_receive_packet(&packet))
-                midi_debug("Received something over mos!");
-            else
-                midi_debug("Not mos data.");
-
+            mos_receive_packet(&packet);
 
             // process packet
             switch (packet.command)
             {
                 case M_CMD_DEBUG_PRINT:
+                {
                     midi_debug_packet(packet);
-                    break;
+                } break;
                 case M_CMD_UPDATE_DATA:
+                {
                     midi_debug_packet(packet);
-                    break;
+                } break;
                 case M_CMD_REQUEST_DATA:
                 {
                     // HERE
+                    /*
                     packet = (MPacket){M_CMD_UPDATE_DATA, M_DEVICE_DISPLAY, 0, M_DISPLAY_DRAW_CHAR, 5, {'A', 0, 0, 0, 0}};
                     mos_send_packet(&packet);
-                    break;
-                }
+                    */
+                } break;
                 default:
-                    break;
+                {
+
+                } break;
             }
-            
                 
             uint8_t custom[] = {
                 MIDI_SYSEX_START,

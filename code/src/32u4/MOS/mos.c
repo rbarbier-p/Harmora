@@ -44,7 +44,6 @@ bool mos_send_packet(MPacket *packet)
     return (true);
 }
 
-
 bool mos_receive_packet(MPacket *packet)
 {
     if (spi_read() != M_START_OF_FRAME)
@@ -54,8 +53,8 @@ bool mos_receive_packet(MPacket *packet)
     packet->device = spi_read();
     packet->deviceId = spi_read();
     packet->deviceValue = spi_read();
-
     packet->length = spi_read();
+
     if (packet->length > M_MAX_DATA_LEN)
         return (false);
 

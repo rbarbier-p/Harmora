@@ -42,16 +42,14 @@ int main(void) {
   MPacket packet1 = {M_CMD_DEBUG_PRINT, M_DEVICE_EMPTY, 0, M_VALUE_EMPTY, sizeof(MSG), MSG};
   MPacket packet2 = {M_CMD_UPDATE_DATA, M_DEVICE_SWITCH, 1, M_SWITCH_PRESSED, 0, {0}};
   MPacket requestPacket = {M_CMD_REQUEST_DATA, M_DEVICE_DISPLAY, 0, M_VALUE_EMPTY, 0, {0}};
-  MPacket receivedPacket = {0};
-    //spi_init(SPI_CLK_DIV_16, SPI_MODE_0, SPI_MSB_FIRST);
+ MPacket receivedPacket = {0};
 
   while (1) {
       /*
     scheduler_run(loop_count);
     loop_count++; // Wraps at 255
       */
-         mos_send_packet(&packet1);
-    //      spi_send('A');
+      mos_send_packet(&packet1);
       _delay_ms(250);
       mos_send_packet(&packet2);
       _delay_ms(250);
