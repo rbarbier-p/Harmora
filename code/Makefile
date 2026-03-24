@@ -79,6 +79,7 @@ ATMEGA328P_SRC += src/328p/tasks.c
 ATMEGA328P_SRC += src/328p/scheduler.c
 ATMEGA328P_SRC += src/328p/input_state.c
 ATMEGA328P_SRC += src/328p/interrupts.c
+ATMEGA328P_SRC += src/328p/mcu_comm.c
 # ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)

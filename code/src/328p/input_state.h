@@ -87,4 +87,8 @@ void input_state_update_pot(uint8_t pot_id, uint8_t value);
 // Clear dirty flags after sending to 32U4 (called by task_mcu_comm)
 void input_state_clear_dirty(void);
 
+// Check if there are any pending changes to send (called by task_mcu_comm)
+// Returns non-zero if any input has changed since last clear_dirty
+uint8_t input_state_has_changes(void);
+
 #endif // INPUT_STATE_H

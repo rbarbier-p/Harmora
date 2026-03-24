@@ -99,3 +99,29 @@ void input_state_clear_dirty(void) {
   // Clear pot changed flags (keep values)
   g_input_state.pots.changed = 0;
 }
+
+uint8_t input_state_has_changes(void) {
+  // Check key events
+  if (g_input_state.keys.count > 0) {
+    return 1;
+  }
+
+  // Check encoder deltas (any non-zero)
+  for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
+    if (g_input_state.encoders.delta[i] != 0) {
+      return 1;
+    }
+  }
+
+  // Check button changes
+  if (g_input_state.buttons.changed != 0) {
+    return 1;
+  }
+
+  // Check pot changes
+  if (g_input_state.pots.changed != 0) {
+    return 1;
+  }
+
+  return 0;
+}

@@ -5,6 +5,7 @@
 #include "expander/expander.h"
 #include "input_state.h"
 #include "interrupts.h"
+#include "mcu_comm.h"
 #include "scheduler.h"
 #include "stopwatch.h"
 #include "tasks.h"
@@ -21,10 +22,12 @@ int main(void) {
   input_state_init();
   display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
   expander_init();
+  mcu_comm_init();
   interrupts_init();
   scheduler_init();
   
-  scheduler_enable(TASK_LED_UPDATE, 0);  // LED update not implemented yet
+  // LED task is now implemented
+  scheduler_enable(TASK_LED_UPDATE, 1);
 
   uint8_t loop_count = 0;
   while (1) {
