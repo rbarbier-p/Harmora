@@ -14,18 +14,12 @@
 
 
 // Piano Keys (Hall Sensors)
-typedef struct {
-    uint8_t note;         // MIDI note number (0-11 for one octave)
-    uint8_t velocity;     // Key press velocity (0-127)
-    uint8_t is_pressed;   // 1 = pressed, 0 = released
-} key_event_t;
 
-#define MAX_KEY_EVENTS 4  // Buffer recent key events (polyphony)
+#define KEY_COUNT 12
 
 typedef struct {
-    key_event_t events[MAX_KEY_EVENTS];
-    uint8_t count;        // Number of events pending
-    uint16_t pressed;     // Bit field: current state of all 12 keys (1=pressed, 0=released)
+    uint16_t pressed;     // Bit field: 1 = currently pressed
+    uint16_t changed;     // Bit field: 1 = changed since last send (dirty flag)
 } key_state_t;
 
 
@@ -71,8 +65,7 @@ extern input_state_t g_input_state;
 void input_state_init(void);
 
 // Add a key event (called by task_hall_scan)
-// Returns 1 if added, 0 if buffer full
-uint8_t input_state_add_key_event(uint8_t note, uint8_t velocity, uint8_t is_pressed);
+void input_state_update_key(uint8_t key_id, uint8_t is_pressed);
 
 // Update encoder delta (called by task_encoder_scan)
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta);

@@ -11,22 +11,26 @@ void input_state_init(void) {
   memset(&g_input_state, 0, sizeof(input_state_t));
 }
 
-uint8_t input_state_add_key_event(uint8_t note, uint8_t velocity, uint8_t is_pressed) {
+void input_state_update_key(uint8_t key_id, uint8_t is_pressed) {
+  if (key_id >= KEY_COUNT)
+    return;
+
   key_state_t *keys = &g_input_state.keys;
+  uint16_t mask = (1U << key_id);
 
-  // Check if buffer full
-  if (keys->count >= MAX_KEY_EVENTS) {
-    return 0; // Buffer full, event lost (consider increasing MAX_KEY_EVENTS)
+  // Get current state
+  uint8_t was_pressed = (keys->pressed & mask) ? 1 : 0;
+
+  // Check if changed
+  if (is_pressed != was_pressed) {
+    if (is_pressed) {
+      keys->pressed |= mask;
+    } else {
+      keys->pressed &= ~mask;
+    }
+
+    keys->changed |= mask;
   }
-
-  // Add event
-  key_event_t *event = &keys->events[keys->count];
-  event->note = note;
-  event->velocity = velocity;
-  event->is_pressed = is_pressed;
-
-  keys->count++;
-  return 1;
 }
 
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta) {
@@ -87,8 +91,8 @@ void input_state_update_pot(uint8_t pot_id, uint8_t value) {
 }
 
 void input_state_clear_dirty(void) {
-  // Clear key events
-  g_input_state.keys.count = 0;
+  // Clear key changed flags (keep pressed state)
+  g_input_state.keys.changed = 0;
 
   // Clear encoder deltas
   memset(g_input_state.encoders.delta, 0, sizeof(g_input_state.encoders.delta));
@@ -101,8 +105,8 @@ void input_state_clear_dirty(void) {
 }
 
 uint8_t input_state_has_changes(void) {
-  // Check key events
-  if (g_input_state.keys.count > 0) {
+  // Check key changes
+  if (g_input_state.keys.changed != 0) {
     return 1;
   }
 

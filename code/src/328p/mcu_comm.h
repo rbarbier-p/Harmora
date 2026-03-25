@@ -60,6 +60,9 @@ typedef enum {
     // Bitmap rendering (future)
     CMD_BITMAP      = 0x09,  // Params: x, y, w, h, bitmap_id (PROGMEM index)
     
+    // LED control
+    CMD_LED         = 0x0A,  // Params: led_id, preset
+    
 } draw_cmd_t;
 
 // Parameter counts for each command (for validation/debugging)
@@ -68,6 +71,7 @@ typedef enum {
 #define CMD_LINE_PARAMS       4   // x0, y0, x1, y1
 #define CMD_RECT_PARAMS       4   // x, y, w, h
 #define CMD_CHAR_PARAMS       3   // x, y, char
+#define CMD_LED_PARAMS        2   // led_id, preset
 // CMD_STRING is variable length: x, y, len, then len chars
 
 // =============================================================================
@@ -77,8 +81,7 @@ typedef enum {
 
 typedef enum {
     // Key events (piano hall sensors)
-    EVT_KEY_PRESS   = 0x10,  // Params: note, velocity
-    EVT_KEY_RELEASE = 0x11,  // Params: note
+    EVT_KEY         = 0x11,  // Params: id, state (0 or 1)
     
     // Encoder events
     EVT_ENCODER     = 0x12,  // Params: id, delta (signed int8)
@@ -118,11 +121,5 @@ void mcu_comm_handle_display(void);
  * Only sends changed values (delta mode)
  */
 void mcu_comm_send_inputs(void);
-
-/**
- * Check if there are any input changes to send
- * Returns non-zero if any input has changed since last send
- */
-uint8_t mcu_comm_has_pending_inputs(void);
 
 #endif // MCU_COMM_H

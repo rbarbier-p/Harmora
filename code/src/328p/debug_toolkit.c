@@ -37,4 +37,4 @@ void i2c_scan(void) {
   }
   
   _delay_ms(3000); // Show scan results for 3 seconds
-} */
+} 

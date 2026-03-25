@@ -4,6 +4,7 @@
 #include "display.h"
 #include "expander/expander.h"
 #include "input_state.h"
+#include "led_state.h"
 #include "interrupts.h"
 #include "scheduler.h"
 #include "mcu_comm.h"
@@ -11,20 +12,9 @@
 #include <stdio.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
 // ===== APA102 LED Configuration =====
-#define LED_COUNT 30
-
-// APA102 color structure (32-bit frame per LED)
-typedef struct {
-  uint8_t brightness; // 0-31 (5 bits, top 3 bits must be 111)
-  uint8_t blue;
-  uint8_t green;
-  uint8_t red;
-} apa102_led_t;
-
-// LED state buffer
-static apa102_led_t led_buffer[LED_COUNT];
 static SoftSPI_t led_spi;
 static uint8_t led_initialized = 0;
 
@@ -35,13 +25,9 @@ void task_hall_scan(void) {
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
   
-  // Using bit field to save RAM (2 bytes instead of 12)
-  static uint16_t last_pressed = 0;
-  
   // Channel mapping array (12 bytes in FLASH)
   static const uint8_t key_to_channel[12] = {
-    0, 1, 2, 3, 4, 5, 6, 7,  // Keys 0-7 → channels 0-7
-    12, 13, 14, 15            // Keys 8-11 → channels 12-15
+    0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15
   };
   
   // Scan all 12 keys
@@ -55,23 +41,8 @@ void task_hall_scan(void) {
     // Determine if key is currently pressed (hall sensor goes LOW when pressed)
     uint8_t is_pressed = (value < press_threshold[key]);
     
-    // Check previous state
-    uint8_t was_pressed = (last_pressed & (1 << key)) ? 1 : 0;
-    
-    // Detect state change
-    if (is_pressed != was_pressed) {
-      if (is_pressed) {
-        // Key pressed - send with velocity 64 (no velocity detection yet)
-        input_state_add_key_event(key, 64, 1);
-        last_pressed |= (1 << key);
-        g_input_state.keys.pressed |= (1 << key);
-      } else {
-        // Key released - send with velocity 0
-        input_state_add_key_event(key, 0, 0);
-        last_pressed &= ~(1 << key);
-        g_input_state.keys.pressed &= ~(1 << key);
-      }
-    }
+    // Update key state (handles change detection internally)
+    input_state_update_key(key, is_pressed);
   }
 }
 
@@ -417,7 +388,7 @@ void task_display_update(void) {
 }
 
 void task_led_update(void) {
-  // Initialize SPI and LEDs on first run
+  // Initialize SPI on first run
   if (!led_initialized) {
     led_initialized = 1;
     
@@ -425,47 +396,13 @@ void task_led_update(void) {
     // PB0 = MOSI (pin 8), PB1 = CLK (pin 9), no MISO
     softspi_init(&led_spi, 9, 8, 0xFF);
     
-    // Initialize all LEDs to default yellow-green (30% brightness)
-    for (uint8_t i = 0; i < LED_COUNT; i++) {
-      led_buffer[i].brightness = 0xE0 | 9;  // 111 + 5-bit brightness (9/31 ≈ 30%)
-      led_buffer[i].red = 200;              // Yellow-green color
-      led_buffer[i].green = 255;
-      led_buffer[i].blue = 0;
-    }
+    // Initialize LED state (sets all to LED_IDLE and marks dirty)
+    led_state_init();
   }
   
-  // Default button-to-LED mapping (1:1 for first 30 buttons)
-  // You can tweak this mapping array to match your physical layout
-  static const uint8_t button_to_led[BUTTON_COUNT] = {
-    0,  1,  2,  3,  4,  5,  6,  7,    // Buttons 0-7  → LEDs 0-7
-    8,  9, 10, 11, 12, 13, 14, 15,    // Buttons 8-15 → LEDs 8-15
-    16, 17, 18, 19, 20, 21, 22, 23,   // Buttons 16-23 → LEDs 16-23
-    24, 25, 26, 27, 28, 29, 0,  0     // Buttons 24-29 → LEDs 24-29, 30-31 → LED 0 (overflow)
-  };
-  
-  // Update LED colors based on button state
-  for (uint8_t btn = 0; btn < BUTTON_COUNT; btn++) {
-    uint8_t led_idx = button_to_led[btn];
-    
-    // Skip if LED index is out of range
-    if (led_idx >= LED_COUNT) continue;
-    
-    // Check if button is pressed
-    uint8_t is_pressed = (g_input_state.buttons.pressed & (1UL << btn)) ? 1 : 0;
-    
-    if (is_pressed) {
-      // Button pressed: RED, 60% brightness
-      led_buffer[led_idx].brightness = 0xE0 | 15;  // 111 + 19/31 ≈ 60%
-      led_buffer[led_idx].red = 255;
-      led_buffer[led_idx].green = 0;
-      led_buffer[led_idx].blue = 0;
-    } else {
-      // Button not pressed: Yellow-green, 30% brightness
-      led_buffer[led_idx].brightness = 0xE0 | 3;   // 111 + 9/31 ≈ 30%
-      led_buffer[led_idx].red = 200;
-      led_buffer[led_idx].green = 255;
-      led_buffer[led_idx].blue = 0;
-    }
+  // Only update LEDs if state has changed
+  if (!led_state_is_dirty()) {
+    return;
   }
   
   // Send data to APA102 LED chain
@@ -479,12 +416,13 @@ void task_led_update(void) {
     softspi_send(&led_spi, 0x00);
   }
   
-  // LED frames
+  // LED frames - read preset colors from PROGMEM
   for (uint8_t i = 0; i < LED_COUNT; i++) {
-    softspi_send(&led_spi, led_buffer[i].brightness);
-    softspi_send(&led_spi, led_buffer[i].blue);
-    softspi_send(&led_spi, led_buffer[i].green);
-    softspi_send(&led_spi, led_buffer[i].red);
+    const led_color_t *color = led_preset_get_color(g_led_state.presets[i]);
+    softspi_send(&led_spi, pgm_read_byte(&color->brightness));
+    softspi_send(&led_spi, pgm_read_byte(&color->blue));
+    softspi_send(&led_spi, pgm_read_byte(&color->green));
+    softspi_send(&led_spi, pgm_read_byte(&color->red));
   }
   
   // End frame (need at least (LED_COUNT + 1) / 2 bits of clock)
@@ -492,4 +430,7 @@ void task_led_update(void) {
   for (uint8_t i = 0; i < 4; i++) {
     softspi_send(&led_spi, 0xFF);
   }
+  
+  // Clear dirty flag
+  led_state_clear_dirty();
 }

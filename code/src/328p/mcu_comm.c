@@ -1,36 +1,28 @@
 #include "mcu_comm.h"
 #include "input_state.h"
+#include "led_state.h"
 #include "display.h"
 #include "SPI/SPI.h"
 #include "pins.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-// =============================================================================
 // INTERNAL STATE
-// =============================================================================
 
 // Flag to track if we're currently processing display commands
 // Prevents re-entrancy if interrupt fires during processing
 static volatile uint8_t g_processing_display = 0;
 
-// =============================================================================
 // INITIALIZATION
-// =============================================================================
 
 void mcu_comm_init(void) {
     // Configure 32U4 chip select pin as output, default HIGH (not selected)
     GPIO_SET_OUTPUT(PIN_32U4_SS);
     GPIO_SET_HIGH(PIN_32U4_SS);
-    
-    // SPI is already initialized by display_init() for the OLED
-    // We share the same SPI bus, just use different CS pins
-    // The display uses PIN_DISPLAY_CS, MCU comm uses PIN_32U4_SS
 }
 
-// =============================================================================
+
 // DISPLAY COMMAND HANDLER
-// =============================================================================
 
 /**
  * Read a single byte from 32U4 via SPI
@@ -153,6 +145,13 @@ void mcu_comm_handle_display(void) {
                 break;
             }
             
+            case CMD_LED: {
+                uint8_t led_id = mcu_comm_read_byte();
+                uint8_t preset = mcu_comm_read_byte();
+                led_state_set(led_id, preset);
+                break;
+            }
+            
             default:
                 // Unknown command - could be sync error
                 // Skip and hope next byte is valid
@@ -166,71 +165,28 @@ void mcu_comm_handle_display(void) {
     g_processing_display = 0;
 }
 
-// =============================================================================
 // INPUT EVENT TRANSMISSION
-// =============================================================================
 
-/**
- * Write a single byte to 32U4 via SPI
- */
 static inline void mcu_comm_write_byte(uint8_t data) {
     spi_transfer(data);  // We ignore the returned byte from 32U4
 }
 
-/**
- * Check if there are any pending input changes to send
- */
-uint8_t mcu_comm_has_pending_inputs(void) {
-    // Check key events
-    if (g_input_state.keys.count > 0) {
-        return 1;
-    }
-    
-    // Check encoder deltas (any non-zero)
-    for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
-        if (g_input_state.encoders.delta[i] != 0) {
-            return 1;
-        }
-    }
-    
-    // Check button changes
-    if (g_input_state.buttons.changed != 0) {
-        return 1;
-    }
-    
-    // Check pot changes
-    if (g_input_state.pots.changed != 0) {
-        return 1;
-    }
-    
-    return 0;
-}
-
-/**
- * Send all pending input events to 32U4
- * Only sends changed values (delta mode) to minimize SPI traffic
- */
 void mcu_comm_send_inputs(void) {
     // Select 32U4 (active low)
     GPIO_SET_LOW(PIN_32U4_SS);
     
-    // --- Key Events (highest priority - timing sensitive) ---
-    if (g_input_state.keys.count > 0) {
-        for (uint8_t i = 0; i < g_input_state.keys.count; i++) {
-            key_event_t *evt = &g_input_state.keys.events[i];
-            
-            if (evt->is_pressed) {
-                mcu_comm_write_byte(EVT_KEY_PRESS);
-                mcu_comm_write_byte(evt->note);
-                mcu_comm_write_byte(evt->velocity);
-            } else {
-                mcu_comm_write_byte(EVT_KEY_RELEASE);
-                mcu_comm_write_byte(evt->note);
+    // --- Key Events ---
+    if (g_input_state.keys.changed != 0) {
+        for (uint8_t i = 0; i < KEY_COUNT; i++) {
+            if (g_input_state.keys.changed & (1UL << i)) {
+                mcu_comm_write_byte(EVT_KEY);
+                mcu_comm_write_byte(i);
+                mcu_comm_write_byte((g_input_state.keys.pressed >> i) & 1);
             }
         }
     }
     
-    // --- Encoder Deltas (only non-zero) ---
+    // --- Encoder Deltas ---
     for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
         int8_t delta = g_input_state.encoders.delta[i];
         if (delta != 0) {
@@ -270,16 +226,4 @@ void mcu_comm_send_inputs(void) {
     
     // Clear dirty flags after successful send
     input_state_clear_dirty();
-}
-
-// =============================================================================
-// ISR HANDLER (overrides weak stub in interrupts.c)
-// =============================================================================
-
-/**
- * Override the weak handle_mcu_comm() stub from interrupts.c
- * This is called directly from ISR(INT0_vect)
- */
-void handle_mcu_comm(void) {
-    mcu_comm_handle_display();
 }
