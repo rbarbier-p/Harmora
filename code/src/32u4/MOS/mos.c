@@ -2,7 +2,6 @@
 
 bool mos_has_data(void)
 {
-    
     if ((SPSR & (1 << SPIF)))
         return (true);
     else

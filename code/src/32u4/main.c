@@ -79,10 +79,14 @@ static void reset_handshake(void) {
  */
 static void process_mos_packet(void)
 {
-    if (!mos_has_data())
+    /*
+    if (!mos_has_data()) // that never returns true
         return;
+        */
+    debug_send_string("Processing mos..\n");
+    MCommand command = spi_read(); // that blocks 
     debug_send_string("Checking commmand..\n");
-    MCommand command = spi_read();
+
     switch (command)
     {
         case M_CMD_DEBUG_PRINT:

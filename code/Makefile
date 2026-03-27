@@ -49,7 +49,7 @@ FLASH = 32768  # ATmega328P Flash in bytes
 BUILD_DIR = .build
 
 # Compiler flags
-CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
+CFLAGS = -DF_CPU=$(F_CPU) -O3 -Wall -Wextra -Werror -g -Wno-unused-parameter
 328P_INCLUDES = -Isrc/328p
 328P_INCLUDES += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
 328P_INCLUDES += -Isrc/328p/I2C
