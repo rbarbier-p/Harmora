@@ -13,7 +13,7 @@ const std::string BLUE = "\033[34m";
 const std::string YELLOW = "\033[33m";
 const std::string PURPLE = "\033[35m";
 
-const char *COMMANDS[] = {"empty", "update data", "request data", "packet stream", "packet stream",  "debug print", "flush"};
+const char *COMMANDS[] = {"empty", "update data", "request data", "packet stream", "debug print", "flush"};
 const char *DEVICES[] = {"empty", "led", "potentiometer", "encoder", "switch", "magnetic switch", "on/off switch", "display", "stream"};
 const char *VALUES[] = {"emtpy", "released", "pressed", "on", "off", "incremented", "decremented", "display draw char", "display draw circle", "display draw rectangle", "display draw triangle", "display draw line", "display draw icon"};
 

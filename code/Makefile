@@ -21,12 +21,12 @@ ifeq ($(UNAME),Darwin)
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
 	PORT := COM3
-	USB_PORT := COM18
+	USB_PORT := COM4
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
 	PORT := COM3
-	USB_PORT := COM18
+	USB_PORT := COM4
 	ISP_PROTOCOL = arduino
 endif
 
@@ -59,6 +59,7 @@ CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
 328P_INCLUDES += -Isrc/328p/MOS
 
 32U4_INCLUDES = -Isrc/32u4
+32U4_INCLUDES += -Isrc/32u4/USB
 32U4_INCLUDES += -Isrc/32u4/SPI
 32U4_INCLUDES += -Isrc/32u4/UART
 32U4_INCLUDES += -Isrc/32u4/MOS
@@ -90,7 +91,13 @@ ATMEGA328P_SRC += $(328P_SPI_SRC)
 ATMEGA328P_SRC += $(328P_MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-ATMEGA32U4_SRC = src/32u4/midi.c
+#ATMEGA32U4_SRC = src/32u4/working.c
+ATMEGA32U4_SRC = src/32u4/main.c
+ATMEGA32U4_SRC += src/32u4/midi.c
+ATMEGA32U4_SRC += src/32u4/mcu.c
+ATMEGA32U4_SRC += src/32u4/usb.c
+ATMEGA32U4_SRC += src/32u4/device_manager.c
+ATMEGA32U4_SRC += src/32u4/debug.c
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(32U4_MOS_SRC)
 #ATMEGA32U4_SRC += $(UART_SRC) --> not used because code is not correct (register are not 32u4 ones)
@@ -120,12 +127,12 @@ $(BUILD_DIR):
 
 # Compile ATMEGA328P_ELF from sources
 $(ATMEGA328P_ELF): $(ATMEGA328P_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
-	@printf "$(GREEN)Compiled $< $(RESET)\n"
+	@$(CC) $(CFLAGS) -DMOS_HOST $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
+	@printf "$(GREEN)Compiled $@ $(RESET)\n"
 
 $(ATMEGA32U4_ELF): $(ATMEGA32U4_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
-	@printf "$(GREEN)Compiled $< $(RESET)\n"
+	@$(CC) $(CFLAGS) -DMOS_DEVICE $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
+	@printf "$(GREEN)Compiled $@ $(RESET)\n"
 
 
 # Generate ATMEGA328P_HEX from ATMEGA328P_ELF
@@ -154,7 +161,7 @@ else
 	@$(MAKE) reset-board-linux
 endif
 	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
-	@sleep 3
+	@sleep 4
 
 32u4: $(ATMEGA32U4_HEX) $(BUILD_DIR)
 	@$(MAKE) reset-board
@@ -171,8 +178,8 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	@$(MAKE) reset-board
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
 	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
-	@printf "$(PURPLE)Waiting 5 seconds for bootloader / USB reset... $(RESET)\n"
-	@sleep 5
+	@printf "$(PURPLE)Waiting 4 seconds for bootloader / USB reset... $(RESET)\n"
+	@sleep 4
 	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
 	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
 	@$(MAKE) 32u4
