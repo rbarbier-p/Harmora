@@ -33,12 +33,6 @@ uint8_t adc_read(void) {
 }
 
 uint8_t adc_read_channel(uint8_t channel) {
-  // Select the channel
   adc_select_channel(channel);
-  
-  // Wait for mux to settle (typically ~10us needed)
-  _delay_us(10);
-  
-  // Read and return the value
   return adc_read();
 }

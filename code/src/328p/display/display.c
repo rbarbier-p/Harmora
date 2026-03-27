@@ -4,9 +4,7 @@
 #include <string.h>
 #include <avr/pgmspace.h>
 
-// ============================================================================
 // INTERNAL STATE
-// ============================================================================
 
 static display_state_t state = {
     .ctrl = NULL,
@@ -15,14 +13,11 @@ static display_state_t state = {
     .framebuffer = {0}
 };
 
-display_state_t* display_get_state(void)
-{
+display_state_t* display_get_state(void) {
     return &state;
 }
 
-// ============================================================================
 // CORE DISPLAY FUNCTIONS
-// ============================================================================
 
 void display_init(display_driver_t driver, display_bus_type_t bus, display_mode_t mode)
 {
@@ -86,12 +81,10 @@ void display_update(void)
     state.dirty_pages = 0;
 }
 
-// ============================================================================
 // LOW-LEVEL PIXEL MANIPULATION
-// ============================================================================
 
-// Bit mask lookup table stored in flash to save 8 bytes RAM
-static const uint8_t bit_mask[8] PROGMEM = {
+// Bit mask lookup table in RAM for fast access (critical for text rendering performance)
+static const uint8_t bit_mask[8] = {
     0x01, 0x02, 0x04, 0x08,
     0x10, 0x20, 0x40, 0x80
 };
@@ -104,7 +97,7 @@ void display_set_pixel(uint8_t x, uint8_t y, uint8_t on)
     uint8_t page = y >> 3;
     uint16_t index = (uint16_t)page * state.ctrl->width + x;
 
-    uint8_t mask = pgm_read_byte(&bit_mask[y & 0x07]);
+    uint8_t mask = bit_mask[y & 0x07];
 
     if (on)
         state.framebuffer[index] |= mask;

@@ -172,3 +172,50 @@ void display_fill_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
         state->dirty_pages |= (1 << page);
     }
 }
+
+void display_clear_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+{
+    display_state_t *state = display_get_state();
+    display_controller_t *ctrl = state->ctrl;
+
+    if (!ctrl) return;
+    if (w == 0 || h == 0) return;
+
+    uint8_t x_end = x + w - 1;
+    uint8_t y_end = y + h - 1;
+
+    if (x >= ctrl->width || y >= ctrl->height)
+        return;
+
+    if (x_end >= ctrl->width)  x_end = ctrl->width - 1;
+    if (y_end >= ctrl->height) y_end = ctrl->height - 1;
+
+    uint8_t start_page = y >> 3;
+    uint8_t end_page   = y_end >> 3;
+
+    uint8_t start_mask = 0xFF << (y & 0x07);
+    uint8_t end_mask   = 0xFF >> (7 - (y_end & 0x07));
+
+    for (uint8_t page = start_page; page <= end_page; page++)
+    {
+        uint8_t mask;
+
+        if (page == start_page && page == end_page)
+            mask = start_mask & end_mask;
+        else if (page == start_page)
+            mask = start_mask;
+        else if (page == end_page)
+            mask = end_mask;
+        else
+            mask = 0xFF;
+
+        uint16_t base = page * ctrl->width + x;
+        uint8_t cols = x_end - x + 1;
+
+        // Clear by ANDing with inverted mask
+        while (cols--)
+            state->framebuffer[base++] &= ~mask;
+
+        state->dirty_pages |= (1 << page);
+    }
+}

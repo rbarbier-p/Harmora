@@ -18,25 +18,16 @@ static inline void stopwatch_init(void) {
     TCNT1  = 0;
 }
 
-static inline void stopwatch_start(void) {
-    TCNT1 = 0; 
-}
-
 static inline uint16_t stopwatch_read(void) {
     return TCNT1;
 }
 
-// Convert ticks to microseconds
-static inline uint32_t stopwatch_ticks_to_us(uint16_t ticks) {
-    return (uint32_t)ticks * 4;
-}
-
 // Calculate elapsed time handling overflow
-static inline uint16_t stopwatch_elapsed(uint16_t start, uint16_t end) {
+static inline uint32_t stopwatch_elapsed(uint16_t start, uint16_t end) {
     if (end >= start) {
         return end - start;
     } else {
-        return (0xFFFF - start) + end;
+        return ((0xFFFF - start) + end) * 4;
     }
 }
 

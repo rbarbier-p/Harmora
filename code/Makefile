@@ -8,15 +8,19 @@ UNAME = $(shell uname -s)
 PLATFORM = linux
 # TODO: probably create a script that finds the correct ports
 # also test on linux
-PORT := /dev/ttyACM0
+# USB_PORT: Port when 32U4 is running application firmware (USB device mode)
+# BOOTLOADER_PORT: Port when 32U4 is in bootloader mode (programmable)
 USB_PORT := /dev/ttyACM0
+BOOTLOADER_PORT := /dev/ttyACM0
 ISP_PROTOCOL = stk500v1
 
 
 ifeq ($(UNAME),Darwin)
 	PLATFORM = mac
-	PORT := /dev/cu.usbmodem101
-	USB_PORT :=  /dev/cu.usbmodem101 #/dev/cu.usbmodem12345673
+	# After reset, the 32U4 re-enumerates with a different port number
+    #Run 'ls /dev/cu.usbmodem*' after reset to find the correct bootloader port
+	USB_PORT := /dev/cu.usbmodem12345673
+	BOOTLOADER_PORT := /dev/cu.usbmodem101
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
@@ -55,27 +59,28 @@ CFLAGS = -DF_CPU=$(F_CPU) -O3 -Wall -Wextra -Werror -g -Wno-unused-parameter
 328P_INCLUDES += -Isrc/328p/I2C
 328P_INCLUDES += -Isrc/328p/SPI
 328P_INCLUDES += -Isrc/328p/ADC
-328P_INCLUDES += -Isrc/328p/analog_mux
-328P_INCLUDES += -Isrc/328p/MOS
+328P_INCLUDES += -Isrc/328p/multiplexer
+328P_INCLUDES += -Isrc/MOS
 
 32U4_INCLUDES = -Isrc/32u4
 32U4_INCLUDES += -Isrc/32u4/USB
 32U4_INCLUDES += -Isrc/32u4/SPI
 32U4_INCLUDES += -Isrc/32u4/UART
-32U4_INCLUDES += -Isrc/32u4/MOS
+32U4_INCLUDES += -Isrc/MOS
 
 # Linker flags
-#LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
+LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
 
 # Source files
 include src/328p/display/display.mk
 include src/328p/I2C/I2C.mk
 include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
-include src/328p/analog_mux/analog_mux.mk
-include src/328p/MOS/MOS.mk
+include src/328p/multiplexer/multiplexer.mk
+include src/328p/expander/expander.mk
+include src/MOS/MOS.mk
 
-include src/32u4/MOS/MOS.mk
+include src/MOS/MOS.mk
 include src/32u4/SPI/SPI.mk
 include src/32u4/UART/uart.mk
 
@@ -83,25 +88,14 @@ ATMEGA328P_SRC = src/328p/atmega328p.c
 ATMEGA328P_SRC += src/328p/tasks.c
 ATMEGA328P_SRC += src/328p/scheduler.c
 ATMEGA328P_SRC += src/328p/input_state.c
+# ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
-ATMEGA328P_SRC += $(328P_SPI_SRC)
-ATMEGA328P_SRC += $(328P_MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-#ATMEGA32U4_SRC = src/32u4/working.c
-ATMEGA32U4_SRC = src/32u4/main.c
-ATMEGA32U4_SRC += src/32u4/midi.c
-ATMEGA32U4_SRC += src/32u4/mcu.c
-ATMEGA32U4_SRC += src/32u4/usb.c
-ATMEGA32U4_SRC += src/32u4/device_manager.c
-ATMEGA32U4_SRC += src/32u4/debug.c
-ATMEGA32U4_SRC += $(32U4_SPI_SRC)
-ATMEGA32U4_SRC += $(32U4_MOS_SRC)
-#ATMEGA32U4_SRC += $(UART_SRC) --> not used because code is not correct (register are not 32u4 ones)
-
+ATMEGA32U4_SRC = src/atmega32u4.c
 
 
 # Output files in build folder
@@ -144,45 +138,47 @@ $(ATMEGA32U4_HEX): $(ATMEGA32U4_ELF)
 
 
 reset-board-windows:
-	@echo "mode $(USB_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
+	@echo "mode $(RESET_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
 
 reset-board-linux:
-	@stty -F $(USB_PORT) 1200 hupcl
+	@stty -F $(RESET_PORT) 1200 hupcl
 
 reset-board-mac:
-	@stty -f $(USB_PORT) 1200 hupcl
+	@stty -f $(RESET_PORT) 1200 hupcl
 
+# Reset the board using the specified port (defaults to USB_PORT)
+# Usage: make reset-board RESET_PORT=/dev/cu.usbmodemXXXX
 reset-board:
+	@$(eval RESET_PORT ?= $(USB_PORT))
 ifeq ($(PLATFORM),windows)
-	@$(MAKE) reset-board-windows
+	@$(MAKE) reset-board-windows RESET_PORT=$(RESET_PORT)
 else ifeq ($(PLATFORM),mac)
-	@$(MAKE) reset-board-mac
+	@$(MAKE) reset-board-mac RESET_PORT=$(RESET_PORT)
 else
-	@$(MAKE) reset-board-linux
+	@$(MAKE) reset-board-linux RESET_PORT=$(RESET_PORT)
 endif
 	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
-	@sleep 4
+	@sleep 3
 
-32u4: $(ATMEGA32U4_HEX) $(BUILD_DIR)
-	@$(MAKE) reset-board
-	@$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
-	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
+isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 
 	@printf "$(RED)Platform: $(PLATFORM) $(RESET)\n"
-	@printf "$(RED)Port: $(PORT) $(RESET)\n"
 	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"
 
 	@$(MAKE) reset-board
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
 	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
-	@printf "$(PURPLE)Waiting 4 seconds for bootloader / USB reset... $(RESET)\n"
-	@sleep 4
+	@printf "$(PURPLE)Waiting 5 seconds for bootloader / USB reset... $(RESET)\n"
+	@sleep 5
 	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
 	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
-	@$(MAKE) 32u4
+	@$(MAKE) reset-board
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Didn't touch much after this
 #	@echo "\033[0;34m-------  Memory usage  --------\033[0m"
@@ -191,11 +187,12 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 
 
 # Print flash and RAM usage only (no Program/Data lines)
+# Uses POSIX-compatible awk (works on both GNU awk and BSD awk on macOS)
 size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
 	@$(SIZE) --format=avr --mcu=$(ATMEGA328P_MCU) $(ATMEGA328P_ELF) > $(SIZE_TXT)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
-	/Program:/ {match($$0,/([0-9]+) bytes/,a); flash=a[1]+0} \
-	/Data:/ {match($$0,/([0-9]+) bytes/,a); ram=a[1]+0} \
+	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
+	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
 	END {printf "Flash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 

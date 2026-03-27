@@ -27,18 +27,4 @@ void scheduler_set_divider(task_id_t id, uint8_t divider);
 // Enable/disable a task
 void scheduler_enable(task_id_t id, uint8_t enabled);
 
-// --- Statistics (always available, stored for display) ---
-
-// Get last execution time in microseconds
-uint16_t scheduler_get_last_us(task_id_t id);
-
-// Get max execution time in microseconds
-uint16_t scheduler_get_max_us(task_id_t id);
-
-// Get total loop time (last full scheduler_run call) in microseconds
-uint16_t scheduler_get_loop_time_us(void);
-
-// Reset max stats
-void scheduler_reset_max(void);
-
 #endif // SCHEDULER_H

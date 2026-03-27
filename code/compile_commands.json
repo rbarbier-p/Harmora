@@ -1,97 +1,122 @@
 [
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/bus/display_bus_i2c.c",
-    "file": "src/display/bus/display_bus_i2c.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/ADC/adc.c",
+    "file": "src/328p/ADC/adc.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/bus/display_bus_spi.c",
-    "file": "src/display/bus/display_bus_spi.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/I2C/I2C.c",
+    "file": "src/328p/I2C/I2C.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/controller/sh1106.c",
-    "file": "src/display/controller/sh1106.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/I2C/SoftI2C.c",
+    "file": "src/328p/I2C/SoftI2C.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/controller/ssd1309.c",
-    "file": "src/display/controller/ssd1309.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/SPI/SPI.c",
+    "file": "src/328p/SPI/SPI.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/display.c",
-    "file": "src/display/display.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/SPI/SoftSPI.c",
+    "file": "src/328p/SPI/SoftSPI.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/display_images.c",
-    "file": "src/display/display_images.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/analog_mux/analog_mux.c",
+    "file": "src/328p/analog_mux/analog_mux.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/display_primitives.c",
-    "file": "src/display/display_primitives.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/atmega328p.c",
+    "file": "src/328p/atmega328p.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/display/display_text.c",
-    "file": "src/display/display_text.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/bus/display_bus_i2c.c",
+    "file": "src/328p/display/bus/display_bus_i2c.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/I2C/I2C.c",
-    "file": "src/I2C/I2C.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/bus/display_bus_spi.c",
+    "file": "src/328p/display/bus/display_bus_spi.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/I2C/SoftI2C.c",
-    "file": "src/I2C/SoftI2C.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/controller/sh1106.c",
+    "file": "src/328p/display/controller/sh1106.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/UART/UART.c",
-    "file": "src/UART/UART.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/controller/ssd1309.c",
+    "file": "src/328p/display/controller/ssd1309.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/atmega32u4.c",
-    "file": "src/atmega32u4.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/display.c",
+    "file": "src/328p/display/display.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/loop_timer.c",
-    "file": "src/loop_timer.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/display_images.c",
+    "file": "src/328p/display/display_images.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/scheduler.c",
-    "file": "src/scheduler.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/display_primitives.c",
+    "file": "src/328p/display/display_primitives.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/tasks.c",
-    "file": "src/tasks.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/display/display_text.c",
+    "file": "src/328p/display/display_text.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/test.c",
-    "file": "src/test.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/scheduler.c",
+    "file": "src/328p/scheduler.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/atmega328p.c",
-    "file": "src/atmega328p.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/input_state.c",
+    "file": "src/328p/input_state.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/SPI/SPI.c",
-    "file": "src/SPI/SPI.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/gpio_expander/mcp23017.c",
+    "file": "src/328p/gpio_expander/mcp23017.c"
   },
   {
     "directory": "/home/rbarbier/Documents/Harmora/code",
-    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/SPI/SoftSPI.c",
-    "file": "src/SPI/SoftSPI.c"
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/gpio_expander/gpio_expander.c",
+    "file": "src/328p/gpio_expander/gpio_expander.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/interrupts.c",
+    "file": "src/328p/interrupts.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/328p/tasks.c",
+    "file": "src/328p/tasks.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/32u4/UART/UART.c",
+    "file": "src/32u4/UART/UART.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/32u4/atmega32u4.c",
+    "file": "src/32u4/atmega32u4.c"
+  },
+  {
+    "directory": "/home/rbarbier/Documents/Harmora/code",
+    "command": "gcc -mmcu=$MCU -DF_CPU=$F_CPU -Os -Isrc -Isrc/display -Isrc/display/bus -Isrc/display/controller -Isrc/display/internal -Isrc/I2C -Isrc/UART -c src/32u4/test.c",
+    "file": "src/32u4/test.c"
   }
 ]

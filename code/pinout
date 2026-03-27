@@ -9,6 +9,7 @@ XTAL1 XTAL4
 PD3 MIDI_D
 
 ATMEGA_328P
+PORTB
 PB0 Soft_SPI_MOSI -> software spi for leds
 PB1 Soft_SPI_CLK -> software spi for leds
 PB2 SPI_SS
@@ -17,16 +18,16 @@ PB4 SPI_MISO
 PB5 SPI_CLK
 PB6 XTAL1
 PB7 XTAL2
-
+PORTC
 PC0 32U4_SS -> 32u4 slave select
 PC1 EXP1_INTA -> expansor 1 interrupt A
 PC2 EXP1_INTB -> expansor 1 interrupt B
-PC3 EXP2_INTA -> expansor 2 interrupt A
+PC3 EXP2_INTA -> expansor 2 interrupts
 PC4 I2C_SDA
 PC5 I2C_SCL
 PC6 -
-
-PD0 EXP2_INTB -> expansor 2 interrupt B
+PORTD
+PD0 DISPLAY_DR
 PD1 DMUX_OUT -> digital mux out
 PD2 32U4_INT -> interrupt line to call 32u4
 PD3 DISPLAY_CS -> display chip select
@@ -34,6 +35,59 @@ PD4 MUX_S3 -> muxs select line 3 (select lines are shared between analog and dig
 PD5 MUX_S0 -> muxs select line 0
 PD6 MUX_S1 -> muxs select line 1
 PD7 MUX_S2 -> muxs select line 2
-
 ADC6 -
 ADC7 AMUX_OUT -> analog mux out
+
+EXPANSOR 1 (MCP23017)
+GPA0 B25 -> octave up
+GPA1 B24 -> octave down
+GPA2 B6
+GPA3 B3
+GPA4 B11
+GPA5 B13
+GPA6 B10
+GPA7 B12
+GPB0 B1
+GPB1 B8
+GPB2 B5
+GPB3 B3
+GPB4 B9
+GPB5 B16
+GPB6 B15
+GPB7 B14
+
+EXPANSOR 2 (MCP23017)
+GPA0 B17
+GPA1 B18
+GPA2 B4
+GPA3 B7
+GPA4 B19
+GPA5 B20
+GPA6 S2
+GPA7 S3
+GPB0 S1
+GPB1 B23
+GPB2 B22
+GPB3 B21
+GPB4 EN3SW -> encoder 3 push button
+GPB5 EN1SW -> encoder 1 push button
+GPB6 EN2SW -> encoder 2 push button
+GPB7 DISPLAY_RST
+
+DIGITAL MUXs
+AI0 EN2B
+AI1 EN2A
+AI2 EN1B
+AI3 EN1A
+AI4 EN3B
+AI5 EN3A
+AI6 EN4A
+AI7 EN4B
+BI0 EN6SW
+BI1 EN5SW
+BI2 EN5A
+BI3 EN5B
+BI4 EN6A
+BI5 EN6B
+BI6 -
+BI7 EN4SW
