@@ -5,26 +5,11 @@
     #error Require -DMOS_HOST or -DMOS_DEVICE in compilation line
 #endif
 
-
-
-// MOS Protocol -> Messages Over SPI
-// Frame format: | SOF | COMMAND | DEVICE | DEVICE_ID | VALUE | LENGTH | DATA[0..n] |
-//                  8       3       4       5           8          5   = 33 / 48
-// TODO: optimise to reduce size and time to send/receive -> only COMMAND, DEVICE can be compressed: device_id can be a number up to ~30 led/switch, value can be up to 255 (analog value)
-
-// for multiple packets in a row either send a packet with the length of the packets array M_CMD_PACKET_ARRAY -> with length
-
 #include "SPI.h"
 #include <stdbool.h>
 
 #define M_FIXED_PACKET_MAX_DATA_LENGTH 3
 #define M_DEBUG_PACKET_MAX_DATA_LENGTH 32
-/*
- Enumvalue thresholds for small packets data size 2, 4, 5
-#define 
-
-#define GET_COMMAND_DATA_LENGTH(command) ((command > ))
-*/
 
 
 // use this type to make the enums 8bit
@@ -44,7 +29,6 @@ typedef enum
     M_DEVICE_ON_OFF_SWITCH,
     M_DEVICE_LED,
     M_DEVICE_DISPLAY,
-    M_DEVICE_STREAM, // probably not used
     M_DEVICE_COUNT
 } MDeviceEnum;
 

@@ -24,13 +24,13 @@ ifeq ($(UNAME),Darwin)
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
-	PORT := COM3
-	USB_PORT := COM4
+	BOOTLOADER_PORT := COM3
+	USB_PORT := COM18
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
-	PORT := COM3
-	USB_PORT := COM4
+	BOOTLOADER_PORT := COM3
+	USB_PORT := COM18
 	ISP_PROTOCOL = arduino
 endif
 
@@ -53,13 +53,14 @@ FLASH = 32768  # ATmega328P Flash in bytes
 BUILD_DIR = .build
 
 # Compiler flags
-CFLAGS = -DF_CPU=$(F_CPU) -O3 -Wall -Wextra -Werror -g -Wno-unused-parameter
+CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
 328P_INCLUDES = -Isrc/328p
 328P_INCLUDES += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
 328P_INCLUDES += -Isrc/328p/I2C
 328P_INCLUDES += -Isrc/328p/SPI
 328P_INCLUDES += -Isrc/328p/ADC
 328P_INCLUDES += -Isrc/328p/multiplexer
+328P_INCLUDES += -Isrc/328p/expander
 328P_INCLUDES += -Isrc/MOS
 
 32U4_INCLUDES = -Isrc/32u4
@@ -72,15 +73,15 @@ CFLAGS = -DF_CPU=$(F_CPU) -O3 -Wall -Wextra -Werror -g -Wno-unused-parameter
 LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
 
 # Source files
+include src/MOS/MOS.mk
+
 include src/328p/display/display.mk
 include src/328p/I2C/I2C.mk
 include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
 include src/328p/multiplexer/multiplexer.mk
 include src/328p/expander/expander.mk
-include src/MOS/MOS.mk
 
-include src/MOS/MOS.mk
 include src/32u4/SPI/SPI.mk
 include src/32u4/UART/uart.mk
 
@@ -88,14 +89,26 @@ ATMEGA328P_SRC = src/328p/atmega328p.c
 ATMEGA328P_SRC += src/328p/tasks.c
 ATMEGA328P_SRC += src/328p/scheduler.c
 ATMEGA328P_SRC += src/328p/input_state.c
-# ATMEGA328P_SRC += src/328p/loop_timer.c  # Not needed - using stopwatch for timing
+ATMEGA328P_SRC += src/328p/led_state.c
+ATMEGA328P_SRC += src/328p/interrupts.c
+ATMEGA328P_SRC += src/328p/mcu_comm.c
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
-ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
+ATMEGA328P_SRC += $(MUX_SRC)
+ATMEGA328P_SRC += $(EXPANDER_SRC)
+ATMEGA328P_SRC += $(328P_SPI_SRC)
+ATMEGA328P_SRC += $(MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-ATMEGA32U4_SRC = src/atmega32u4.c
+ATMEGA32U4_SRC = src/32u4/main.c
+ATMEGA32U4_SRC += src/32u4/midi.c
+ATMEGA32U4_SRC += src/32u4/mcu.c
+ATMEGA32U4_SRC += src/32u4/usb.c
+ATMEGA32U4_SRC += src/32u4/device_manager.c
+ATMEGA32U4_SRC += src/32u4/debug.c
+ATMEGA32U4_SRC += $(32U4_SPI_SRC)
+ATMEGA32U4_SRC += $(MOS_SRC)
 
 
 # Output files in build folder
@@ -170,14 +183,14 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"
 
 	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
 	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
 	@printf "$(PURPLE)Waiting 5 seconds for bootloader / USB reset... $(RESET)\n"
 	@sleep 5
 	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
 	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
 	@$(MAKE) reset-board
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Didn't touch much after this
@@ -188,12 +201,18 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 
 # Print flash and RAM usage only (no Program/Data lines)
 # Uses POSIX-compatible awk (works on both GNU awk and BSD awk on macOS)
-size: $(ATMEGA328P_ELF) | $(BUILD_DIR)
+size: $(ATMEGA328P_ELF) $(ATMEGA32U4_ELF)
 	@$(SIZE) --format=avr --mcu=$(ATMEGA328P_MCU) $(ATMEGA328P_ELF) > $(SIZE_TXT)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
 	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
 	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
-	END {printf "Flash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
+	END {printf "[328p]\nFlash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
+	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
+	@$(SIZE) --format=avr --mcu=$(ATMEGA32U4_MCU) $(ATMEGA32U4_ELF) > $(SIZE_TXT)
+	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
+	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
+	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
+	END {printf "[32u4]\nFlash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 
 # Clean build files

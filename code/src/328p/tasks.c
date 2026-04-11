@@ -248,7 +248,7 @@ void task_display_update(void) {
   static uint8_t last_exp1_a = 0, last_exp1_b = 0, last_exp2_a = 0, last_exp2_b = 0;
   
   // Hex digit lookup table
-  static const char hex_chars[16] = "0123456789ABCDEF";
+  static const char hex_chars[] = "0123456789ABCDEF";
   char hex_buf[5]; // For displaying hex values (4 chars + null)
   char val_buf[4]; // For displaying numeric values (3 chars + null)
   

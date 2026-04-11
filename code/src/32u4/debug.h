@@ -2,7 +2,7 @@
 #define DEBUG_H
 
 #include <stdint.h>
-#include "MOS/mos.h"
+#include "mos.h"
 
 /**
  * Send debug string via MIDI SysEx

@@ -1752,6 +1752,227 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Symbols:SPI_OLED_Display"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 11.176 8.382 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "128x64 2.42 inc"
+				(at 4.064 -8.382 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SPI_OLED_Display_0_1"
+				(rectangle
+					(start 5.08 -1.905)
+					(end -5.08 3.175)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SPI_OLED_Display_1_1"
+				(rectangle
+					(start -12.7 10.16)
+					(end 12.7 -10.16)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -1.905) (xy 0 -4.445) (xy -2.54 -4.445) (xy 2.54 -4.445) (xy 0 -4.445) (xy 0 -1.905)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(text "OLED"
+					(at 0 0.635 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 7.62 0)
+					(length 2.54)
+					(name "SS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 5.08 0)
+					(length 2.54)
+					(name "DC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 2.54 0)
+					(length 2.54)
+					(name "RES"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 0 0)
+					(length 2.54)
+					(name "SDA/MOSI"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 -2.54 0)
+					(length 2.54)
+					(name "SCK"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -15.24 -5.08 0)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -15.24 -7.62 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Symbols:TVS_Diode"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2986,6 +3207,12 @@
 		(uuid "23531461-4289-4fcb-9d33-7648efdd0f81")
 	)
 	(junction
+		(at 187.96 128.27)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2ae5477e-f405-41b0-8ad2-f7b00bdd19b2")
+	)
+	(junction
 		(at 48.26 74.93)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3052,6 +3279,12 @@
 		(uuid "cd9e9185-27e0-43d5-acb9-7e7f587cacc6")
 	)
 	(junction
+		(at 172.72 138.43)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e6fc6e74-1024-4ae2-ae63-8ce88636a3db")
+	)
+	(junction
 		(at 50.8 92.71)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3070,20 +3303,8 @@
 		(uuid "357a6468-14ea-433f-8d4b-04863847e3da")
 	)
 	(no_connect
-		(at 129.54 119.38)
-		(uuid "38cc6925-d3df-4606-a2b1-e13a79d96359")
-	)
-	(no_connect
 		(at 129.54 132.08)
 		(uuid "3b4da05a-24df-463f-89da-e5165eabad91")
-	)
-	(no_connect
-		(at 129.54 116.84)
-		(uuid "492769fc-7d88-4887-9b0d-5301d9f40b17")
-	)
-	(no_connect
-		(at 129.54 114.3)
-		(uuid "4bf16b2b-802c-4dc6-a2e5-9d36a3526312")
 	)
 	(no_connect
 		(at 129.54 127)
@@ -3094,24 +3315,12 @@
 		(uuid "7d94dcc2-425f-4240-8d56-1fc701ed7d1c")
 	)
 	(no_connect
-		(at 129.54 101.6)
-		(uuid "8806817a-bd12-47fc-a04a-21f3a1e03827")
-	)
-	(no_connect
-		(at 80.01 91.44)
-		(uuid "8a84797e-e197-4b3e-8f5c-76be453d0176")
-	)
-	(no_connect
 		(at 80.01 86.36)
 		(uuid "970374bb-ec03-4590-a6df-9ade59320db6")
 	)
 	(no_connect
 		(at 129.54 83.82)
 		(uuid "99185bb1-bfaf-44a5-b6e7-c418fce9dea9")
-	)
-	(no_connect
-		(at 129.54 106.68)
-		(uuid "a1651994-c841-4929-a0e7-db700af4981f")
 	)
 	(no_connect
 		(at 129.54 124.46)
@@ -3132,10 +3341,6 @@
 	(no_connect
 		(at 129.54 144.78)
 		(uuid "cc18694a-63c7-4b0c-a5fa-a6f4445915ca")
-	)
-	(no_connect
-		(at 129.54 104.14)
-		(uuid "d036cc37-d552-422c-92ec-9d4920d5f637")
 	)
 	(no_connect
 		(at 129.54 88.9)
@@ -3163,7 +3368,17 @@
 	)
 	(wire
 		(pts
-			(xy 147.32 111.76) (xy 148.59 111.76)
+			(xy 170.18 101.6) (xy 185.42 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "076dc7f7-387e-46d2-bde2-717c9aac8e81")
+	)
+	(wire
+		(pts
+			(xy 148.59 114.3) (xy 148.59 111.76)
 		)
 		(stroke
 			(width 0)
@@ -3193,7 +3408,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 111.76) (xy 142.24 111.76)
+			(xy 148.59 120.65) (xy 148.59 119.38)
 		)
 		(stroke
 			(width 0)
@@ -3233,6 +3448,16 @@
 	)
 	(wire
 		(pts
+			(xy 129.54 71.12) (xy 134.62 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "16c64b1a-2941-407f-b2fe-0d34725e81c0")
+	)
+	(wire
+		(pts
 			(xy 27.94 129.54) (xy 27.94 132.08)
 		)
 		(stroke
@@ -3240,6 +3465,16 @@
 			(type default)
 		)
 		(uuid "1a59ceef-4c74-426b-b331-3c2c9cc610a7")
+	)
+	(wire
+		(pts
+			(xy 129.54 114.3) (xy 142.24 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1d375995-9829-47ac-84cd-fe1574169e75")
 	)
 	(wire
 		(pts
@@ -3323,6 +3558,16 @@
 	)
 	(wire
 		(pts
+			(xy 176.53 128.27) (xy 187.96 128.27)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2d745bd0-dfe6-4bcc-885d-c488f3422b4a")
+	)
+	(wire
+		(pts
 			(xy 20.32 129.54) (xy 20.32 132.08)
 		)
 		(stroke
@@ -3343,6 +3588,16 @@
 	)
 	(wire
 		(pts
+			(xy 190.5 101.6) (xy 191.77 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3447e78e-73bf-4fb7-8c2b-ad39d6508b81")
+	)
+	(wire
+		(pts
 			(xy 102.87 44.45) (xy 102.87 49.53)
 		)
 		(stroke
@@ -3350,6 +3605,16 @@
 			(type default)
 		)
 		(uuid "35afd524-dd87-4df2-bbfa-6a7911f22a76")
+	)
+	(wire
+		(pts
+			(xy 190.5 99.06) (xy 191.77 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "37c0948a-36e0-4c13-9ac1-4099d1186f23")
 	)
 	(wire
 		(pts
@@ -3370,6 +3635,16 @@
 			(type default)
 		)
 		(uuid "397d02de-c0f4-4f47-9a42-9c6c13de2f4f")
+	)
+	(wire
+		(pts
+			(xy 172.72 138.43) (xy 172.72 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3b6aed11-cdc8-4e9a-8d1c-f5965cc3cb5f")
 	)
 	(wire
 		(pts
@@ -3400,6 +3675,16 @@
 			(type default)
 		)
 		(uuid "3e120b0a-1089-401f-86f0-93499aa7fb08")
+	)
+	(wire
+		(pts
+			(xy 129.54 119.38) (xy 142.24 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40f2941b-87a0-4e8b-b288-54754b23be0b")
 	)
 	(wire
 		(pts
@@ -3493,6 +3778,16 @@
 	)
 	(wire
 		(pts
+			(xy 129.54 93.98) (xy 144.78 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "72cd4e14-22d3-42b9-bdea-dad45fb0c519")
+	)
+	(wire
+		(pts
 			(xy 43.18 91.44) (xy 44.45 91.44)
 		)
 		(stroke
@@ -3513,6 +3808,16 @@
 	)
 	(wire
 		(pts
+			(xy 129.54 96.52) (xy 144.78 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78296ced-9b17-460d-bb1e-57a78f580b20")
+	)
+	(wire
+		(pts
 			(xy 138.43 73.66) (xy 157.48 73.66)
 		)
 		(stroke
@@ -3520,6 +3825,16 @@
 			(type default)
 		)
 		(uuid "79c10ef5-9db9-4dd1-9c91-99afb2f3de86")
+	)
+	(wire
+		(pts
+			(xy 187.96 128.27) (xy 187.96 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7a2ee7d9-cb01-483b-9dc6-72f5b4415728")
 	)
 	(wire
 		(pts
@@ -3540,6 +3855,16 @@
 			(type default)
 		)
 		(uuid "7b6ba2a0-c825-45ab-8185-6a1c2a959000")
+	)
+	(wire
+		(pts
+			(xy 129.54 116.84) (xy 142.24 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7d44788e-8498-420b-a658-0be3eb071d85")
 	)
 	(wire
 		(pts
@@ -3573,6 +3898,16 @@
 	)
 	(wire
 		(pts
+			(xy 134.62 49.53) (xy 134.62 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89fbfe45-92b7-4a72-9120-4ed90f751253")
+	)
+	(wire
+		(pts
 			(xy 63.5 96.52) (xy 73.66 96.52)
 		)
 		(stroke
@@ -3590,6 +3925,16 @@
 			(type default)
 		)
 		(uuid "93ee2f20-86b1-4522-8df7-f0e8fa158b0d")
+	)
+	(wire
+		(pts
+			(xy 170.18 99.06) (xy 185.42 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "979f8a09-a3a2-4a76-9628-f988c4a6add3")
 	)
 	(wire
 		(pts
@@ -3643,7 +3988,7 @@
 	)
 	(wire
 		(pts
-			(xy 128.27 55.88) (xy 128.27 54.61)
+			(xy 125.73 55.88) (xy 125.73 54.61)
 		)
 		(stroke
 			(width 0)
@@ -3720,6 +4065,16 @@
 			(type default)
 		)
 		(uuid "ad85895d-4567-40ec-bde3-c2df384bdb19")
+	)
+	(wire
+		(pts
+			(xy 171.45 138.43) (xy 172.72 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aeb35368-7078-4d8f-9ea0-446c07a641f0")
 	)
 	(wire
 		(pts
@@ -3803,6 +4158,16 @@
 	)
 	(wire
 		(pts
+			(xy 120.65 55.88) (xy 125.73 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bf718e7c-5994-4218-b8b2-86fb182ba85b")
+	)
+	(wire
+		(pts
 			(xy 20.32 132.08) (xy 21.59 132.08)
 		)
 		(stroke
@@ -3813,6 +4178,16 @@
 	)
 	(wire
 		(pts
+			(xy 187.96 124.46) (xy 187.96 128.27)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c0896dd8-3644-4ebc-a35c-9dfaabbee3fd")
+	)
+	(wire
+		(pts
 			(xy 54.61 114.3) (xy 63.5 114.3)
 		)
 		(stroke
@@ -3820,6 +4195,26 @@
 			(type default)
 		)
 		(uuid "c0c9fe96-4491-428d-b7fb-bb3d4b6acc83")
+	)
+	(wire
+		(pts
+			(xy 176.53 135.89) (xy 187.96 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c1ea2444-7cb5-49f4-a753-4b4edd16654e")
+	)
+	(wire
+		(pts
+			(xy 181.61 124.46) (xy 182.88 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c241e6cb-a10e-4b3b-b2f0-9cb1b85c0729")
 	)
 	(wire
 		(pts
@@ -3873,6 +4268,16 @@
 	)
 	(wire
 		(pts
+			(xy 165.1 138.43) (xy 166.37 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cabaf0fa-061b-44cf-b347-7583e6b0d09e")
+	)
+	(wire
+		(pts
 			(xy 49.53 68.58) (xy 48.26 68.58)
 		)
 		(stroke
@@ -3890,6 +4295,16 @@
 			(type default)
 		)
 		(uuid "cd2fc659-3686-4755-a38a-01adf0de5e7c")
+	)
+	(wire
+		(pts
+			(xy 172.72 138.43) (xy 187.96 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cdaca870-c33f-4bdb-89ad-89e65315b8be")
 	)
 	(wire
 		(pts
@@ -3953,6 +4368,16 @@
 	)
 	(wire
 		(pts
+			(xy 160.02 133.35) (xy 172.72 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e4b12e24-fc1f-4b9c-a572-13a056e034f8")
+	)
+	(wire
+		(pts
 			(xy 129.54 109.22) (xy 142.24 109.22)
 		)
 		(stroke
@@ -3970,16 +4395,6 @@
 			(type default)
 		)
 		(uuid "eccd0adf-eed4-43f1-8a9b-468c876f1333")
-	)
-	(wire
-		(pts
-			(xy 120.65 55.88) (xy 128.27 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f14e33ef-40ac-41fe-93c9-3c7e5680e58e")
 	)
 	(wire
 		(pts
@@ -4023,6 +4438,16 @@
 	)
 	(wire
 		(pts
+			(xy 134.62 54.61) (xy 134.62 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f627eca7-804c-4155-87ad-a5d22a6bcd27")
+	)
+	(wire
+		(pts
 			(xy 49.53 81.28) (xy 48.26 81.28)
 		)
 		(stroke
@@ -4041,6 +4466,96 @@
 		)
 		(uuid "042f0163-5106-4584-af56-b7b4f29ef1d0")
 	)
+	(label "DISPLAY_RST"
+		(at 142.24 119.38 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "0fc81ea6-3bc8-419d-8685-5917f8651d09")
+	)
+	(label "SOFT_SPI_CLK"
+		(at 144.78 96.52 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "26602ee8-3d90-4478-932e-c731290defaf")
+	)
+	(label "SOFT_SPI_MOSI"
+		(at 170.18 99.06 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2c49e7b9-4933-4470-b06f-909ff3409a6a")
+	)
+	(label "DISPLAY_DC"
+		(at 176.53 135.89 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "3eb7cec7-683a-4773-ac4a-3d5440dbea91")
+	)
+	(label "SOFT_SPI_CLK"
+		(at 170.18 101.6 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5db9708a-a002-4c59-8804-ccca6683e0c5")
+	)
+	(label "DISPLAY_RST"
+		(at 160.02 133.35 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "76fff5d3-73e5-4c44-ad01-192b353aee12")
+	)
+	(label "DISPLAY_SS"
+		(at 176.53 128.27 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8b82ccf1-7263-4066-acf9-9b2f4f2d3687")
+	)
+	(label "DISPLAY_DC"
+		(at 142.24 114.3 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "92de2a76-b202-4f82-936f-63ebb3e1e22f")
+	)
+	(label "SOFT_SPI_MOSI"
+		(at 144.78 93.98 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "c4db7a49-4bb7-4724-9420-8d663ba2c6d0")
+	)
 	(label "RESET"
 		(at 78.74 64.77 270)
 		(effects
@@ -4051,9 +4566,19 @@
 		)
 		(uuid "d06829b8-8610-40b9-b4c0-5dbfe3bd0712")
 	)
+	(label "DISPLAY_SS"
+		(at 142.24 116.84 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f7f79da6-9af9-4279-9587-8ddbe1812ca8")
+	)
 	(hierarchical_label "328p_RESET"
 		(shape input)
-		(at 129.54 93.98 0)
+		(at 129.54 104.14 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4061,6 +4586,17 @@
 			(justify left)
 		)
 		(uuid "0038abb8-3c8d-40b2-870f-c44a957ae5d9")
+	)
+	(hierarchical_label "SPI_MOSI"
+		(shape input)
+		(at 187.96 140.97 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0355c895-6b00-4646-98ad-3d3398869514")
 	)
 	(hierarchical_label "SPI_MOSI"
 		(shape input)
@@ -4072,6 +4608,17 @@
 			(justify left)
 		)
 		(uuid "1f9a55fd-23b3-42bb-bb71-1a7d325ca032")
+	)
+	(hierarchical_label "SPI_SCK"
+		(shape input)
+		(at 187.96 143.51 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "20872370-2bad-4a79-b20d-8b2955f35e94")
 	)
 	(hierarchical_label "SPI_MISO"
 		(shape input)
@@ -4095,20 +4642,20 @@
 		)
 		(uuid "b18e1a7f-3d8a-4718-b72e-7ad96465fef4")
 	)
-	(hierarchical_label "SPI_SS"
+	(hierarchical_label "328P_SS"
 		(shape input)
-		(at 129.54 71.12 0)
+		(at 129.54 101.6 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "d2a5f73f-3e7a-449d-9cb7-2997b0119e26")
+		(uuid "c87a5070-2de7-49b5-ab80-7782bc4cd6d3")
 	)
 	(hierarchical_label "MCU_INT"
 		(shape input)
-		(at 129.54 96.52 0)
+		(at 129.54 106.68 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4266,7 +4813,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:Capacitor 0603")
-		(at 128.27 52.07 0)
+		(at 125.73 52.07 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4274,7 +4821,7 @@
 		(dnp no)
 		(uuid "0c2f438f-633a-4859-950d-98db7f09ad4a")
 		(property "Reference" "C76"
-			(at 131.064 49.784 0)
+			(at 128.524 49.784 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4283,7 +4830,7 @@
 			)
 		)
 		(property "Value" "1uF"
-			(at 130.302 51.816 0)
+			(at 127.762 51.816 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4292,7 +4839,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:0603_C"
-			(at 128.27 52.07 0)
+			(at 125.73 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4301,7 +4848,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 128.27 52.07 0)
+			(at 125.73 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4310,7 +4857,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 128.27 52.07 0)
+			(at 125.73 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4328,6 +4875,74 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "C76")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 187.96 101.6 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0c49269d-d8be-469d-b514-4841ff9cb739")
+		(property "Reference" "R11"
+			(at 189.484 103.378 90)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22"
+			(at 187.96 101.6 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 187.96 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 187.96 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 187.96 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f2135dba-f914-4f1c-820e-bd11bb0e5ef6")
+		)
+		(pin "2"
+			(uuid "0b7f2a71-b1e5-48a7-9da8-092208d1b4b7")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R11")
 					(unit 1)
 				)
 			)
@@ -4399,6 +5014,73 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:VCC")
+		(at 187.96 146.05 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "12646306-d838-42e0-888f-bf524479f2e9")
+		(property "Reference" "#PWR0124"
+			(at 187.96 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 184.15 146.0499 90)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 187.96 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 187.96 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 187.96 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "04e88828-69f2-45a3-bfbc-cbac89aa5b40")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "#PWR0124")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:GND")
 		(at 102.87 161.29 0)
 		(unit 1)
@@ -4458,6 +5140,73 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0141")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:VCC")
+		(at 80.01 91.44 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "23c9b0a2-9f17-4340-8e9e-490c66739f6c")
+		(property "Reference" "#PWR0166"
+			(at 80.01 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 76.2 91.4399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 80.01 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 80.01 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 80.01 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "d3ae043b-cf4a-4ead-9dba-cb1afb4185ed")
+		)
+		(instances
+			(project ""
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "#PWR0166")
 					(unit 1)
 				)
 			)
@@ -4524,6 +5273,73 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0142")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 134.62 52.07 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "25bd765a-16e4-487e-bd76-4e55792d1e3a")
+		(property "Reference" "R25"
+			(at 136.652 52.07 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 134.62 52.07 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 134.62 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 134.62 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 134.62 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dbcf8799-7d30-4df0-a9ca-affcf3724af8")
+		)
+		(pin "2"
+			(uuid "84d2e017-a3ed-4ad6-9032-94bba11aab9b")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R25")
 					(unit 1)
 				)
 			)
@@ -4869,32 +5685,35 @@
 		)
 	)
 	(symbol
-		(lib_id "Symbols:Resistor 0603")
-		(at 144.78 111.76 90)
+		(lib_id "Symbols:GND")
+		(at 187.96 148.59 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4c82407f-d262-42e2-998e-3ccf76c6f061")
-		(property "Reference" "R20"
-			(at 144.78 113.792 90)
+		(fields_autoplaced yes)
+		(uuid "4a4c220a-cdce-4f19-ae69-c70cc169cf65")
+		(property "Reference" "#PWR0114"
+			(at 187.96 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
-		(property "Value" "330"
-			(at 144.78 111.76 90)
+		(property "Value" "GND"
+			(at 184.15 148.5899 90)
 			(effects
 				(font
-					(size 0.762 0.762)
+					(size 1.016 1.016)
 				)
+				(justify right)
 			)
 		)
-		(property "Footprint" "Footprints:0603_R"
-			(at 144.78 111.76 0)
+		(property "Footprint" ""
+			(at 187.96 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4903,7 +5722,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 144.78 111.76 0)
+			(at 187.96 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4912,7 +5731,71 @@
 			)
 		)
 		(property "Description" ""
-			(at 144.78 111.76 0)
+			(at 187.96 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "be47c533-496d-4bd1-a1ce-eef464f80a89")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "#PWR0114")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 148.59 116.84 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4c82407f-d262-42e2-998e-3ccf76c6f061")
+		(property "Reference" "R20"
+			(at 150.622 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "330"
+			(at 148.59 116.84 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 148.59 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 148.59 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 148.59 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4995,6 +5878,74 @@
 			(project "Harmora"
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0132")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 187.96 99.06 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5e2b247d-83f0-4f6b-b4b6-e00a275bbf6c")
+		(property "Reference" "R10"
+			(at 189.484 97.536 90)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22"
+			(at 187.96 99.06 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 187.96 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 187.96 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 187.96 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e4d608fc-5ca0-41a4-a60f-757735ca8656")
+		)
+		(pin "2"
+			(uuid "053f9797-173c-4a2c-beab-1d56f220f8cd")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -5605,6 +6556,73 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 185.42 124.46 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "80d9ecdd-d0b0-4aaa-a7bc-7cda4f164f16")
+		(property "Reference" "R18"
+			(at 185.42 122.682 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 185.42 124.46 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 185.42 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 185.42 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "c2803e25-83a4-44b4-8e33-466e38949919")
+		)
+		(pin "1"
+			(uuid "66875be7-0ed1-497c-af56-aa788473e798")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:GND")
 		(at 62.23 74.93 90)
 		(unit 1)
@@ -5804,7 +6822,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:GND")
-		(at 128.27 49.53 180)
+		(at 125.73 49.53 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5812,7 +6830,7 @@
 		(dnp no)
 		(uuid "8649c714-9e28-467d-8ece-5eeeaae34515")
 		(property "Reference" "#PWR0152"
-			(at 128.27 49.53 0)
+			(at 125.73 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5821,7 +6839,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 128.27 45.466 0)
+			(at 125.73 45.466 0)
 			(effects
 				(font
 					(size 1.016 1.016)
@@ -5829,7 +6847,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 128.27 49.53 0)
+			(at 125.73 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5838,7 +6856,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 128.27 49.53 0)
+			(at 125.73 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5847,7 +6865,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 128.27 49.53 0)
+			(at 125.73 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6618,6 +7636,72 @@
 		)
 	)
 	(symbol
+		(lib_id "Symbols:VCC")
+		(at 165.1 138.43 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a044576f-62c3-431d-b74b-ddc48a47aec1")
+		(property "Reference" "#PWR0158"
+			(at 165.1 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 162.56 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 165.1 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 165.1 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 165.1 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "f0ace5f9-6662-4858-8435-3867c633f542")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "#PWR0158")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Symbols:Resistor 0603")
 		(at 46.99 91.44 90)
 		(unit 1)
@@ -7085,7 +8169,7 @@
 	)
 	(symbol
 		(lib_id "Symbols:VCC")
-		(at 140.97 111.76 90)
+		(at 148.59 120.65 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7093,7 +8177,7 @@
 		(dnp no)
 		(uuid "d0c051ca-db43-4413-9411-890b846e6b6f")
 		(property "Reference" "#PWR0156"
-			(at 140.97 111.76 0)
+			(at 148.59 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7102,7 +8186,7 @@
 			)
 		)
 		(property "Value" "VCC"
-			(at 136.652 111.76 90)
+			(at 148.59 124.968 90)
 			(effects
 				(font
 					(size 1.016 1.016)
@@ -7110,7 +8194,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 140.97 111.76 0)
+			(at 148.59 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7119,7 +8203,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 140.97 111.76 0)
+			(at 148.59 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7128,7 +8212,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 140.97 111.76 0)
+			(at 148.59 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7143,6 +8227,72 @@
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0156")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:VCC")
+		(at 181.61 124.46 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d771d6ba-d96d-4a7b-9391-b79b6f4558a3")
+		(property "Reference" "#PWR0161"
+			(at 181.61 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 179.07 124.46 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 181.61 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 181.61 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 181.61 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "f59e8a76-2363-43fa-a032-715297c63405")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "#PWR0161")
 					(unit 1)
 				)
 			)
@@ -7234,6 +8384,221 @@
 			(project ""
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "J1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:SPI_OLED_Display")
+		(at 203.2 140.97 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "df5f700d-0ecb-4488-9418-ecb44adfbf99")
+		(property "Reference" "J5"
+			(at 213.36 149.606 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "128x64 2.42 inc"
+			(at 207.264 132.334 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:SPI Screen PinHeader"
+			(at 203.2 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 203.2 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "5"
+			(uuid "ef6b2295-27af-43d7-a00f-1bc36490144f")
+		)
+		(pin "4"
+			(uuid "190be6f5-54cc-45c7-8cfd-a8e43c7afdc2")
+		)
+		(pin "6"
+			(uuid "ce54a9fb-e67f-4f7e-83d8-65967eb430e1")
+		)
+		(pin "1"
+			(uuid "d105ebfd-8f82-4f49-9867-84eff24d85cf")
+		)
+		(pin "3"
+			(uuid "5c016ade-654b-4235-8027-6abc36047be8")
+		)
+		(pin "2"
+			(uuid "99687c40-8368-499d-81a8-ab82b7bc2ece")
+		)
+		(pin "7"
+			(uuid "7ba1a9a9-92ce-402c-b477-f739cff5f84f")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "J5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:Resistor 0603")
+		(at 168.91 138.43 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e1bbb12a-5b03-409e-a3e8-b95228132a3e")
+		(property "Reference" "R16"
+			(at 168.91 136.652 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 168.91 138.43 90)
+			(effects
+				(font
+					(size 0.762 0.762)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:0603_R"
+			(at 168.91 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 168.91 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 168.91 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "545d891b-b19b-4830-891d-fdc1325eb05c")
+		)
+		(pin "1"
+			(uuid "14e0d51f-34f9-405a-8ce1-013c5e3b8394")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "R16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Symbols:VCC")
+		(at 134.62 48.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ea4ea89e-abf2-4a30-a545-0b0f7357e654")
+		(property "Reference" "#PWR0133"
+			(at 134.62 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VCC"
+			(at 134.62 45.212 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 134.62 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 134.62 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 134.62 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "a9517ad0-8505-453d-8175-ccf862ffd1f5")
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(reference "#PWR0133")
 					(unit 1)
 				)
 			)
@@ -7505,6 +8870,69 @@
 				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
 					(reference "#PWR0138")
 					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet
+		(at 191.77 96.52)
+		(size 25.4 7.62)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "fe20a896-fa27-4c2f-bedd-4a6c78e987b9")
+		(property "Sheetname" "SPI LED chain"
+			(at 191.77 95.8084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "schematic_pages/SPI_LED_chain.kicad_sch"
+			(at 191.77 104.0896 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "SOFT_SPI_CLK" input
+			(at 191.77 101.6 180)
+			(uuid "3740a01e-b299-4e97-9267-e0f785af2c7c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SOFT_SPI_MOSI" input
+			(at 191.77 99.06 180)
+			(uuid "b14fab4c-1bb0-4237-851f-bef5cda8e7e3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Harmora"
+				(path "/de43e009-b04c-42c1-b131-cdc664039a0d/65694d34-2946-48e5-a5ba-19c1727ab9b1"
+					(page "2")
 				)
 			)
 		)

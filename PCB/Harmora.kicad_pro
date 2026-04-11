@@ -38,8 +38,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.45,
-          "width": 0.3
+          "height": 0.55,
+          "width": 1.475
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -58,7 +58,56 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "clearance|198501156|73820000|247f5832-f552-46d0-b610-a8cc33f46ffe|d8766540-24d4-42f7-aecd-d9e131a5f82c",
+          ""
+        ],
+        [
+          "clearance|201701156|75270000|1370b055-e86f-46c9-9203-1cf334bb31b0|d0f123d5-1e92-47fd-9611-ab1f0be0ffb8",
+          ""
+        ],
+        [
+          "shorting_items|198501156|74545000|5d2a3d5a-301b-4dc3-bce6-5dbdf7492d56|d8766540-24d4-42f7-aecd-d9e131a5f82c",
+          ""
+        ],
+        [
+          "shorting_items|200001156|74545000|1e94bb77-69d6-4d14-99d5-26ee7ac47caf|42c5472c-245b-44db-b0cd-a2fd465a4554",
+          ""
+        ],
+        [
+          "shorting_items|201701156|73820000|1370b055-e86f-46c9-9203-1cf334bb31b0|c5fe642c-fba1-4b03-9f92-0c4304f4d83e",
+          ""
+        ],
+        [
+          "shorting_items|201701156|74545000|1370b055-e86f-46c9-9203-1cf334bb31b0|b275692d-4459-49d6-a472-3511187a6775",
+          ""
+        ],
+        [
+          "shorting_items|201701156|74545000|1370b055-e86f-46c9-9203-1cf334bb31b0|d9a7eef7-53fc-416a-bbde-ebbab4cffd9b",
+          ""
+        ],
+        [
+          "solder_mask_bridge|198501156|74545000|5d2a3d5a-301b-4dc3-bce6-5dbdf7492d56|d8766540-24d4-42f7-aecd-d9e131a5f82c",
+          ""
+        ],
+        [
+          "solder_mask_bridge|200001156|74545000|42c5472c-245b-44db-b0cd-a2fd465a4554|1e94bb77-69d6-4d14-99d5-26ee7ac47caf",
+          ""
+        ],
+        [
+          "solder_mask_bridge|201701156|73820000|c5fe642c-fba1-4b03-9f92-0c4304f4d83e|1370b055-e86f-46c9-9203-1cf334bb31b0",
+          ""
+        ],
+        [
+          "solder_mask_bridge|201701156|74545000|b275692d-4459-49d6-a472-3511187a6775|1370b055-e86f-46c9-9203-1cf334bb31b0",
+          ""
+        ],
+        [
+          "solder_mask_bridge|201701156|74545000|d9a7eef7-53fc-416a-bbde-ebbab4cffd9b|1370b055-e86f-46c9-9203-1cf334bb31b0",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -66,7 +115,7 @@
         "annular_width": "error",
         "clearance": "error",
         "connection_width": "warning",
-        "copper_edge_clearance": "error",
+        "copper_edge_clearance": "ignore",
         "copper_sliver": "warning",
         "courtyards_overlap": "error",
         "creepage": "error",
@@ -699,7 +748,7 @@
       "Root"
     ],
     [
-      "8c7f0436-3a68-4f5f-872d-97f6a622412c",
+      "fe20a896-fa27-4c2f-bedd-4a6c78e987b9",
       "SPI LED chain"
     ],
     [

@@ -8,7 +8,7 @@
 #include "mcu.h"
 #include "debug.h"
 #include "device_manager.h"
-#include "MOS/mos.h"
+#include "mos.h"
 
 // ==================== Application State ====================
 

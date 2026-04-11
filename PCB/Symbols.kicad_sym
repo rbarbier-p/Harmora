@@ -424,7 +424,7 @@
 						)
 					)
 				)
-				(number ""
+				(number "16"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -5186,7 +5186,7 @@
 			(pin input line
 				(at -15.24 7.62 0)
 				(length 2.54)
-				(name "RST"
+				(name "SS"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -5204,7 +5204,7 @@
 			(pin input line
 				(at -15.24 5.08 0)
 				(length 2.54)
-				(name "SS"
+				(name "DC"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -5222,7 +5222,7 @@
 			(pin input line
 				(at -15.24 2.54 0)
 				(length 2.54)
-				(name "MOSI"
+				(name "RES"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -5240,7 +5240,7 @@
 			(pin input line
 				(at -15.24 0 0)
 				(length 2.54)
-				(name "DS"
+				(name "SDA/MOSI"
 					(effects
 						(font
 							(size 1.27 1.27)
