@@ -3291,10 +3291,6 @@
 		(uuid "ee408fb9-f751-42e2-8235-91ce3f4c5cd1")
 	)
 	(no_connect
-		(at 129.54 86.36)
-		(uuid "2a3c32ec-78af-4f22-975f-ce31b2c3e11b")
-	)
-	(no_connect
 		(at 129.54 111.76)
 		(uuid "2e4369c6-6201-4459-ac99-f8535b3aa848")
 	)
@@ -3329,6 +3325,10 @@
 	(no_connect
 		(at 129.54 137.16)
 		(uuid "b54afbc4-0290-478a-b24b-e937b96456f7")
+	)
+	(no_connect
+		(at 129.54 106.68)
+		(uuid "b6a87436-c101-493f-87ae-e5bdd524be96")
 	)
 	(no_connect
 		(at 129.54 81.28)
@@ -4578,7 +4578,7 @@
 	)
 	(hierarchical_label "328p_RESET"
 		(shape input)
-		(at 129.54 104.14 0)
+		(at 129.54 86.36 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4655,7 +4655,7 @@
 	)
 	(hierarchical_label "MCU_INT"
 		(shape input)
-		(at 129.54 106.68 0)
+		(at 129.54 104.14 0)
 		(effects
 			(font
 				(size 1.27 1.27)
