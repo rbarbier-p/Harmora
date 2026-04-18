@@ -20,7 +20,7 @@ static uint8_t led_initialized = 0;
 
 void task_hall_scan(void) {
   static uint8_t press_threshold[12] = {
-    85, 97, 84, 90,
+    117, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
     82, 89, 86, 87,
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
