@@ -28,6 +28,8 @@ int main(void) {
   
   // LED task is now implemented
   scheduler_enable(TASK_LED_UPDATE, 1);
+  scheduler_enable(TASK_MCU_COMM, 0);
+
 
   uint8_t loop_count = 0;
   while (1) {

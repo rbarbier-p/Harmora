@@ -54,5 +54,5 @@ ISR(PCINT1_vect) {
 
 // MCU Communication Interrupt
 ISR(INT0_vect) {
-    mcu_comm_handle_display();
+    //mcu_comm_handle_display(); // temporary disable (it was crashing)
 }

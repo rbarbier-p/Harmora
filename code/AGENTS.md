@@ -18,7 +18,7 @@ ATmega328P (Main Controller)
 ├── Digital Mux →  6 Rotary encoders
 ├── SPI Master → 32U4
 ├── UART (115200) → Debug
-└── Software SPI LED chain (30 leds)
+└── Software SPI LED chain (26 leds)
 
 ATmega32U4 (USB/MIDI)
 ├── USB Device (D+/D-)
