@@ -25,12 +25,12 @@ ifeq ($(UNAME),Darwin)
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
 	BOOTLOADER_PORT := COM12
-	USB_PORT := COM15
+	USB_PORT := COM13
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
 	BOOTLOADER_PORT := COM12
-	USB_PORT := COM15
+	USB_PORT := COM13
 	ISP_PROTOCOL = arduino
 endif
 
@@ -102,13 +102,13 @@ ATMEGA328P_SRC += $(MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
 #ATMEGA32U4_SRC = src/32u4/working.c
-#ATMEGA32U4_SRC = src/32u4/main3.c
+ATMEGA32U4_SRC = src/32u4/main3.c
 
-ATMEGA32U4_SRC = src/32u4/main.c
-ATMEGA32U4_SRC += src/32u4/midi.c
-ATMEGA32U4_SRC += src/32u4/mcu.c
-ATMEGA32U4_SRC += src/32u4/usb.c
-ATMEGA32U4_SRC += src/32u4/debug.c
+#ATMEGA32U4_SRC = src/32u4/main.c
+#ATMEGA32U4_SRC += src/32u4/midi.c
+#ATMEGA32U4_SRC += src/32u4/mcu.c
+#ATMEGA32U4_SRC += src/32u4/usb.c
+#ATMEGA32U4_SRC += src/32u4/debug.c
 
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(MOS_SRC)
