@@ -106,6 +106,12 @@ void mcu_send_timecode(const char *timecode) {
     midi_send_sysex(sysex, idx);
 }
 
+void send_custom_sysex(const uint8_t *data, uint8_t length) {
+    if (length > 32) length = 32;
+    midi_send_sysex(data, length);
+}
+
+
 mcu_state_t* mcu_get_state(void) {
     return &mcu_state;
 }

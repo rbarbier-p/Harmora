@@ -130,6 +130,9 @@ void mcu_set_meter(uint8_t channel, uint8_t level);
  */
 void mcu_send_timecode(const char *timecode);
 
+
+void send_custom_sysex(const uint8_t *data, uint8_t length);
+
 /**
  * Get current MCU state
  */

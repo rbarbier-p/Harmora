@@ -12,11 +12,6 @@
 #include <stdint.h>
 #include <string.h>
 
-// MIDI api:
-/*
-
-
-*/
 
 // USB Standard Request Codes
 #define GET_STATUS        0
@@ -57,7 +52,7 @@
 #define BOOT_KEY_PTR ((volatile uint16_t *)0x0800)
 
 
-// MIDI Message Types (from version 43)
+// MIDI Message Types 
 #define MIDI_NOTE_OFF       0x80
 #define MIDI_NOTE_ON        0x90
 #define MIDI_AFTERTOUCH     0xA0
@@ -68,7 +63,7 @@
 #define MIDI_SYSEX_START    0xF0
 #define MIDI_SYSEX_END      0xF7
 
-// Common MIDI CC numbers (from version 43)
+// Common MIDI CC numbers 
 #define CC_BANK_SELECT      0
 #define CC_MODULATION       1
 #define CC_VOLUME           7
@@ -141,7 +136,8 @@
 
 
 // CDC line coding state (default 9600 8N1)
-typedef struct {
+typedef struct
+{
     uint32_t dwDTERate;
     uint8_t  bCharFormat;
     uint8_t  bParityType;
@@ -149,7 +145,8 @@ typedef struct {
 } cdc_line_coding_t;
 
 
-typedef struct {
+typedef struct
+{
     uint8_t bmRequestType;
     uint8_t bRequest;
     uint16_t wValue;
@@ -157,8 +154,10 @@ typedef struct {
     uint16_t wLength;
 } usb_setup_t;
 
+// UNUSED
 // Controller state 
-typedef struct {
+typedef struct
+{
     uint8_t current_channel;
     uint8_t current_program;
     uint8_t current_bank;
@@ -169,7 +168,8 @@ typedef struct {
 
 // MCU state
 #define LCD_TEXT_MAX_SIZE 112
-typedef struct {
+typedef struct
+{
     uint8_t fader_position[8];
     uint8_t vpot_position[8];
     uint8_t vpot_led_mode[8];

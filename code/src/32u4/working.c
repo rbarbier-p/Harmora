@@ -10,6 +10,7 @@ const uint8_t PROGMEM device_descriptor[] = {
     0x41, 0x23, 0x36, 0x00, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
 };
 
+
 // USB Configuration Descriptor — 175 bytes total, 4 interfaces
 // Layout: [IAD MIDI][iface0 AudioCtrl][iface1 MIDIStream][IAD CDC][iface2 CDC Ctrl][iface3 CDC Data]
 const uint8_t PROGMEM config_descriptor[] = {
@@ -58,18 +59,31 @@ const uint8_t PROGMEM config_descriptor[] = {
     7, 0x05, 0x85, 0x02, 0x10, 0x00, 0x00,
 };
 
-const uint8_t PROGMEM string0[] = { 4, 0x03, 0x09, 0x04 };
+
+// String 0 (Language)
+const uint8_t PROGMEM string0[] = { 4, 0x03, 0x09, 0x04 }; // English (US)
+
+// String 1 (Manufacturer)
 const uint8_t PROGMEM string1[] = { 14, 0x03, 'M',0, 'a',0, 'c',0, 'k',0, 'i',0, 'e',0 };
 
+
+// String 2 (Product)
 const uint8_t PROGMEM string2[] = { 26, 0x03, 
-    'H', 0, 'a', 0, 'r', 0, 'm', 0, 'o', 0, 'r', 0, 'a', 0, ' ', 0, 'v', 0, '1', 0, '.', 0, '0', 0
+    'H', 0, 'a', 0, 'r', 0, 'm', 0, 'o', 0, 'r', 0, 'a', 0, ' ', 0, 'v', 0, '2', 0, '.', 0, '0', 0
 };
 
+// MIDI
+/*
 const uint8_t PROGMEM string3[] = {
     18, 0x03,
     '0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'1',0
 };
+*/
 
+// From main3.c
+const uint8_t PROGMEM string3[] = { 16, 0x03, '1',0, '2',0, '3',0, '4',0, '5',0, '6',0, '7',0 };
+
+// CDC
 const uint8_t PROGMEM string4[] = {
     20, 0x03,
     'C',0,'D',0,'C',0,' ',0,'S',0,'e',0,'r',0,'i',0,'a',0,'l',0
@@ -77,6 +91,8 @@ const uint8_t PROGMEM string4[] = {
 
 static uint8_t usb_configuration = 0;
 
+
+// CDC line coding state (default 9600 8N1)
 static cdc_line_coding_t cdc_line_coding = {
     .dwDTERate   = 9600,
     .bCharFormat = 0,
@@ -123,7 +139,7 @@ static void usb_hw_init(void) {
     USBCON = (1 << USBE) | (1 << FRZCLK);
     USBCON &= ~(1 << FRZCLK);
     USBCON |= (1 << OTGPADE);
-    _delay_ms(300);
+    _delay_ms(300); // this was added at some point (was not in libusb)
     UDCON &= ~(1 << DETACH);
     UDIEN = (1 << EORSTE);
 }
@@ -188,12 +204,22 @@ static uint8_t cdc_ep_init(void) {
     return 1;
 }
 
+
+// Wait for IN ready
 static inline void wait_in(void) { while (!(UEINTX & (1 << TXINI))); }
+// Wait for OUT ready
+static inline void wait_out(void) { while (!(UEINTX & (1 << RXOUTI))); }
+// Clear IN
 static inline void clear_in(void) { UEINTX &= ~(1 << TXINI); }
+// Clear OUT
 static inline void clear_out(void) { UEINTX &= ~(1 << RXOUTI); }
+// Clear SETUP
 static inline void clear_setup(void) { UEINTX &= ~((1 << RXSTPI) | (1 << RXOUTI) | (1 << TXINI)); }
+// Stall endpoint
 static inline void stall(void) { UECONX |= (1 << STALLRQ); }
+// Read byte from FIFO
 static inline uint8_t read_byte(void) { return UEDATX; }
+// Write byte to FIFO
 static inline void write_byte(uint8_t b) { UEDATX = b; }
 
 static void send_progmem(const uint8_t *data, uint16_t len) {
@@ -267,6 +293,8 @@ static void handle_get_interface(void) {
     wait_in();
     write_byte(0);
     clear_in();
+    //wait_out(); // from libusb/usb.c (old version)
+    //clear_out();
 }
 
 static void handle_set_interface(void) {
@@ -281,6 +309,8 @@ static void handle_get_status(void) {
     write_byte(0);
     write_byte(0);
     clear_in();
+    //wait_out();
+    //clear_out();
 }
 
 static void handle_feature(void) {
@@ -381,6 +411,13 @@ ISR(USB_COM_vect) {
     UENUM = 0;
     if (UEINTX & (1 << RXSTPI)) handle_setup();
     if (UEINTX & (1 << RXOUTI)) UEINTX &= ~(1 << RXOUTI);
+
+    // Check MIDI RX endpoint (added from main3.c)
+    UENUM = MIDI_RX_ENDPOINT;
+    if (UEINTX & (1 << RXOUTI)) {
+        // Data received - will be processed in main loop
+    }
+
 }
 
 
@@ -431,18 +468,18 @@ void midi_cc(uint8_t channel, uint8_t cc, uint8_t value) {
     midi_send_3byte(0x0B, MIDI_CC | (channel & 0x0F), cc & 0x7F, value & 0x7F);
 }
 
-// Program Change
+// Program Change (instrument selection)
 void midi_program_change(uint8_t channel, uint8_t program) {
     midi_send_2byte(0x0C, MIDI_PROGRAM_CHANGE | (channel & 0x0F), program & 0x7F);
 }
 
-// Pitch Bend
+// Pitch Bend (-8192 to +8191, 0 = center)
 void midi_pitch_bend(uint8_t channel, int16_t bend) {
     uint16_t value = (uint16_t)(bend + 8192);
     midi_send_3byte(0x0E, MIDI_PITCH_BEND | (channel & 0x0F), value & 0x7F, (value >> 7) & 0x7F);
 }
 
-// Channel Pressure
+// Channel Pressure (aftertouch)
 void midi_channel_pressure(uint8_t channel, uint8_t pressure) {
     midi_send_2byte(0x0D, MIDI_CHANNEL_PRESSURE | (channel & 0x0F), pressure & 0x7F);
 }
@@ -452,7 +489,8 @@ void midi_poly_aftertouch(uint8_t channel, uint8_t note, uint8_t pressure) {
     midi_send_3byte(0x0A, MIDI_AFTERTOUCH | (channel & 0x0F), note & 0x7F, pressure & 0x7F);
 }
 
-// Play a chord
+// NOTE: probably should only use count and not '8'
+// Play a chord (up to 8 notes)
 void midi_play_chord(uint8_t channel, const uint8_t *notes, uint8_t count, uint8_t velocity) {
     for (uint8_t i = 0; i < count && i < 8; i++) {
         midi_note_on(channel, notes[i], velocity);
@@ -460,7 +498,7 @@ void midi_play_chord(uint8_t channel, const uint8_t *notes, uint8_t count, uint8
     }
 }
 
-// Stop a chord
+// Stop a chord (up to 8 notes)
 void midi_stop_chord(uint8_t channel, const uint8_t *notes, uint8_t count) {
     for (uint8_t i = 0; i < count && i < 8; i++) {
         midi_note_off(channel, notes[i], 0);
@@ -468,7 +506,7 @@ void midi_stop_chord(uint8_t channel, const uint8_t *notes, uint8_t count) {
     }
 }
 
-// Change instrument
+// Change instrument (program + bank)
 void midi_set_instrument(uint8_t channel, uint8_t bank, uint8_t program) {
     midi_cc(channel, CC_BANK_SELECT, bank);
     midi_program_change(channel, program);
@@ -476,7 +514,7 @@ void midi_set_instrument(uint8_t channel, uint8_t bank, uint8_t program) {
     ctrl_state.current_program = program;
 }
 
-// All notes off
+// All notes off 
 void midi_all_notes_off(uint8_t channel) {
     midi_cc(channel, 123, 0);
 }
@@ -579,7 +617,6 @@ void mcu_send_version_reply(void) {
     midi_send_sysex(sysex, sizeof(sysex));
 }
 
-// MCU Mackie Control Universal
 
 // Update LCD display
 void mcu_lcd_write(uint8_t position, const char *text, uint8_t length) {
@@ -672,6 +709,7 @@ void send_custom_sysex(const uint8_t *data, uint8_t length) {
     midi_send_sysex(data, length);
 }
 
+
 // Debug SysEx message sender
 void midi_debug(const char *msg) {
     if (!usb_configuration || !msg) return;
@@ -692,7 +730,7 @@ void midi_debug(const char *msg) {
     
     midi_send_sysex(sysex, idx);
 }
-
+/*
 void midi_debug_packet(MPacket packet) {
     if (!usb_configuration) return;
     
@@ -756,9 +794,122 @@ void midi_debug_value(const char *label, uint16_t value) {
     
     midi_debug(buf);
 }
+*/
+
+// SysEx receive buffer
+static uint8_t sysex_buffer[32];
+static uint8_t sysex_pos = 0;
+static uint8_t in_sysex = 0;
+
+// Process incoming MIDI/SysEx from DAW
+void process_incoming_midi(void) {
+    if (!usb_configuration) return;
+    
+    UENUM = MIDI_RX_ENDPOINT;
+    
+    // Check if data available
+    if (!(UEINTX & (1 << RXOUTI))) return;
+    
+    // Read USB MIDI packet (4 bytes)
+    uint8_t header = read_byte();
+    uint8_t byte1 = read_byte();
+    uint8_t byte2 = read_byte();
+    uint8_t byte3 = read_byte();
+    
+    // Clear OUT
+    UEINTX &= ~(1 << RXOUTI);
+    UEINTX &= ~(1 << FIFOCON);
+    
+    // Parse header to determine message type
+    uint8_t cin = header & 0x0F;
+    
+    // Handle SysEx
+    if (cin >= 0x04 && cin <= 0x07) {
+        // SysEx message
+        if (byte1 == MIDI_SYSEX_START) {
+            in_sysex = 1;
+            sysex_pos = 0;
+            sysex_buffer[sysex_pos++] = byte1;
+            if (sysex_pos < sizeof(sysex_buffer)) sysex_buffer[sysex_pos++] = byte2;
+            if (sysex_pos < sizeof(sysex_buffer) && byte3 != 0) sysex_buffer[sysex_pos++] = byte3;
+        } else if (in_sysex) {
+            if (sysex_pos < sizeof(sysex_buffer)) sysex_buffer[sysex_pos++] = byte1;
+            if (sysex_pos < sizeof(sysex_buffer) && byte2 != 0) sysex_buffer[sysex_pos++] = byte2;
+            if (sysex_pos < sizeof(sysex_buffer) && byte3 != 0) sysex_buffer[sysex_pos++] = byte3;
+        }
+        
+        // Check for end of SysEx
+        if (byte1 == MIDI_SYSEX_END || byte2 == MIDI_SYSEX_END || byte3 == MIDI_SYSEX_END) {
+            in_sysex = 0;
+            
+            // Process complete SysEx message
+            if (sysex_pos >= 6) {
+                // Check if it's a Mackie SysEx
+                if (sysex_buffer[1] == MCU_SYSEX_ID_1 &&
+                    sysex_buffer[2] == MCU_SYSEX_ID_2 &&
+                    sysex_buffer[3] == MCU_SYSEX_ID_3 &&
+                    sysex_buffer[4] == MCU_DEVICE_ID) {
+                    
+                    uint8_t cmd = sysex_buffer[5];
+                    
+                    switch (cmd) {
+                        case MCU_CMD_DEVICE_QUERY:
+                            // Host is asking "are you there?"
+                            mcu_send_device_query_response();
+                            midi_debug("are you there ?");
+                            break;
+                            
+                        case MCU_CMD_VERSION_REQUEST:
+                            // Host wants version info
+                            mcu_send_version_reply();
+                            break;
+                            
+                        default:
+                            // Unknown command
+                            break;
+                    }
+                }
+            }
+            sysex_pos = 0;
+        }
+    }
+    // Handle Note On/Off (fader touch, buttons from host)
+    else if (cin == 0x09 || cin == 0x08) {
+        // DAW is sending button/fader touch state
+        // byte1 = status (0x90 = note on, 0x80 = note off)
+        // byte2 = note number (button)
+        // byte3 = velocity (0 or 127)
+        
+        // Echo it back to confirm (optional)
+        // You could add LED updates here based on button presses from DAW
+    }
+    // Handle Control Change (V-Pot, etc from host)
+    else if (cin == 0x0B) {
+        // byte1 = 0xB0 | channel
+        // byte2 = CC number
+        // byte3 = value
+        
+        // DAW is updating V-Pot or other CC
+    }
+    // Handle Pitch Bend (fader from host)
+    else if (cin == 0x0E) {
+        // byte1 = 0xE0 | channel
+        // byte2 = LSB
+        // byte3 = MSB
+        
+        // DAW is moving a fader
+        uint8_t channel = byte1 & 0x0F;
+        //HERE
+        //uint16_t value = byte2 | (byte3 << 7);
+        
+        // Update local state
+        if (channel < 8) {
+            mcu_state.fader_position[channel] = byte3;
+        }
+    }
+}
 
 // ==================== MAIN ====================
-
 
 int main(void)
 {
@@ -775,65 +926,188 @@ int main(void)
     usb_hw_init();
     sei();
 
-    mos_init(M_INIT_DEVICE);
-    //spi_init(SPI_MODE_0, SPI_MSB_FIRST);
+    // mos_init(M_INIT_DEVICE);
+    //uint8_t handshake_sent = 0;
+    uint8_t counter = 0;
+    uint8_t value = 32;
+    char buffer[4];
+    memset(&buffer, 0, 4);
+    buffer[0] = '\'';
+    buffer[2] = '\'';
+
+    while (!usb_configuration)
+    {
+        _delay_ms(100);
+    }
+    
+    while (1) {
+        /*
+        if (!handshake_sent) {
+            midi_debug("MCU initializing...");
+            _delay_ms(500);
+            mcu_send_device_query_response();
+            _delay_ms(100);
+            //mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
+            //mcu_lcd_write(56, "   AVR USB MCU    ", 17);
+            midi_debug("MCU ready!");
+            handshake_sent = 1;
+        }
+        */
+        if (value >= 126)
+            value = 32;
+
+
+        buffer[1] = value;
+        midi_debug("loop: ");
+
+        midi_debug(buffer);
+
+            
+        counter++;
+        if (counter >= 20)
+            counter = 0;
+
+        const uint8_t roots[] = {60, 65, 67, 60}; // C, F, G, C
+        uint8_t root = roots[(counter / 2) % 4];
+        mcu_button(MCU_BTN_RECORD, 1);
+        midi_play_chord_type(0, root, chord_major, 3, 80);
+        _delay_ms(1000);
+        uint8_t notes[3];
+        for (uint8_t i = 0; i < 3; i++) {
+            notes[i] = root + pgm_read_byte(&chord_major[i]);
+        }
+        midi_stop_chord(0, notes, 3);
+        
+        uint8_t custom[] = {
+            MIDI_SYSEX_START,
+            0x7E, 0x00, 0x06, 0x01,
+            MIDI_SYSEX_END
+        };
+        send_custom_sysex(custom, sizeof(custom));
+        
+        _delay_ms(100);
+        value++;
+        
+    }
+    return 0;
+}
+
+/*
+ int main(void) {
+    MCUCR = (1 << JTD);
+    MCUCR = (1 << JTD);
+    
+    LED_INIT();
+    LED_OFF();
+    
+    memset(&mcu_state, 0, sizeof(mcu_state));
+    strcpy(mcu_state.lcd_text, "Mackie Control Universal Ready                                                          ");
+    
+    UDCON = (1 << DETACH);
+    _delay_ms(250);
+    
+    for (uint8_t i = 0; i < 5; i++) {
+        LED_TOGGLE();
+        _delay_ms(100);
+    }
+    LED_OFF();
+    
+    pll_init();
+    usb_hw_init();
+    sei();
+    
+    uint8_t demo_step = 0;
+    uint16_t counter = 0;
     uint8_t handshake_sent = 0;
     
     while (1) {
         if (usb_configuration) {
+            // Continuously process incoming MIDI from DAW
+            for (uint8_t i = 0; i < 4; i++) {
+                process_incoming_midi();
+            }
+            
             if (!handshake_sent) {
-                midi_debug("MCU initializing...");
                 _delay_ms(500);
                 mcu_send_device_query_response();
                 _delay_ms(100);
-                //mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
-                //mcu_lcd_write(56, "   AVR USB MCU    ", 17);
-                midi_debug("MCU ready!");
-                handshake_sent = 1;
-            }
-            
-
-            MPacket packet;
-            mos_receive_packet(&packet);
-
-            // process packet
-            switch (packet.command)
-            {
-                case M_CMD_DEBUG_PRINT:
-                {
-                    midi_debug_packet(packet);
-                } break;
-                case M_CMD_UPDATE_DATA:
-                {
-                    midi_debug_packet(packet);
-                } break;
-                case M_CMD_REQUEST_DATA:
-                {
-                    // HERE
-                    /*
-                    packet = (MPacket){M_CMD_UPDATE_DATA, M_DEVICE_DISPLAY, 0, M_DISPLAY_DRAW_CHAR, 5, {'A', 0, 0, 0, 0}};
-                    mos_send_packet(&packet);
-                    */
-                } break;
-                default:
-                {
-
-                } break;
-            }
+                mcu_send_version_reply();
+                _delay_ms(100);
+                mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
+                mcu_lcd_write(56, "   Ready for DAW  ", 17);
                 
-            uint8_t custom[] = {
-                MIDI_SYSEX_START,
-                0x7E, 0x00, 0x06, 0x01,
-                MIDI_SYSEX_END
-            };
-            send_custom_sysex(custom, sizeof(custom));
+                // Initialize all faders to center
+                for (uint8_t i = 0; i < 8; i++) {
+                    mcu_set_fader(i, 8192);  // Center position
+                    mcu_set_vpot_led(i, 1, 6);  // Center LED
+                }
+                
+                handshake_sent = 1;
+                LED_ON();
+            }
             
+            counter++;
+            if (counter >= 20) {
+                counter = 0;
+                demo_step = (demo_step + 1) % 6;
+                
+                switch (demo_step) {
+                    case 0:
+                        for (uint8_t i = 0; i < 8; i++) {
+                            mcu_set_fader(i, (i * 2000) + 2000);
+                        }
+                        mcu_lcd_write(0, "  Fader Demo      ", 17);
+                        break;
+                        
+                    case 1:
+                        for (uint8_t i = 0; i < 8; i++) {
+                            mcu_set_vpot_led(i, 1, 6);
+                        }
+                        mcu_lcd_write(0, "  V-Pot Demo      ", 17);
+                        break;
+                        
+                    case 2:
+                        mcu_button(MCU_BTN_PLAY, 1);
+                        mcu_lcd_write(0, "  Transport Play  ", 17);
+                        _delay_ms(100);
+                        mcu_button(MCU_BTN_PLAY, 0);
+                        break;
+                        
+                    case 3:
+                        for (uint8_t i = 0; i < 8; i++) {
+                            mcu_set_meter(i, 6 + (i % 4));
+                        }
+                        mcu_lcd_write(0, "  Meter Demo      ", 17);
+                        break;
+                        
+                    case 4:
+                        mcu_send_timecode("12:34:56:78");
+                        mcu_lcd_write(0, "  Timecode Demo   ", 17);
+                        break;
+                        
+                    case 5:
+                        {
+                            uint8_t custom[] = {
+                                MIDI_SYSEX_START,
+                                0x7E, 0x00, 0x06, 0x01,
+                                MIDI_SYSEX_END
+                            };
+                            send_custom_sysex(custom, sizeof(custom));
+                            mcu_lcd_write(0, "  Custom SysEx    ", 17);
+                        }
+                        break;
+                }
+            }
             _delay_ms(100);
-            
-        } else {
+        } 
+        else
+        {
             handshake_sent = 0;
             _delay_ms(100);
+            LED_TOGGLE();
         }
     }
+    
     return 0;
 }
+*/

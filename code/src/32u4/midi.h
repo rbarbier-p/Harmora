@@ -31,6 +31,7 @@
 
 // ==================== Basic MIDI Messages ====================
 
+void midi_usb_rx_task(void);
 /**
  * Send raw 3-byte MIDI message
  */
@@ -48,6 +49,7 @@ void midi_send_sysex(const uint8_t *data, uint8_t length);
 
 // ==================== Voice Messages ====================
 
+void midi_master_volume(uint8_t value);
 /**
  * Note On - Start playing a note
  */

@@ -1,18 +1,41 @@
 #include "usb.h"
 
+// PROGMEM -> macro from <avr/pgmspace.h> to store data in flash (program memory) instead of SRAM (data memory)
+// Need to use helpers to access it (functions/macros)
+
 // USB Device Descriptor
 // bDeviceClass=0xEF, bDeviceSubClass=0x02, bDeviceProtocol=0x01
 // required for IAD composite devices on Windows
+
 const uint8_t PROGMEM device_descriptor[] = {
-    18, 0x01, 0x00, 0x02, 0xEF, 0x02, 0x01, 0x20,
-    0x41, 0x23, 0x36, 0x00, 0x00, 0x01, 0x01, 0x02, 0x03, 0x01
+    18,         // bLength
+    0x01,       // bDescriptorType (Device)
+    0x00, 0x02, // bcdUSB 2.00
+    0xEF,       // bDeviceClass (defined in interface)
+    0x02,       // bDeviceSubClass
+    0x01,       // bDeviceProtocol
+    0x20,       // bMaxPacketSize0 32
+    0xC0, 0x16, // idVendor 0x16C0
+    0xE4, 0x05, // idProduct 0x05E4
+    0x00, 0x01, // bcdDevice 1.00
+    0x01,       // iManufacturer
+    0x02,       // iProduct
+    0x03,       // iSerialNumber
+    0x01        // bNumConfigurations
 };
 
 // USB Configuration Descriptor — 175 bytes total, 4 interfaces
 // Layout: [IAD MIDI][iface0 AudioCtrl][iface1 MIDIStream][IAD CDC][iface2 CDC Ctrl][iface3 CDC Data]
 const uint8_t PROGMEM config_descriptor[] = {
     // Configuration header
-    9, 0x02, 175, 0, 4, 1, 0, 0x80, 0x32,
+    9,          // bLength
+    0x02,       // bDescriptorType (Configuration)
+    175, 0,     // wTotalLength (9 + 8 + 9 + )
+    4,          // bNumInterfaces (Audio Control + MIDI Streaming)
+    1,          // bConfigurationValue
+    0,          // iConfiguration
+    0x80,       // bmAttributes (Bus Powered)
+    0x32,       // bMaxPower (100mA)
 
     // IAD: MIDI function (interfaces 0-1, Audio class)
     8, 0x0B, 0, 2, 0x01, 0x00, 0x00, 0,
@@ -50,24 +73,160 @@ const uint8_t PROGMEM config_descriptor[] = {
 
     // Interface 3: CDC Data
     9, 0x04, 0x03, 0x00, 0x02, 0x0A, 0x00, 0x00, 0x00,
-    // EP4 OUT bulk (host->device, 16 bytes)
-    7, 0x05, 0x04, 0x02, 0x10, 0x00, 0x00,
+    // EP4 OUT bulk (host->device, 64 bytes)
+    7, 0x05, 0x04, 0x02, 0x40, 0x00, 0x00,
     // EP5 IN bulk (device->host, 16 bytes)
     7, 0x05, 0x85, 0x02, 0x10, 0x00, 0x00,
 };
 
-const uint8_t PROGMEM string0[] = { 4, 0x03, 0x09, 0x04 };
+
+/* Older version with details
+// USB Configuration Descriptor with MIDI interfaces
+const uint8_t PROGMEM config_descriptor[] = {
+    // Configuration Descriptor
+    9,            // bLength
+    0x02,         // bDescriptorType (Configuration)
+    101, 0,       // wTotalLength (9 + 9 + 9 + 7 + 6 + 6 + 9 + 9 + 7 + 5 + 9 + 5 + 7)
+    0x02,         // bNumInterfaces (Audio Control + MIDI Streaming)
+    0x01,         // bConfigurationValue
+    0x00,         // iConfiguration
+    0x80,         // bmAttributes (Bus Powered)
+    0x32,         // bMaxPower (100mA)
+
+    // Standard AC Interface Descriptor (Audio Control)
+    9,            // bLength
+    0x04,         // bDescriptorType (Interface)
+    0x00,         // bInterfaceNumber
+    0x00,         // bAlternateSetting
+    0x00,         // bNumEndpoints
+    0x01,         // bInterfaceClass (Audio)
+    0x01,         // bInterfaceSubClass (Audio Control)
+    0x00,         // bInterfaceProtocol
+    0x00,         // iInterface
+
+    // Class-Specific AC Interface Descriptor
+    9,            // bLength
+    0x24,         // bDescriptorType (CS_INTERFACE)
+    0x01,         // bDescriptorSubtype (HEADER)
+    0x00, 0x01,   // bcdADC 1.00
+    0x09, 0x00,   // wTotalLength
+    0x01,         // bInCollection (1 streaming interface)
+    0x01,         // baInterfaceNr(1) - MIDI Streaming interface
+
+    // Standard MS Interface Descriptor (MIDI Streaming)
+    9,            // bLength
+    0x04,         // bDescriptorType (Interface)
+    0x01,         // bInterfaceNumber
+    0x00,         // bAlternateSetting
+    0x02,         // bNumEndpoints (IN and OUT)
+    0x01,         // bInterfaceClass (Audio)
+    0x03,         // bInterfaceSubClass (MIDI Streaming)
+    0x00,         // bInterfaceProtocol
+    0x00,         // iInterface
+
+    // Class-Specific MS Interface Descriptor
+    7,            // bLength
+    0x24,         // bDescriptorType (CS_INTERFACE)
+    0x01,         // bDescriptorSubtype (MS_HEADER)
+    0x00, 0x01,   // bcdMSC 1.00
+    65, 0,        // wTotalLength
+
+    // MIDI IN Jack Descriptor (Embedded)
+    6,            // bLength
+    0x24,         // bDescriptorType (CS_INTERFACE)
+    0x02,         // bDescriptorSubtype (MIDI_IN_JACK)
+    0x01,         // bJackType (Embedded)
+    0x01,         // bJackID
+    0x00,         // iJack
+
+    // MIDI IN Jack Descriptor (External)
+    6,            // bLength
+    0x24,         // bDescriptorType (CS_INTERFACE)
+    0x02,         // bDescriptorSubtype (MIDI_IN_JACK)
+    0x02,         // bJackType (External)
+    0x02,         // bJackID
+    0x00,         // iJack
+
+    // MIDI OUT Jack Descriptor (Embedded)
+    9,            // bLength
+    0x24,         // bDescriptorType (CS_INTERFACE)
+    0x03,         // bDescriptorSubtype (MIDI_OUT_JACK)
+    0x01,         // bJackType (Embedded)
+    0x03,         // bJackID
+    0x01,         // bNrInputPins
+    0x02,         // baSourceID(1) - External IN Jack
+    0x01,         // baSourcePin(1)
+    0x00,         // iJack
+
+    // MIDI OUT Jack Descriptor (External)
+    9,            // bLength
+    0x24,         // bDescriptorType (CS_INTERFACE)
+    0x03,         // bDescriptorSubtype (MIDI_OUT_JACK)
+    0x02,         // bJackType (External)
+    0x04,         // bJackID
+    0x01,         // bNrInputPins
+    0x01,         // baSourceID(1) - Embedded IN Jack
+    0x01,         // baSourcePin(1)
+    0x00,         // iJack
+
+    // Standard Bulk OUT Endpoint Descriptor
+    9,            // bLength
+    0x05,         // bDescriptorType (Endpoint)
+    0x01,         // bEndpointAddress (OUT, EP1)
+    0x02,         // bmAttributes (Bulk)
+    0x20, 0x00,   // wMaxPacketSize 32
+    0x00,         // bInterval (ignored for bulk)
+    0x00,         // bRefresh
+    0x00,         // bSynchAddress
+
+    // Class-Specific MS Bulk OUT Endpoint Descriptor
+    5,            // bLength
+    0x25,         // bDescriptorType (CS_ENDPOINT)
+    0x01,         // bDescriptorSubtype (MS_GENERAL)
+    0x01,         // bNumEmbMIDIJack
+    0x01,         // baAssocJackID(1)
+
+    // Standard Bulk IN Endpoint Descriptor
+    9,            // bLength
+    0x05,         // bDescriptorType (Endpoint)
+    0x82,         // bEndpointAddress (IN, EP2)
+    0x02,         // bmAttributes (Bulk)
+    0x20, 0x00,   // wMaxPacketSize 32
+    0x00,         // bInterval (ignored for bulk)
+    0x00,         // bRefresh
+    0x00,         // bSynchAddress
+
+    // Class-Specific MS Bulk IN Endpoint Descriptor
+    5,            // bLength
+    0x25,         // bDescriptorType (CS_ENDPOINT)
+    0x01,         // bDescriptorSubtype (MS_GENERAL)
+    0x01,         // bNumEmbMIDIJack
+    0x03,         // baAssocJackID(1)
+};
+*/
+
+// String 0: Language
+const uint8_t PROGMEM string0[] = { 4, 0x03, 0x09, 0x04 }; // English (US)
+// String 1: Manufacturer
 const uint8_t PROGMEM string1[] = { 14, 0x03, 'M',0, 'a',0, 'c',0, 'k',0, 'i',0, 'e',0 };
 
+// String 2 : Product
 const uint8_t PROGMEM string2[] = { 26, 0x03, 
     'H', 0, 'a', 0, 'r', 0, 'm', 0, 'o', 0, 'r', 0, 'a', 0, ' ', 0, 'v', 0, '1', 0, '.', 0, '0', 0
 };
 
+/*
+// MIDI
 const uint8_t PROGMEM string3[] = {
     18, 0x03,
     '0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'0',0,'1',0
 };
+*/
 
+const uint8_t PROGMEM string3[] = { 16, 0x03, '1',0, '2',0, '3',0, '4',0, '5',0, '6',0, '7',0 };
+
+
+// CDC
 const uint8_t PROGMEM string4[] = {
     20, 0x03,
     'C',0,'D',0,'C',0,' ',0,'S',0,'e',0,'r',0,'i',0,'a',0,'l',0
@@ -75,6 +234,7 @@ const uint8_t PROGMEM string4[] = {
 
 // Static state
 static uint8_t usb_configuration = 0;
+// CDC line coding state (default 9600 8N1)
 static cdc_line_coding_t cdc_line_coding = {
     .dwDTERate   = 9600,
     .bCharFormat = 0,
@@ -174,13 +334,6 @@ static uint8_t cdc_ep_init_internal(void) {
     return 1;
 }
 
-static inline void wait_in(void) { while (!(UEINTX & (1 << TXINI))); }
-static inline void clear_in(void) { UEINTX &= ~(1 << TXINI); }
-static inline void clear_out(void) { UEINTX &= ~(1 << RXOUTI); }
-static inline void clear_setup(void) { UEINTX &= ~((1 << RXSTPI) | (1 << RXOUTI) | (1 << TXINI)); }
-static inline void stall(void) { UECONX |= (1 << STALLRQ); }
-static inline uint8_t read_byte(void) { return UEDATX; }
-static inline void write_byte(uint8_t b) { UEDATX = b; }
 
 static void send_progmem(const uint8_t *data, uint16_t len) {
     uint16_t tosend = len < setup.wLength ? len : setup.wLength;
@@ -364,6 +517,7 @@ ISR(USB_GEN_vect) {
 }
 
 ISR(USB_COM_vect) {
+
     UENUM = 0;
     if (UEINTX & (1 << RXSTPI)) handle_setup();
     if (UEINTX & (1 << RXOUTI)) UEINTX &= ~(1 << RXOUTI);

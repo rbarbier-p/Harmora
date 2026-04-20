@@ -64,6 +64,15 @@ typedef struct {
     uint8_t  bDataBits;
 } cdc_line_coding_t;
 
+
+static inline void wait_in(void) { while (!(UEINTX & (1 << TXINI))); }
+static inline void clear_in(void) { UEINTX &= ~(1 << TXINI); }
+static inline void clear_out(void) { UEINTX &= ~(1 << RXOUTI); }
+static inline void clear_setup(void) { UEINTX &= ~((1 << RXSTPI) | (1 << RXOUTI) | (1 << TXINI)); }
+static inline void stall(void) { UECONX |= (1 << STALLRQ); }
+static inline uint8_t read_byte(void) { return UEDATX; }
+static inline void write_byte(uint8_t b) { UEDATX = b; }
+
 /**
  * Initialize USB hardware and peripherals
  * Call this once during system startup
@@ -84,5 +93,11 @@ void usb_jump_to_bootloader(void);
  * Get current CDC line coding configuration
  */
 const cdc_line_coding_t* usb_get_line_coding(void);
+
+/*
+#ifdef (HARMORA_USB_IMPLEMENTATION)
+    #include "harmora_usb.c"
+#endif
+*/
 
 #endif // USB_H

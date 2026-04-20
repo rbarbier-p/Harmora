@@ -24,13 +24,13 @@ ifeq ($(UNAME),Darwin)
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
-	BOOTLOADER_PORT := COM3
-	USB_PORT := COM18
+	BOOTLOADER_PORT := COM12
+	USB_PORT := COM15
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
-	BOOTLOADER_PORT := COM3
-	USB_PORT := COM18
+	BOOTLOADER_PORT := COM12
+	USB_PORT := COM15
 	ISP_PROTOCOL = arduino
 endif
 
@@ -53,7 +53,7 @@ FLASH = 32768  # ATmega328P Flash in bytes
 BUILD_DIR = .build
 
 # Compiler flags
-CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter
+CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter -Wno-unused-function
 328P_INCLUDES = -Isrc/328p
 328P_INCLUDES += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
 328P_INCLUDES += -Isrc/328p/I2C
@@ -101,12 +101,15 @@ ATMEGA328P_SRC += $(328P_SPI_SRC)
 ATMEGA328P_SRC += $(MOS_SRC)
 
 #NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
+#ATMEGA32U4_SRC = src/32u4/working.c
+#ATMEGA32U4_SRC = src/32u4/main3.c
+
 ATMEGA32U4_SRC = src/32u4/main.c
 ATMEGA32U4_SRC += src/32u4/midi.c
 ATMEGA32U4_SRC += src/32u4/mcu.c
 ATMEGA32U4_SRC += src/32u4/usb.c
-ATMEGA32U4_SRC += src/32u4/device_manager.c
 ATMEGA32U4_SRC += src/32u4/debug.c
+
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(MOS_SRC)
 
@@ -175,6 +178,11 @@ endif
 
 isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+
+32u4: $(ATMEGA32U4_HEX)
+	@$(MAKE) reset-board
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)

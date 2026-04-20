@@ -11,16 +11,74 @@ const uint8_t PROGMEM chord_maj7[] = {0, 4, 7, 11};
 const uint8_t PROGMEM chord_min7[] = {0, 3, 7, 10};
 const uint8_t PROGMEM chord_dom7[] = {0, 4, 7, 10};
 
-// ==================== MIDI Endpoint Helpers ====================
+// HERE
+#define MIDI_RX_BUFFER_SIZE 64
 
-static inline void wait_in(void) { while (!(UEINTX & (1 << TXINI))); }
-static inline void write_byte(uint8_t b) { UEDATX = b; }
-static inline void clear_in_ep(void) { 
-    UEINTX &= ~(1 << TXINI); 
-    UEINTX &= ~(1 << FIFOCON);
-}
+static uint8_t midi_rx_buffer[MIDI_RX_BUFFER_SIZE][4];
+static volatile uint8_t midi_rx_head = 0;
+static volatile uint8_t midi_rx_tail = 0;
+
 
 // ==================== Basic MIDI Messages ====================
+
+
+// HERE 
+uint8_t usb_midi_out_available(void)
+{
+    UENUM = 1; // select EP1
+
+    return (UEINTX & (1 << RXOUTI));
+}
+
+void usb_midi_read_packet(uint8_t *buf)
+{
+    UENUM = 1; // select EP1
+
+    // read 4 bytes (USB MIDI event packet)
+    buf[0] = UEDATX;
+    buf[1] = UEDATX;
+    buf[2] = UEDATX;
+    buf[3] = UEDATX;
+
+    // clear RXOUTI (VERY IMPORTANT)
+    UEINTX &= ~(1 << RXOUTI);
+}
+
+uint8_t midi_available(void)
+{
+    return (midi_rx_head != midi_rx_tail);
+}
+
+void midi_read(uint8_t *packet)
+{
+    if (midi_rx_head == midi_rx_tail)
+        return;
+
+    for (int i = 0; i < 4; i++)
+        packet[i] = midi_rx_buffer[midi_rx_tail][i];
+
+    midi_rx_tail = (midi_rx_tail + 1) % MIDI_RX_BUFFER_SIZE;
+}
+
+
+void midi_usb_rx_task(void)
+{
+    while (usb_midi_out_available())
+    {
+        uint8_t packet[4];
+
+        usb_midi_read_packet(packet); // read 4 bytes from EP OUT
+
+        uint8_t next = (midi_rx_head + 1) % MIDI_RX_BUFFER_SIZE;
+        if (next != midi_rx_tail) // avoid overflow
+        {
+            for (int i = 0; i < 4; i++)
+                midi_rx_buffer[midi_rx_head][i] = packet[i];
+
+            midi_rx_head = next;
+        }
+    }
+}
 
 void midi_send_3byte(uint8_t cable, uint8_t b1, uint8_t b2, uint8_t b3) {
     if (!usb_is_configured()) return;
@@ -33,7 +91,7 @@ void midi_send_3byte(uint8_t cable, uint8_t b1, uint8_t b2, uint8_t b3) {
     write_byte(b1);
     write_byte(b2);
     write_byte(b3);
-    clear_in_ep();
+    clear_in();
 }
 
 void midi_send_2byte(uint8_t cable, uint8_t b1, uint8_t b2) {
@@ -47,7 +105,7 @@ void midi_send_2byte(uint8_t cable, uint8_t b1, uint8_t b2) {
     write_byte(b1);
     write_byte(b2);
     write_byte(0);
-    clear_in_ep();
+    clear_in();
 }
 
 void midi_send_sysex(const uint8_t *data, uint8_t length) {
@@ -84,11 +142,17 @@ void midi_send_sysex(const uint8_t *data, uint8_t length) {
             }
         }
         
-        clear_in_ep();
+        clear_in();
     }
 }
 
 // ==================== Voice Messages ====================
+
+void midi_master_volume(uint8_t value)
+{
+    uint16_t pitchBend = ((uint16_t)value * 16383) >> 8;
+    midi_send_3byte(0, 0xE8, pitchBend & 0x7F, (pitchBend >> 7) & 0x7F);
+}
 
 void midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity) {
     midi_send_3byte(0x09, MIDI_NOTE_ON | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
