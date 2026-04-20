@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+// Shared framed-link protocol definitions
+#include "../shared/mcu_link.h"
+
 /**
  * MCU-to-MCU Communication Protocol
  * 
@@ -34,36 +37,9 @@
 // =============================================================================
 // DRAWING COMMANDS (32U4 → 328P)
 // =============================================================================
-// 328P receives these commands and executes corresponding display functions
+// (Defined in src/shared/mcu_link.h)
 
-typedef enum {
-    // Control commands
-    CMD_NOP         = 0x00,  // No operation (can be used for timing/sync)
-    CMD_END         = 0x0F,  // End of command stream
-    
-    // Screen commands
-    CMD_CLEAR       = 0x01,  // Clear entire screen
-    
-    // Pixel operations
-    CMD_SET_PIXEL   = 0x02,  // Params: x, y, on (1 byte each)
-    
-    // Drawing primitives
-    CMD_LINE        = 0x03,  // Params: x0, y0, x1, y1
-    CMD_RECT        = 0x04,  // Params: x, y, w, h
-    CMD_FILL_RECT   = 0x05,  // Params: x, y, w, h
-    CMD_CLEAR_RECT  = 0x06,  // Params: x, y, w, h
-    
-    // Text rendering
-    CMD_CHAR        = 0x07,  // Params: x, y, char
-    CMD_STRING      = 0x08,  // Params: x, y, len, chars[len]
-    
-    // Bitmap rendering (future)
-    CMD_BITMAP      = 0x09,  // Params: x, y, w, h, bitmap_id (PROGMEM index)
-    
-    // LED control
-    CMD_LED         = 0x0A,  // Params: led_id, preset
-    
-} draw_cmd_t;
+typedef mcu_link_draw_cmd_t draw_cmd_t;
 
 // Parameter counts for each command (for validation/debugging)
 #define CMD_CLEAR_PARAMS      0
@@ -77,25 +53,9 @@ typedef enum {
 // =============================================================================
 // INPUT EVENTS (328P → 32U4)
 // =============================================================================
-// 328P sends these events when input state changes
+// (Defined in src/shared/mcu_link.h)
 
-typedef enum {
-    // Key events (piano hall sensors)
-    EVT_KEY         = 0x11,  // Params: id, state (0 or 1)
-    
-    // Encoder events
-    EVT_ENCODER     = 0x12,  // Params: id, delta (signed int8)
-    
-    // Button events
-    EVT_BUTTON      = 0x13,  // Params: id, state (0 or 1)
-    
-    // Potentiometer events
-    EVT_POT         = 0x14,  // Params: id, value (0-255)
-    
-    // End marker
-    EVT_END         = 0x1F,  // End of event stream
-    
-} input_event_t;
+typedef mcu_link_input_evt_t input_event_t;
 
 // =============================================================================
 // PUBLIC API

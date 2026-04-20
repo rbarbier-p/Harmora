@@ -1,14 +1,16 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 #include <util/delay.h>
 #include <string.h>
 
 #include "usb.h"
-#include "midi.h"
 #include "mcu.h"
 #include "debug.h"
 #include "device_manager.h"
-#include "MOS/mos.h"
+#include "SPI/SPI.h"
+
+#include "link/mcu_link.h"
 
 // ==================== Application State ====================
 
@@ -28,21 +30,28 @@ static usb_state_t usb_state = {
  * Initialize all subsystems
  */
 static void app_init(void) {
+    // Caterina/bootloader may leave the watchdog enabled; disable it early or
+    // the MCU can reset a few seconds after boot.
+    MCUSR &= ~(1 << WDRF);
+    wdt_disable();
+
     // Disable JTAG to free up pins
     MCUCR = (1 << JTD);
     MCUCR = (1 << JTD);
-    
-    // Initialize USB and related hardware
+
+    // Initialize USB and related hardware.
     usb_init();
     
-    // Initialize inter-MCU communication
-    mos_device_init();
-    
+    // SPI slave for framed link
+    spi_init(SPI_MODE_0, SPI_MSB_FIRST);
+    mcu_link_init();
+
     // Initialize device state
     device_manager_init();
-    
+
     usb_state.initialized = 1;
     usb_state.handshake_sent = 0;
+
 }
 
 // ==================== MCU Handshake ====================
@@ -54,11 +63,7 @@ static void send_mcu_handshake(void) {
     if (usb_state.handshake_sent) return;
     
     debug_send_string("MCU initializing...");
-    _delay_ms(500);
-    
     mcu_send_device_query_response();
-    _delay_ms(100);
-    
     debug_send_string("MCU ready!");
     usb_state.handshake_sent = 1;
     device_manager_set_handshake_sent(1);
@@ -74,83 +79,153 @@ static void reset_handshake(void) {
 
 // ==================== Packet Processing ====================
 
-/**
- * Process a packet received from the 328P
- */
-static void process_mos_packet(void)
+static void process_link_rx_frame(void)
 {
-    /*
-    if (!mos_has_data()) // that never returns true
+    uint8_t buf[4 + MCU_LINK_MAX_PAYLOAD];
+    if (!mcu_link_rx_frame_ready()) {
         return;
-        */
-    debug_send_string("Processing mos..\n");
-    MCommand command = spi_read(); // that blocks 
-    debug_send_string("Checking commmand..\n");
-
-    switch (command)
-    {
-        case M_CMD_DEBUG_PRINT:
-            debug_send_string("DEBUG PRINT\n");
-            break;
-            
-        case M_CMD_UPDATE_DATA:
-            // Update internal state from sensor data
-            break;
-            
-        case M_CMD_REQUEST_DATA:
-            // 328P is requesting data from us
-            // Respond with screen or led updates 
-            break;
-            
-        default:
-            break;
     }
+
+    uint8_t n = mcu_link_read_rx_bytes(buf, sizeof(buf));
+    if (n < 4) {
+        return;
+    }
+
+    if (buf[0] != MCU_LINK_MAGIC) {
+        return;
+    }
+
+    uint8_t type = buf[1];
+    uint8_t seq = buf[2];
+    (void)seq;
+    uint8_t len = buf[3];
+    if (4 + len > n) {
+        return;
+    }
+
+    if (type != MCU_LINK_FRAME_INPUT) {
+        return;
+    }
+
+    uint8_t end = (uint8_t)(4 + len);
+    uint8_t idx = 4;
+    uint8_t evt_count = 0;
+    uint8_t shown = 0;
+
+    while (idx < end) {
+        uint8_t evt = buf[idx++];
+        if (evt == EVT_END) {
+            break;
+        }
+
+        uint8_t plen = mcu_link_evt_param_len(evt);
+        if (plen == 0xFF) {
+            break;
+        }
+        if ((uint8_t)(idx + plen) > end) {
+            break;
+        }
+
+        if (shown < 4) {
+            switch (evt) {
+                case EVT_KEY: {
+                    uint8_t id = buf[idx + 0];
+                    uint8_t state = buf[idx + 1];
+                    debug_send_value("K", (uint16_t)((id << 8) | state));
+                    break;
+                }
+                case EVT_ENCODER: {
+                    uint8_t id = buf[idx + 0];
+                    uint8_t delta = buf[idx + 1];
+                    debug_send_value("E", (uint16_t)((id << 8) | delta));
+                    break;
+                }
+                case EVT_BUTTON: {
+                    uint8_t id = buf[idx + 0];
+                    uint8_t state = buf[idx + 1];
+                    debug_send_value("B", (uint16_t)((id << 8) | state));
+                    break;
+                }
+                case EVT_POT: {
+                    uint8_t id = buf[idx + 0];
+                    uint8_t value = buf[idx + 1];
+                    debug_send_value("P", (uint16_t)((id << 8) | value));
+                    break;
+                }
+                default:
+                    break;
+            }
+            shown++;
+        }
+
+        idx = (uint8_t)(idx + plen);
+        evt_count++;
+    }
+
+    debug_send_value("IN", evt_count);
 }
 
+static void send_link_test_led10(void)
+{
+    static uint8_t div = 0;
+    static uint8_t on = 0;  
 
-// ==================== Test Communication ====================
+    // Main loop delay is 100ms, so toggle every 5 ticks (~500ms).
+    if (++div < 5) {
+        return;
+    }
+    div = 0;
+    on ^= 1;
 
-/**
- * Send periodic test packets to verify MCU connection
- */
-static void send_test_packets(void) {
-    // Send test SysEx every iteration
-    uint8_t test_sysex[] = {
-        MIDI_SYSEX_START,
-        0x7E, 0x00, 0x06, 0x01,  // Universal identity request
-        MIDI_SYSEX_END
+    uint8_t payload[] = {
+        CMD_LED,
+        10,
+        (uint8_t)(on ? 3 : 0), // LED_HIGHLIGHT (white) / LED_OFF
     };
-    midi_send_sysex(test_sysex, sizeof(test_sysex));
+
+    // If TX is busy, we'll retry on next tick.
+    (void)mcu_link_queue_display_frame(payload, (uint8_t)sizeof(payload));
 }
 
 // ==================== Main Loop ====================
 
 int main(void) {
-    app_init();
+    app_init(); //   <-- stuck herer for ~15 seconds
+    sei();
     
     while (1) {
+        process_link_rx_frame();
+        send_link_test_led10();
+
         if (usb_is_configured()) {
-            // USB is connected and configured
-            
             if (!usb_state.handshake_sent) {
-                // Send handshake on first connection
                 send_mcu_handshake();
             }
-            
-            // Process packets from 328P
-            process_mos_packet();
-            
-            // Send periodic test packets
-            send_test_packets();
-            
-            _delay_ms(100);
-            
         } else {
-            // USB not configured - wait and reset state
             reset_handshake();
-            _delay_ms(100);
         }
+
+        _delay_ms(100);
     }
     
     return 0;
 }
+
+/*int main(void) {
+    app_init();
+    
+    while (!usb_is_configured());
+
+    if (!usb_state.handshake_sent)
+        send_mcu_handshake();
+    
+    while (1) { // main loop
+        debug_send_string("toggling");
+        PORTC &= ~(1 << PC7);
+        _delay_ms(100);
+        PORTC |= (1 << PC7);
+        _delay_ms(100);
+    }
+    
+    return 0;
+}*/

@@ -1,6 +1,8 @@
 #include "I2C/I2C.h"
 #include "display.h"
 #include <avr/io.h>
+#include <stdio.h>
+#include <util/delay.h>
 
 void i2c_scan(void) {
   char buf[32];

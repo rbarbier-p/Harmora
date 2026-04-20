@@ -20,33 +20,6 @@ void debug_send_string(const char *msg) {
     midi_send_sysex(sysex, idx);
 }
 
-/*
-void debug_send_packet(MPacket packet) {
-    if (!usb_is_configured()) return;
-    
-    uint8_t sysex[64];
-    uint8_t idx = 0;
-    
-    sysex[idx++] = MIDI_SYSEX_START;
-    sysex[idx++] = 0x7A;  // Educational/debug manufacturer ID
-    
-    sysex[idx++] = (packet.command);
-    sysex[idx++] = (packet.device);
-    sysex[idx++] = (packet.deviceId);
-    sysex[idx++] = (packet.deviceValue);
-    sysex[idx++] = (packet.length);
-
-    uint8_t i = 0;
-    while (i < packet.length && idx < (sizeof(sysex) - 1)) {
-        sysex[idx++] = packet.data[i++];
-    }
-    
-    sysex[idx++] = MIDI_SYSEX_END;
-    
-    midi_send_sysex(sysex, idx);
-}
-*/
-
 void debug_send_value(const char *label, uint16_t value) {
     char buf[32];
     uint8_t idx = 0;

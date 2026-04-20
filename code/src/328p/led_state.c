@@ -24,7 +24,7 @@ static const led_color_t PROGMEM preset_colors[LED_PRESET_COUNT] = {
     { 0xE0 | 10, 0,   255, 0   },
     
     // LED_WARNING: orange
-    { 0xE0 | 12, 0,   128, 255 },
+    { 0xE0 | 12, 0,   128, 200 },
     
     // LED_ERROR: bright red
     { 0xE0 | 20, 0,   0,   255 },
@@ -35,7 +35,7 @@ static const led_color_t PROGMEM preset_colors[LED_PRESET_COUNT] = {
 
 void led_state_init(void) {
     // Set all LEDs to idle preset
-    memset(g_led_state.presets, LED_IDLE, LED_COUNT);
+    memset(g_led_state.presets, LED_OFF, LED_COUNT);
     g_led_state.dirty = 1;  // Force initial update
 }
 
