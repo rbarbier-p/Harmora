@@ -8,6 +8,7 @@ working.c -> send a lot of sysex messages | works in midiview and reaper (if not
 separated files -> sends nothing | works no where 
 midi_usb.c -> works in reaper and midiview | as a midi device but MCU stops working ?
 
+
 - working.c MCU working in REAPER
     -> splitted files same main doesn't work at all
 
@@ -20,3 +21,8 @@ midi_usb.c -> works in reaper and midiview | as a midi device but MCU stops work
         -> MCU/sysex input/ouput
         -> MIDI
 
+Files:
+main.c -> main function, loop 
+usb.c/usb.h
+cdc.c/cdc.h
+midi.c/midi.h (mcu, sysex and debug through sysex is here)

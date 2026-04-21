@@ -926,8 +926,6 @@ int main(void)
     usb_hw_init();
     sei();
 
-    // mos_init(M_INIT_DEVICE);
-    //uint8_t handshake_sent = 0;
     uint8_t counter = 0;
     uint8_t value = 32;
     char buffer[4];
@@ -941,18 +939,6 @@ int main(void)
     }
     
     while (1) {
-        /*
-        if (!handshake_sent) {
-            midi_debug("MCU initializing...");
-            _delay_ms(500);
-            mcu_send_device_query_response();
-            _delay_ms(100);
-            //mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
-            //mcu_lcd_write(56, "   AVR USB MCU    ", 17);
-            midi_debug("MCU ready!");
-            handshake_sent = 1;
-        }
-        */
         if (value >= 126)
             value = 32;
 
@@ -992,122 +978,3 @@ int main(void)
     return 0;
 }
 
-/*
- int main(void) {
-    MCUCR = (1 << JTD);
-    MCUCR = (1 << JTD);
-    
-    LED_INIT();
-    LED_OFF();
-    
-    memset(&mcu_state, 0, sizeof(mcu_state));
-    strcpy(mcu_state.lcd_text, "Mackie Control Universal Ready                                                          ");
-    
-    UDCON = (1 << DETACH);
-    _delay_ms(250);
-    
-    for (uint8_t i = 0; i < 5; i++) {
-        LED_TOGGLE();
-        _delay_ms(100);
-    }
-    LED_OFF();
-    
-    pll_init();
-    usb_hw_init();
-    sei();
-    
-    uint8_t demo_step = 0;
-    uint16_t counter = 0;
-    uint8_t handshake_sent = 0;
-    
-    while (1) {
-        if (usb_configuration) {
-            // Continuously process incoming MIDI from DAW
-            for (uint8_t i = 0; i < 4; i++) {
-                process_incoming_midi();
-            }
-            
-            if (!handshake_sent) {
-                _delay_ms(500);
-                mcu_send_device_query_response();
-                _delay_ms(100);
-                mcu_send_version_reply();
-                _delay_ms(100);
-                mcu_lcd_write(0, "  MACKIE CONTROL  ", 17);
-                mcu_lcd_write(56, "   Ready for DAW  ", 17);
-                
-                // Initialize all faders to center
-                for (uint8_t i = 0; i < 8; i++) {
-                    mcu_set_fader(i, 8192);  // Center position
-                    mcu_set_vpot_led(i, 1, 6);  // Center LED
-                }
-                
-                handshake_sent = 1;
-                LED_ON();
-            }
-            
-            counter++;
-            if (counter >= 20) {
-                counter = 0;
-                demo_step = (demo_step + 1) % 6;
-                
-                switch (demo_step) {
-                    case 0:
-                        for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_fader(i, (i * 2000) + 2000);
-                        }
-                        mcu_lcd_write(0, "  Fader Demo      ", 17);
-                        break;
-                        
-                    case 1:
-                        for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_vpot_led(i, 1, 6);
-                        }
-                        mcu_lcd_write(0, "  V-Pot Demo      ", 17);
-                        break;
-                        
-                    case 2:
-                        mcu_button(MCU_BTN_PLAY, 1);
-                        mcu_lcd_write(0, "  Transport Play  ", 17);
-                        _delay_ms(100);
-                        mcu_button(MCU_BTN_PLAY, 0);
-                        break;
-                        
-                    case 3:
-                        for (uint8_t i = 0; i < 8; i++) {
-                            mcu_set_meter(i, 6 + (i % 4));
-                        }
-                        mcu_lcd_write(0, "  Meter Demo      ", 17);
-                        break;
-                        
-                    case 4:
-                        mcu_send_timecode("12:34:56:78");
-                        mcu_lcd_write(0, "  Timecode Demo   ", 17);
-                        break;
-                        
-                    case 5:
-                        {
-                            uint8_t custom[] = {
-                                MIDI_SYSEX_START,
-                                0x7E, 0x00, 0x06, 0x01,
-                                MIDI_SYSEX_END
-                            };
-                            send_custom_sysex(custom, sizeof(custom));
-                            mcu_lcd_write(0, "  Custom SysEx    ", 17);
-                        }
-                        break;
-                }
-            }
-            _delay_ms(100);
-        } 
-        else
-        {
-            handshake_sent = 0;
-            _delay_ms(100);
-            LED_TOGGLE();
-        }
-    }
-    
-    return 0;
-}
-*/

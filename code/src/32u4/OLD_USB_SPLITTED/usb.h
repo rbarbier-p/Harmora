@@ -9,25 +9,6 @@
 #include <stdint.h>
 #include <string.h>
 
-// Caterina bootloader magic key — must match the flashed Caterina exactly
-#define BOOT_KEY     0x7777
-#define BOOT_KEY_PTR ((volatile uint16_t *)0x0800)
-
-// MIDI Endpoints
-#define MIDI_RX_ENDPOINT 1
-#define MIDI_TX_ENDPOINT 2
-
-// CDC Endpoints
-#define CDC_NOTIFICATION_ENDPOINT 3
-#define CDC_RX_ENDPOINT           4
-#define CDC_TX_ENDPOINT           5
-
-// CDC Class Requests
-#define CDC_SET_LINE_CODING        0x20
-#define CDC_GET_LINE_CODING        0x21
-#define CDC_SET_CONTROL_LINE_STATE 0x22
-
-
 // USB Standard Request Codes
 #define GET_STATUS        0
 #define CLEAR_FEATURE     1
@@ -48,9 +29,26 @@
 #define CS_INTERFACE             0x24
 #define CS_ENDPOINT              0x25
 
+// MIDI Endpoints
+#define MIDI_RX_ENDPOINT 1
+#define MIDI_TX_ENDPOINT 2
 
-typedef struct
-{
+// CDC Endpoints
+#define CDC_NOTIFICATION_ENDPOINT 3
+#define CDC_RX_ENDPOINT           4
+#define CDC_TX_ENDPOINT           5
+
+// CDC Class Requests
+#define CDC_SET_LINE_CODING        0x20
+#define CDC_GET_LINE_CODING        0x21
+#define CDC_SET_CONTROL_LINE_STATE 0x22
+
+// Caterina bootloader magic key
+#define BOOT_KEY     0x7777
+#define BOOT_KEY_PTR ((volatile uint16_t *)0x0800)
+
+// USB Setup Request Structure
+typedef struct {
     uint8_t bmRequestType;
     uint8_t bRequest;
     uint16_t wValue;
@@ -58,9 +56,8 @@ typedef struct
     uint16_t wLength;
 } usb_setup_t;
 
-// CDC line coding state (default 9600 8N1)
-typedef struct
-{
+// CDC line coding state
+typedef struct {
     uint32_t dwDTERate;
     uint8_t  bCharFormat;
     uint8_t  bParityType;
@@ -68,42 +65,39 @@ typedef struct
 } cdc_line_coding_t;
 
 
-// Wait for IN ready
 static inline void wait_in(void) { while (!(UEINTX & (1 << TXINI))); }
-// Wait for OUT ready
-static inline void wait_out(void) { while (!(UEINTX & (1 << RXOUTI))); }
-// Clear IN
 static inline void clear_in(void) { UEINTX &= ~(1 << TXINI); }
-// Clear OUT
 static inline void clear_out(void) { UEINTX &= ~(1 << RXOUTI); }
-// Clear SETUP
 static inline void clear_setup(void) { UEINTX &= ~((1 << RXSTPI) | (1 << RXOUTI) | (1 << TXINI)); }
-// Stall endpoint
 static inline void stall(void) { UECONX |= (1 << STALLRQ); }
-// Read byte from FIFO
 static inline uint8_t read_byte(void) { return UEDATX; }
-// Write byte to FIFO
 static inline void write_byte(uint8_t b) { UEDATX = b; }
 
-
-void jump_to_bootloader(void);
+/**
+ * Initialize USB hardware and peripherals
+ * Call this once during system startup
+ */
 void usb_init(void);
-void pll_init(void);
-void usb_hw_init(void);
-void ep0_init(void);
-void send_progmem(const uint8_t *data, uint16_t len);
-void handle_get_descriptor(void);
-void handle_set_address(void);
-void handle_get_configuration(void);
-void handle_set_configuration(void);
-void handle_get_interface(void);
-void handle_set_interface(void);
-void handle_get_status(void);
-void handle_feature(void);
-void handle_setup(void);
 
-void handle_cdc_request(void);
-uint8_t cdc_ep_init(void);
-uint8_t midi_ep_init(void);
+/**
+ * Check if USB is configured and ready
+ */
+uint8_t usb_is_configured(void);
+
+/**
+ * Jump to bootloader (used for firmware updates)
+ */
+void usb_jump_to_bootloader(void);
+
+/**
+ * Get current CDC line coding configuration
+ */
+const cdc_line_coding_t* usb_get_line_coding(void);
+
+/*
+#ifdef (HARMORA_USB_IMPLEMENTATION)
+    #include "harmora_usb.c"
+#endif
+*/
 
 #endif // USB_H

@@ -1,9 +1,6 @@
 #ifndef MIDI_H
 #define MIDI_H
 
-//#include "atmeag32u4.h" // -> platform abstraction layer
-// probably contains most of the headers and is included in different modules (spi, uart, i2c)
-// NOTE: probably also need USB/CDC abstraction
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
