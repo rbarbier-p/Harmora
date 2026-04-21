@@ -1,102 +1,16 @@
-<<<<<<< HEAD
 #include "usb.h"
 #include "midi.h"
 #include "spi.h"
-=======
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/wdt.h>
-#include <util/delay.h>
-
-#include "usb.h"
-#include "mcu.h"
-#include "device_manager.h"
-#include "SPI/SPI.h"
-
+#include "mos.h"
 #include "link/mcu_link.h"
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 
 extern volatile uint8_t usbConfigured;
 extern usb_setup_t setup;
 extern cdc_line_coding_t cdcLineCoding;
 //extern mcu_state_t mcuState;
 
-<<<<<<< HEAD
-int main(void)
-{
-    usb_init();
-    /*
-    memset(&mcuState, 0, sizeof(mcuState));
-    strcpy(mcuState.lcd_text, "Mackie Control Universal Ready");
-    */
-    uint8_t counter = 0;
+     
 
-    while (!usbConfigured)
-    {
-        _delay_ms(100);
-=======
-typedef struct {
-    uint8_t initialized;
-    uint8_t handshake_sent;
-} usb_state_t;
-
-static usb_state_t usb_state = {
-    .initialized = 0,
-    .handshake_sent = 0
-};
-
-// ==================== Initialization Functions ====================
-
-/**
- * Initialize all subsystems
- */
-static void app_init(void) {
-    // Caterina/bootloader may leave the watchdog enabled; disable it early or
-    // the MCU can reset a few seconds after boot.
-    MCUSR &= ~(1 << WDRF);
-    wdt_disable();
-
-    // Disable JTAG to free up pins
-    MCUCR = (1 << JTD);
-    MCUCR = (1 << JTD);
-
-    // Initialize USB and related hardware.
-    usb_init();
-    
-    // SPI slave for framed link
-    spi_init(SPI_MODE_0, SPI_MSB_FIRST);
-    mcu_link_init();
-
-    // Initialize device state
-    device_manager_init();
-
-    usb_state.initialized = 1;
-    usb_state.handshake_sent = 0;
-
-}
-
-// ==================== MCU Handshake ====================
-
-/**
- * Send MCU initialization handshake
- */
-static void send_mcu_handshake(void) {
-    if (usb_state.handshake_sent) return;
-
-    mcu_send_device_query_response();
-    usb_state.handshake_sent = 1;
-    device_manager_set_handshake_sent(1);
-}
-
-/**
- * Reset handshake state when USB disconnects
- */
-static void reset_handshake(void) {
-    usb_state.handshake_sent = 0;
-    device_manager_set_handshake_sent(0);
-}
-
-// ==================== Packet Processing ====================
 
 static void process_link_rx_frame(void)
 {
@@ -126,36 +40,9 @@ static void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value)
 {
     if (*idx < MCU_LINK_MAX_PAYLOAD) {
         buf[(*idx)++] = value;
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
     }
-    while (1)
-    {
-        if (counter >= 20)
-            counter = 0;
+}
 
-<<<<<<< HEAD
-        const uint8_t roots[] = {60, 65, 67, 60}; // C, F, G, C
-        uint8_t root = roots[(counter / 2) % 4];
-        mcu_button(MCU_BTN_RECORD, 1);
-        midi_play_chord_type(0, root, chord_major, 3, 80);
-        _delay_ms(1000);
-        uint8_t notes[3];
-        for (uint8_t i = 0; i < 3; i++) {
-            notes[i] = root + pgm_read_byte(&chord_major[i]);
-        }
-        midi_stop_chord(0, notes, 3);
-        
-        uint8_t custom[] = {
-            MIDI_SYSEX_START,
-            0x7E, 0x00, 0x06, 0x01,
-            MIDI_SYSEX_END
-        };
-        send_custom_sysex(custom, sizeof(custom));
-        
-
-        counter++;
-        _delay_ms(100);
-=======
 static void append_led_cmd(uint8_t *buf, uint8_t *idx, uint8_t led_id, uint8_t preset)
 {
     append_byte(buf, idx, CMD_LED);
@@ -217,46 +104,53 @@ static void send_demo_display_frame(void)
 
 // ==================== Main Loop ====================
 
-int main(void) {
-    app_init();
-    sei();
-    
-    while (1) {
+
+
+
+int main(void)
+{
+    usb_init();
+    spi_init(SPI_MODE_0, SPI_MSB_FIRST);
+    mcu_link_init();
+    /*
+    memset(&mcuState, 0, sizeof(mcuState));
+    strcpy(mcuState.lcd_text, "Mackie Control Universal Ready");
+    */
+    uint8_t counter = 0;
+
+    while (!usbConfigured)
+    {
+        _delay_ms(50);
+    }
+
+    while (1)
+    {
         process_link_rx_frame();
         send_demo_display_frame();
+        if (counter >= 20)
+            counter = 0;
 
-        if (usb_is_configured()) {
-            if (!usb_state.handshake_sent) {
-                send_mcu_handshake();
-            }
-        } else {
-            reset_handshake();
+        const uint8_t roots[] = {60, 65, 67, 60}; // C, F, G, C
+        uint8_t root = roots[(counter / 2) % 4];
+        mcu_button(MCU_BTN_RECORD, 1);
+        midi_play_chord_type(0, root, chord_major, 3, 80);
+        _delay_ms(1000);
+        uint8_t notes[3];
+        for (uint8_t i = 0; i < 3; i++) {
+            notes[i] = root + pgm_read_byte(&chord_major[i]);
         }
+        midi_stop_chord(0, notes, 3);
+        
+        uint8_t custom[] = {
+            MIDI_SYSEX_START,
+            0x7E, 0x00, 0x06, 0x01,
+            MIDI_SYSEX_END
+        };
+        send_custom_sysex(custom, sizeof(custom));
+        
 
+        counter++;
         _delay_ms(50);
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
     }
-    return 0;
+    return (0);
 }
-
-<<<<<<< HEAD
-=======
-/*int main(void) {
-    app_init();
-    
-    while (!usb_is_configured());
-
-    if (!usb_state.handshake_sent)
-        send_mcu_handshake();
-    
-    while (1) { // main loop
-        debug_send_string("toggling");
-        PORTC &= ~(1 << PC7);
-        _delay_ms(100);
-        PORTC |= (1 << PC7);
-        _delay_ms(100);
-    }
-    
-    return 0;
-}*/
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032

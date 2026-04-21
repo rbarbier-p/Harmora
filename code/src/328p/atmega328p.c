@@ -11,16 +11,9 @@
 #include "tasks.h"
 #include <avr/io.h>
 #include <util/delay.h>
-<<<<<<< HEAD
-#include "mos.h"
 
 #include <stdio.h>
-#include <avr/interrupt.h>
-=======
-#include <stdio.h>
-#include <avr/interrupt.h>
 // 328P main loop: scan inputs, forward deltas to 32U4, execute draw commands in INT0.
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 
 int main(void) {
   i2c_init();
@@ -41,11 +34,8 @@ int main(void) {
 
 
   uint8_t loop_count = 0;
-<<<<<<< HEAD
-  while(1) {
-=======
-  while (1) {
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
+  while (1)
+  {
     scheduler_run(loop_count++);
   }
 }

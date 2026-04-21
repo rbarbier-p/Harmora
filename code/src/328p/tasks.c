@@ -250,7 +250,6 @@ void task_pot_scan(void) {
 }
 
 void task_display_update(void) {
-<<<<<<< HEAD
   // Minimalistic input status display - optimized for dirty pages
   // Each section is aligned to page boundaries (8 pixels) for optimal dirty page usage
   
@@ -400,12 +399,10 @@ void task_display_update(void) {
   }
   
   // Update display (only dirty pages will be sent)
-=======
   // Only flush framebuffer. All drawing is driven by 32U4 commands via INT0.
   // Disable interrupts while OLED uses SPI (shared with 32U4 link).
   uint8_t sreg = SREG;
   cli();
->>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
   display_update();
   SREG = sreg;
 }
