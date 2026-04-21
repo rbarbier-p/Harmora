@@ -1,5 +1,6 @@
 #include "usb.h"
 #include "midi.h"
+#include "spi.h"
 
 extern volatile uint8_t usbConfigured;
 extern usb_setup_t setup;
@@ -13,15 +14,12 @@ int main(void)
     memset(&mcuState, 0, sizeof(mcuState));
     strcpy(mcuState.lcd_text, "Mackie Control Universal Ready");
     */
-    
-
     uint8_t counter = 0;
 
     while (!usbConfigured)
     {
         _delay_ms(100);
     }
-    
     while (1)
     {
         if (counter >= 20)

@@ -100,8 +100,6 @@ ATMEGA328P_SRC += $(EXPANDER_SRC)
 ATMEGA328P_SRC += $(328P_SPI_SRC)
 ATMEGA328P_SRC += $(MOS_SRC)
 
-#NOTE: atmega32u4 need to contain code that will enumerate the device as a usb device so it can be reset from the host using serial
-#ATMEGA32U4_SRC = src/32u4/working.c
 
 ATMEGA32U4_SRC = src/32u4/main.c
 ATMEGA32U4_SRC += src/32u4/midi.c

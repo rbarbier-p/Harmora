@@ -1,9 +1,9 @@
 #include "midi.h"
 
 extern uint8_t usbConfigured;
-mcu_state_t mcuState;
+//mcu_state_t mcuState;
 
-
+/*
 static controller_state_t ctrl_state = {
     .current_channel = 0,
     .current_program = 0,
@@ -11,6 +11,7 @@ static controller_state_t ctrl_state = {
     .octave_offset = 0,
     .velocity = 100
 };
+*/
 
 // Predefined chord patterns
 const uint8_t PROGMEM chord_major[] = {0, 4, 7};
@@ -111,8 +112,10 @@ void midi_stop_chord(uint8_t channel, const uint8_t *notes, uint8_t count) {
 void midi_set_instrument(uint8_t channel, uint8_t bank, uint8_t program) {
     midi_cc(channel, CC_BANK_SELECT, bank);
     midi_program_change(channel, program);
+    /*
     ctrl_state.current_bank = bank;
     ctrl_state.current_program = program;
+    */
 }
 
 // All notes off 
@@ -248,14 +251,14 @@ void mcu_set_fader(uint8_t channel, uint16_t position) {
     uint8_t lsb = position & 0x7F;
     uint8_t msb = (position >> 7) & 0x7F;
     midi_send_3byte(0x0E, MIDI_PITCH_BEND | channel, lsb, msb);
-    mcuState.fader_position[channel] = msb;
+    //mcuState.fader_position[channel] = msb;
 }
 
 // Set V-Pot position
 void mcu_set_vpot(uint8_t channel, uint8_t value) {
     if (channel >= 8) return;
     midi_send_3byte(0x0B, MIDI_CC | MCU_CHANNEL, MCU_CC_VPOT_1 + channel, value & 0x7F);
-    mcuState.vpot_position[channel] = value;
+    //mcuState.vpot_position[channel] = value;
 }
 
 // Set V-Pot LED ring
@@ -270,7 +273,7 @@ void mcu_set_meter(uint8_t channel, uint8_t level) {
     if (channel >= 8 || level > 12) return;
     uint8_t meter_value = (level == 0) ? 0 : (level << 4) | 0x0E;
     midi_send_2byte(0x0D, MIDI_CHANNEL_PRESSURE | (channel & 0x0F), meter_value);
-    mcuState.meter_level[channel] = level;
+    //mcuState.meter_level[channel] = level;
 }
 
 // Send timecode display
@@ -425,14 +428,16 @@ void process_incoming_midi(void) {
         // byte3 = MSB
         
         // DAW is moving a fader
-        uint8_t channel = byte1 & 0x0F;
+        //uint8_t channel = byte1 & 0x0F;
         //HERE
         //uint16_t value = byte2 | (byte3 << 7);
         
         // Update local state
+        /*
         if (channel < 8) {
             mcuState.fader_position[channel] = byte3;
         }
+        */
     }
 }
 
