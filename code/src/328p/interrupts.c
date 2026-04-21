@@ -6,13 +6,15 @@
 
 // Interrupt Flags
 volatile uint8_t g_exp_interrupt = 0;
+volatile uint8_t g_mcu_int_fired = 0;
 
 // Initialization
 void interrupts_init(void) {
     GPIO_SET_INPUT(PIN_MCU_INT);
     GPIO_ENABLE_PULLUP(PIN_MCU_INT);
     
-    // Falling edge trigger (ISC01=1, ISC00=0)
+    // Falling edge trigger (ISC01=1, ISC00=0).
+    // Using level-trigger can starve the main loop if MCU_INT is held low.
     EICRA |= (1 << ISC01);
     EICRA &= ~(1 << ISC00);
     
@@ -29,6 +31,12 @@ void interrupts_init(void) {
     PCMSK1 |= (1 << PCINT9) | (1 << PCINT10) | (1 << PCINT11);
     
     sei();
+
+    // If the 32U4 is already holding MCU_INT low (e.g. it queued a frame before
+    // we enabled INT0), we won't get a falling edge. Handle one frame now.
+    if (!GPIO_READ(PIN_MCU_INT)) {
+        mcu_comm_handle_display();
+    }
 }
 
 // Expander Interrupts
@@ -54,5 +62,6 @@ ISR(PCINT1_vect) {
 
 // MCU Communication Interrupt
 ISR(INT0_vect) {
+    g_mcu_int_fired = 1;
     mcu_comm_handle_display();
 }

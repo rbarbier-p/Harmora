@@ -5,11 +5,18 @@
 #include <stdint.h>
 
 
+<<<<<<< HEAD
 // SPI Clock Dividers (F_CPU / divider)
+=======
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 #define SPI_CLK_DIV_2   0  // F_CPU/2   (8MHz @ 16MHz)
 #define SPI_CLK_DIV_4   1  // F_CPU/4   (4MHz @ 16MHz)
 #define SPI_CLK_DIV_8   2  // F_CPU/8   (2MHz @ 16MHz)
 #define SPI_CLK_DIV_16  3  // F_CPU/16  (1MHz @ 16MHz)
+#define SPI_CLK_DIV_32  4  // F_CPU/32  (500kHz @ 16MHz)
+#define SPI_CLK_DIV_64  5  // F_CPU/64  (250kHz @ 16MHz)
+#define SPI_CLK_DIV_128 6  // F_CPU/128 (125kHz @ 16MHz)
+#define SPI_CLK_DIV_256 7  // F_CPU/256 (62.5kHz @ 16MHz)
 
 // SPI Modes
 #define SPI_MODE_0  0 // clock idle low, sample on rising edge
@@ -27,9 +34,14 @@ void spi_send(uint8_t data);
 void spi_send_buf(const uint8_t *buf, uint16_t len);
 void spi_transfer_buf(const uint8_t *tx_buf, uint8_t *rx_buf, uint16_t len);
 uint8_t spi_read(void);
+<<<<<<< HEAD
 /** Assert SS low (begin transaction). */
 void spi_ss_assert(void);
 /** Deassert SS high (end transaction). */
 void spi_ss_deassert(void);
 
 #endif // SPI_H
+=======
+
+#endif
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032

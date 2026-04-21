@@ -69,6 +69,22 @@ void spi_send(uint8_t data);
 void spi_send_buf(const uint8_t *buf, uint16_t len);
 
 /**
+ * Enable SPI interrupt (SPI_STC_vect).
+ */
+static inline void spi_enable_interrupt(void)
+{
+  SPCR |= (1 << SPIE);
+}
+
+/**
+ * Disable SPI interrupt.
+ */
+static inline void spi_disable_interrupt(void)
+{
+  SPCR &= ~(1 << SPIE);
+}
+
+/**
  * Transfer multiple bytes (full duplex)
  * @param tx_buf  Buffer to send (can be NULL to send zeros)
  * @param rx_buf  Buffer to receive (can be NULL to discard)

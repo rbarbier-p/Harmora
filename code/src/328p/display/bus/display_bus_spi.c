@@ -27,7 +27,10 @@ static void spi_data(const uint8_t *buf, uint16_t len) {
 void display_bus_spi_init(void) {
   // Initialize hardware SPI
   // Mode 0, MSB first, fastest clock (F_CPU/2 = 8MHz)
-  //spi_init(SPI_CLK_DIV_2, SPI_MODE_0, SPI_MSB_FIRST);
+  // Use a conservative clock so the same SPI config works for both:
+  // - SSD1309 OLED flushes
+  // - framed SPI link to the 32U4
+  spi_init(SPI_CLK_DIV_16, SPI_MODE_0, SPI_MSB_FIRST);
 
   // Set display CS and DC pins as outputs and set initial states
   GPIO_SET_OUTPUT(PIN_DISPLAY_CS);

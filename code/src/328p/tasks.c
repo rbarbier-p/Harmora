@@ -9,6 +9,8 @@
 #include "scheduler.h"
 #include "mcu_comm.h"
 #include "SPI/SoftSPI.h"
+#include "stopwatch.h"
+#include "pins.h"
 #include <stdio.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -20,7 +22,7 @@ static uint8_t led_initialized = 0;
 
 void task_hall_scan(void) {
   static uint8_t press_threshold[12] = {
-    85, 97, 84, 90,
+    117, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
     82, 89, 86, 87,
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
@@ -108,6 +110,19 @@ void task_encoder_scan(void) {
 }
 
 void task_mcu_comm(void) {
+  g_mcu_int_fired = 0;
+
+  // If the 32U4 asserted MCU_INT while interrupts were masked (e.g. during an
+  // SPI OLED update), the falling-edge IRQ can be missed. Poll the line here so
+  // we still drain any pending display frame.
+  if (!GPIO_READ(PIN_MCU_INT)) {
+    mcu_comm_handle_display();
+    // Do not start an opposite-direction SPI transaction in the same tick.
+    // This avoids consuming a pending 32U4 TX frame while we are trying to
+    // send inputs to the 32U4.
+    return;
+  }
+
   // Send input events to 32U4 if any inputs have changed
   // Drawing commands from 32U4 are handled in ISR (handle_mcu_comm)
   if (input_state_has_changes()) {
@@ -235,6 +250,7 @@ void task_pot_scan(void) {
 }
 
 void task_display_update(void) {
+<<<<<<< HEAD
   // Minimalistic input status display - optimized for dirty pages
   // Each section is aligned to page boundaries (8 pixels) for optimal dirty page usage
   
@@ -384,10 +400,38 @@ void task_display_update(void) {
   }
   
   // Update display (only dirty pages will be sent)
+=======
+  // Only flush framebuffer. All drawing is driven by 32U4 commands via INT0.
+  // Disable interrupts while OLED uses SPI (shared with 32U4 link).
+  uint8_t sreg = SREG;
+  cli();
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
   display_update();
+  SREG = sreg;
 }
 
 void task_led_update(void) {
+  // Heartbeat: toggle LED0 every ~1s so we can tell if the 328P main loop is alive
+  // even when 32U4 comms/display is broken.
+  // Timer1 tick = 4us (see stopwatch.h). We extend it to 32-bit by counting wraps.
+  static uint16_t hb_last_tcnt1 = 0;
+  static uint32_t hb_high = 0;
+  static uint32_t hb_last_toggle = 0;
+  static uint8_t hb_on = 0;
+
+  uint16_t now16 = stopwatch_read();
+  if (now16 < hb_last_tcnt1) {
+    hb_high += 0x10000UL;
+  }
+  hb_last_tcnt1 = now16;
+
+  uint32_t now = hb_high + now16;
+  if ((uint32_t)(now - hb_last_toggle) >= 250000UL) { // 1s / 4us
+    hb_last_toggle = now;
+    hb_on ^= 1;
+    led_state_set(0, hb_on ? LED_ACTIVE : LED_OFF);
+  }
+
   // Initialize SPI on first run
   if (!led_initialized) {
     led_initialized = 1;

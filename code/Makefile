@@ -19,7 +19,9 @@ ifeq ($(UNAME),Darwin)
 	PLATFORM = mac
 	# After reset, the 32U4 re-enumerates with a different port number
     #Run 'ls /dev/cu.usbmodem*' after reset to find the correct bootloader port
-	USB_PORT := /dev/cu.usbmodem12345673
+	# App / ArduinoISP (USB CDC) port
+	USB_PORT := /dev/cu.usbmodem000000013
+	# Caterina bootloader port (avr109)
 	BOOTLOADER_PORT := /dev/cu.usbmodem101
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
@@ -32,6 +34,20 @@ else ifeq ($(UNAME),MSYS_NT-10.0-26200)
 	BOOTLOADER_PORT := COM12
 	USB_PORT := COM15
 	ISP_PROTOCOL = arduino
+endif
+
+# Backward-compatible alias: existing flash recipe uses PORT for 32U4 AVR109.
+# On mac/linux this should match the bootloader/programming port.
+# Use ?= so Windows PORT assignments keep working.
+PORT ?= $(BOOTLOADER_PORT)
+
+# Normalize serial port paths.
+# On mac/linux, accept either "cu.usbmodemXXXX" or "/dev/cu.usbmodemXXXX".
+# On windows, leave COM ports as-is.
+ifeq ($(PLATFORM),windows)
+	devpath = $(1)
+else
+	devpath = $(if $(filter /dev/%,$(1)),$(1),/dev/$(1))
 endif
 
 ATMEGA328P_MCU = atmega328p
@@ -50,24 +66,38 @@ SIZE = avr-size
 SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
 
+USB_REENUM_SLEEP ?= 1
+
 BUILD_DIR = .build
 
 # Compiler flags
+<<<<<<< HEAD
 CFLAGS = -DF_CPU=$(F_CPU) -Os -Wall -Wextra -Werror -g -Wno-unused-parameter -Wno-unused-function
+=======
+CFLAGS = -DF_CPU=$(F_CPU) -O3 -Wall -Wextra -g -Wno-unused-parameter #-Werror
+
+# 32U4: optional delay before calling usb_init()
+USB_INIT_DELAY_MS ?= 0
+CFLAGS += -DUSB_INIT_DELAY_MS=$(USB_INIT_DELAY_MS)
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 328P_INCLUDES = -Isrc/328p
 328P_INCLUDES += -Isrc/328p/display -Isrc/328p/display/bus -Isrc/328p/display/controller -Isrc/328p/display/internal
 328P_INCLUDES += -Isrc/328p/I2C
 328P_INCLUDES += -Isrc/328p/SPI
 328P_INCLUDES += -Isrc/328p/ADC
 328P_INCLUDES += -Isrc/328p/multiplexer
+<<<<<<< HEAD
 328P_INCLUDES += -Isrc/328p/expander
 328P_INCLUDES += -Isrc/MOS
+=======
+328P_INCLUDES += -Isrc/shared
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 
 32U4_INCLUDES = -Isrc/32u4
-32U4_INCLUDES += -Isrc/32u4/USB
 32U4_INCLUDES += -Isrc/32u4/SPI
 32U4_INCLUDES += -Isrc/32u4/UART
-32U4_INCLUDES += -Isrc/MOS
+32U4_INCLUDES += -Isrc/32u4/link
+32U4_INCLUDES += -Isrc/shared
 
 # Linker flags
 LDFLAGS = -Wl,--gc-sections  # Remove unused sections (dead code elimination)
@@ -81,9 +111,13 @@ include src/328p/SPI/SPI.mk
 include src/328p/ADC/adc.mk
 include src/328p/multiplexer/multiplexer.mk
 include src/328p/expander/expander.mk
+<<<<<<< HEAD
 
+=======
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 include src/32u4/SPI/SPI.mk
-include src/32u4/UART/uart.mk
+include src/32u4/UART/UART.mk
+include src/32u4/link/link.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c
@@ -95,6 +129,7 @@ ATMEGA328P_SRC += src/328p/mcu_comm.c
 ATMEGA328P_SRC += $(DISPLAY_SRC)
 ATMEGA328P_SRC += $(I2C_SRC)
 ATMEGA328P_SRC += $(ADC_SRC)
+<<<<<<< HEAD
 ATMEGA328P_SRC += $(MUX_SRC)
 ATMEGA328P_SRC += $(EXPANDER_SRC)
 ATMEGA328P_SRC += $(328P_SPI_SRC)
@@ -107,6 +142,26 @@ ATMEGA32U4_SRC += src/32u4/usb.c
 
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(MOS_SRC)
+=======
+ATMEGA328P_SRC += $(ANALOG_MUX_SRC)
+ATMEGA328P_SRC += $(MUX_SRC)
+ATMEGA328P_SRC += $(328P_SPI_SRC)
+ATMEGA328P_SRC += $(EXPANDER_SRC)
+ATMEGA328P_SRC += src/328p/interrupts.c
+ATMEGA328P_SRC += src/328p/mcu_comm.c
+ATMEGA328P_SRC += src/328p/led_state.c
+ATMEGA328P_SRC += src/328p/debug_toolkit.c
+
+ATMEGA32U4_SRC = src/32u4/main.c
+ATMEGA32U4_SRC += src/32u4/usb.c
+ATMEGA32U4_SRC += src/32u4/midi.c
+ATMEGA32U4_SRC += src/32u4/mcu.c
+ATMEGA32U4_SRC += src/32u4/debug.c
+ATMEGA32U4_SRC += src/32u4/device_manager.c
+ATMEGA32U4_SRC += $(32U4_SPI_SRC)
+ATMEGA32U4_SRC += $(UART_SRC)
+ATMEGA32U4_SRC += $(32U4_LINK_SRC)
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 
 
 # Output files in build folder
@@ -132,11 +187,11 @@ $(BUILD_DIR):
 
 # Compile ATMEGA328P_ELF from sources
 $(ATMEGA328P_ELF): $(ATMEGA328P_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -DMOS_HOST $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
+	@$(CC) $(CFLAGS) $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
 	@printf "$(GREEN)Compiled $@ $(RESET)\n"
 
 $(ATMEGA32U4_ELF): $(ATMEGA32U4_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -DMOS_DEVICE $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
+	@$(CC) $(CFLAGS) $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
 	@printf "$(GREEN)Compiled $@ $(RESET)\n"
 
 
@@ -152,10 +207,10 @@ reset-board-windows:
 	@echo "mode $(RESET_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
 
 reset-board-linux:
-	@stty -F $(RESET_PORT) 1200 hupcl
+	@stty -F "$(call devpath,$(RESET_PORT))" 1200 hupcl 2>/dev/null || true
 
 reset-board-mac:
-	@stty -f $(RESET_PORT) 1200 hupcl
+	@stty -f "$(call devpath,$(RESET_PORT))" 1200 hupcl 2>/dev/null || true
 
 # Reset the board using the specified port (defaults to USB_PORT)
 # Usage: make reset-board RESET_PORT=/dev/cu.usbmodemXXXX
@@ -172,7 +227,7 @@ endif
 	@sleep 3
 
 isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 
 32u4: $(ATMEGA32U4_HEX)
 	@$(MAKE) reset-board
@@ -183,17 +238,27 @@ isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
 flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 
 	@printf "$(RED)Platform: $(PLATFORM) $(RESET)\n"
-	@printf "$(RED)USB Port: $(USB_PORT) $(RESET)\n"
+	@printf "$(RED)USB Port: $(call devpath,$(USB_PORT)) $(RESET)\n"
+	@printf "$(RED)Boot Port: $(call devpath,$(BOOTLOADER_PORT)) $(RESET)\n"
 
 	@$(MAKE) reset-board
+<<<<<<< HEAD
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ISP_HEX):i
+=======
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ISP_HEX):i
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
-	@printf "$(PURPLE)Waiting 5 seconds for bootloader / USB reset... $(RESET)\n"
+	@printf "$(PURPLE)Waiting 5 second... $(RESET)\n"
 	@sleep 5
-	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(USB_PORT) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
+	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
 	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
+<<<<<<< HEAD
 	@$(MAKE) reset-board
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+=======
+	@$(MAKE) reset-board RESET_PORT=$(BOOTLOADER_PORT)
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+>>>>>>> 853e95209a1135eda58b87eab5556eb66dbaf032
 	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Didn't touch much after this
@@ -226,4 +291,3 @@ re: clean all
 
 # Declare phony targets
 .PHONY: all flash size clean re
-
