@@ -9,6 +9,10 @@
 #define SPI_CLK_DIV_4   1  // F_CPU/4   (4MHz @ 16MHz)
 #define SPI_CLK_DIV_8   2  // F_CPU/8   (2MHz @ 16MHz)
 #define SPI_CLK_DIV_16  3  // F_CPU/16  (1MHz @ 16MHz)
+#define SPI_CLK_DIV_32  4  // F_CPU/32  (500kHz @ 16MHz)
+#define SPI_CLK_DIV_64  5  // F_CPU/64  (250kHz @ 16MHz)
+#define SPI_CLK_DIV_128 6  // F_CPU/128 (125kHz @ 16MHz)
+#define SPI_CLK_DIV_256 7  // F_CPU/256 (62.5kHz @ 16MHz)
 
 // SPI Modes
 #define SPI_MODE_0  0 // clock idle low, sample on rising edge

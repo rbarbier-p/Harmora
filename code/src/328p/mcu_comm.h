@@ -34,6 +34,10 @@
 // Dummy byte sent when reading from 32U4
 #define MCU_COMM_DUMMY_BYTE   0x00
 
+// SPI slave on 32U4 updates SPDR from ISR after each byte. Add a small
+// inter-byte gap so back-to-back master transfers don't outrun slave refill.
+#define MCU_COMM_INTERBYTE_DELAY_US  2
+
 // =============================================================================
 // DRAWING COMMANDS (32U4 → 328P)
 // =============================================================================

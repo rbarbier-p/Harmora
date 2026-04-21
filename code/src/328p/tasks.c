@@ -110,6 +110,8 @@ void task_encoder_scan(void) {
 }
 
 void task_mcu_comm(void) {
+  g_mcu_int_fired = 0;
+
   // If the 32U4 asserted MCU_INT while interrupts were masked (e.g. during an
   // SPI OLED update), the falling-edge IRQ can be missed. Poll the line here so
   // we still drain any pending display frame.
@@ -277,9 +279,6 @@ void task_led_update(void) {
     hb_on ^= 1;
     led_state_set(0, hb_on ? LED_ACTIVE : LED_OFF);
   }
-
-  // Raw MCU_INT line level (active low): helps see brief pulses without a scope.
-  led_state_set(3, !GPIO_READ(PIN_MCU_INT) ? LED_WARNING : LED_OFF);
 
   // Initialize SPI on first run
   if (!led_initialized) {

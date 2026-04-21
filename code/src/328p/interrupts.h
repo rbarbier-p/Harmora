@@ -12,6 +12,7 @@
 
 // Bit flags indicate which port(s) triggered:
 extern volatile uint8_t g_exp_interrupt;
+extern volatile uint8_t g_mcu_int_fired;
 
 // Bit masks for port flags
 #define INT_EXP1_PORT_A  (1 << 0)

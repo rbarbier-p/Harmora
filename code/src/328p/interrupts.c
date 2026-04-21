@@ -6,6 +6,7 @@
 
 // Interrupt Flags
 volatile uint8_t g_exp_interrupt = 0;
+volatile uint8_t g_mcu_int_fired = 0;
 
 // Initialization
 void interrupts_init(void) {
@@ -61,5 +62,6 @@ ISR(PCINT1_vect) {
 
 // MCU Communication Interrupt
 ISR(INT0_vect) {
+    g_mcu_int_fired = 1;
     mcu_comm_handle_display();
 }

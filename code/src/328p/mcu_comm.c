@@ -6,6 +6,7 @@
 #include "pins.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 // INTERNAL STATE
 
@@ -29,7 +30,11 @@ void mcu_comm_init(void) {
  * 328P is master, so we clock out a dummy byte to receive data
  */
 static inline uint8_t mcu_comm_read_byte(void) {
-    return spi_transfer(MCU_COMM_DUMMY_BYTE);
+    uint8_t b = spi_transfer(MCU_COMM_DUMMY_BYTE);
+    if (MCU_COMM_INTERBYTE_DELAY_US) {
+        _delay_us(MCU_COMM_INTERBYTE_DELAY_US);
+    }
+    return b;
 }
 
 static uint8_t mcu_comm_compute_input_payload_len(uint8_t max_payload)
@@ -109,11 +114,6 @@ void mcu_comm_handle_display(void) {
     }
     g_processing_display = 1;
 
-    // Debug visibility on the APA102 chain:
-    // - LED2 lights when we enter the handler
-    // - LED2 becomes SUCCESS if header validates, ERROR if it doesn't
-    led_state_set(2, LED_WARNING);
-     
     // Select 32U4 (active low)
     GPIO_SET_LOW(PIN_32U4_SS);
 
@@ -123,47 +123,16 @@ void mcu_comm_handle_display(void) {
     uint8_t payload_len = mcu_comm_read_byte();
     (void)seq;
 
-    // More debug visibility on the APA102 chain:
-    // LED4 encodes the first header byte we read (magic)
-    // - LED_IDLE: 0x00
-    // - LED_HIGHLIGHT: 0xFF
-    // - LED_SUCCESS: expected MAGIC
-    // - LED_WARNING: other
-    if (magic == 0x00) {
-        led_state_set(4, LED_IDLE);
-    } else if (magic == 0xFF) {
-        led_state_set(4, LED_HIGHLIGHT);
-    } else if (magic == MCU_LINK_MAGIC) {
-        led_state_set(4, LED_ACCENT);
-    } else {
-        led_state_set(4, LED_WARNING);
-    }
-
-    // LED7 encodes the frame type byte we read
-    // - LED_IDLE: 0x00
-    // - LED_SUCCESS: DISPLAY
-    // - LED_ERROR: other
-    if (type == 0x00) {
-        led_state_set(7, LED_IDLE);
-    } else if (type == MCU_LINK_FRAME_DISPLAY) {
-        led_state_set(7, LED_SUCCESS);
-    } else {
-        led_state_set(7, LED_ERROR);
-    }
-
     if (magic != MCU_LINK_MAGIC || type != MCU_LINK_FRAME_DISPLAY || payload_len > MCU_LINK_MAX_PAYLOAD) {
-        led_state_set(2, LED_ERROR);
-        // Drain a full max-payload worth of bytes so the 32U4 TX state machine
-        // can complete even if we got out of sync.
-        for (uint8_t i = 0; i < MCU_LINK_MAX_PAYLOAD; i++) {
+        // Diagnostic drain only: keep this short so a bad frame does not hold SS
+        // low for ~1ms and starve subsequent attempts.
+        for (uint8_t i = 0; i < 8; i++) {
             (void)mcu_comm_read_byte();
         }
         GPIO_SET_HIGH(PIN_32U4_SS);
         g_processing_display = 0;
         return;
     }
-
-    led_state_set(2, LED_SUCCESS);
 
     // Parse payload as command stream.
     // Note: We execute as we read; this updates the framebuffer only.
@@ -276,8 +245,6 @@ void mcu_comm_handle_display(void) {
                 uint8_t led_id = mcu_comm_read_byte(); remaining--;
                 uint8_t preset = mcu_comm_read_byte(); remaining--;
                 led_state_set(led_id, preset);
-                // Mark that we successfully parsed at least one command.
-                led_state_set(5, LED_ACTIVE);
                 break;
             }
 
