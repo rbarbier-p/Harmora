@@ -117,10 +117,10 @@ void task_mcu_comm(void) {
   // we still drain any pending display frame.
   if (!GPIO_READ(PIN_MCU_INT)) {
     mcu_comm_handle_display();
-    // Do not start an opposite-direction SPI transaction in the same tick.
-    // This avoids consuming a pending 32U4 TX frame while we are trying to
-    // send inputs to the 32U4.
-    return;
+    // Re-check line after draining once. If still low, defer TX this tick.
+    if (!GPIO_READ(PIN_MCU_INT)) {
+      return;
+    }
   }
 
   // Send input events to 32U4 if any inputs have changed
@@ -252,155 +252,6 @@ void task_pot_scan(void) {
 void task_display_update(void) {
   // Minimalistic input status display - optimized for dirty pages
   // Each section is aligned to page boundaries (8 pixels) for optimal dirty page usage
-  
-  static uint8_t first_run = 1;
-  
-  // Previous states for change detection
-  //static uint32_t last_buttons = 0;
-  static uint16_t last_keys = 0;
-  static uint8_t last_pots[POT_COUNT] = {0};
-  static int8_t last_encoders[ENCODER_COUNT] = {0};
-  static uint8_t last_exp1_a = 0, last_exp1_b = 0, last_exp2_a = 0, last_exp2_b = 0;
-  
-  // Hex digit lookup table
-  static const char hex_chars[] = "0123456789ABCDEF";
-  char hex_buf[5]; // For displaying hex values (4 chars + null)
-  char val_buf[4]; // For displaying numeric values (3 chars + null)
-  
-  if (first_run) {
-    first_run = 0;
-    display_clear();
-    
-    // Draw static labels (aligned to page boundaries for dirty pages)
-    // Page 0-1: Hall sensors (12 keys, 2 rows of 6)
-    display_draw_string(0, 0, "Keys:");
-    
-    // Page 2: Expanders (hex values)
-    display_draw_string(0, 16, "Exp1:");
-    display_draw_string(70, 16, "Exp2:");
-    
-    // Page 3: Potentiometers
-    display_draw_string(0, 24, "Pots:");
-    
-    // Page 4-5: Encoders (6 encoders, 2 rows)
-    display_draw_string(0, 32, "Enc:");
-    
-    // Initialize previous states to trigger initial draw
-    //last_buttons = ~g_input_state.buttons.pressed;
-    last_keys = ~g_input_state.keys.pressed;
-    for (uint8_t i = 0; i < POT_COUNT; i++) {
-      last_pots[i] = ~g_input_state.pots.values[i];
-    }
-    for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
-      last_encoders[i] = ~g_input_state.encoders.delta[i];
-    }
-  }
-  
-  // === Page 0-1: Hall Sensors (12 keys as small squares) ===
-  if (last_keys != g_input_state.keys.pressed) {
-    uint8_t x = 30;
-    uint8_t y = 1;
-    for (uint8_t i = 0; i < 12; i++) {
-      // 6 keys per row, 4 pixels square, 2 pixels spacing
-      if (i == 6) {
-        x = 30;
-        y = 9;
-      }
-      
-      uint8_t is_pressed = (g_input_state.keys.pressed & (1 << i)) ? 1 : 0;
-      uint8_t was_pressed = (last_keys & (1 << i)) ? 1 : 0;
-      
-      if (is_pressed != was_pressed) {
-        if (is_pressed) {
-          display_fill_rect(x, y, 4, 4);
-        } else {
-          display_draw_rect(x, y, 4, 4);
-          display_clear_rect(x + 1, y + 1, 2, 2);
-        }
-      }
-      x += 6;
-    }
-    last_keys = g_input_state.keys.pressed;
-  }
-  
-  // === Page 2: Expander Values (as hex) ===
-  // Expander 1 (Port A and B combined as 16-bit hex)
-  uint8_t exp1_a = expander_read_raw(0, 0);
-  uint8_t exp1_b = expander_read_raw(0, 1);
-  if (exp1_a != last_exp1_a || exp1_b != last_exp1_b) {
-    display_clear_rect(30, 16, 30, 8);
-    hex_buf[0] = hex_chars[exp1_a >> 4];
-    hex_buf[1] = hex_chars[exp1_a & 0x0F];
-    hex_buf[2] = hex_chars[exp1_b >> 4];
-    hex_buf[3] = hex_chars[exp1_b & 0x0F];
-    hex_buf[4] = '\0';
-    display_draw_string(30, 16, hex_buf);
-    last_exp1_a = exp1_a;
-    last_exp1_b = exp1_b;
-  }
-  
-  // Expander 2 (Port A and B combined as 16-bit hex)
-  uint8_t exp2_a = expander_read_raw(1, 0);
-  uint8_t exp2_b = expander_read_raw(1, 1);
-  if (exp2_a != last_exp2_a || exp2_b != last_exp2_b) {
-    display_clear_rect(100, 16, 30, 8);
-    hex_buf[0] = hex_chars[exp2_a >> 4];
-    hex_buf[1] = hex_chars[exp2_a & 0x0F];
-    hex_buf[2] = hex_chars[exp2_b >> 4];
-    hex_buf[3] = hex_chars[exp2_b & 0x0F];
-    hex_buf[4] = '\0';
-    display_draw_string(100, 16, hex_buf);
-    last_exp2_a = exp2_a;
-    last_exp2_b = exp2_b;
-  }
-  
-  // === Page 3: Potentiometers (0-255 values) ===
-  for (uint8_t i = 0; i < POT_COUNT; i++) {
-    if (g_input_state.pots.values[i] != last_pots[i]) {
-      uint8_t x = 30 + (i * 24);
-      display_clear_rect(x, 24, 18, 8);
-      
-      // Convert to 3-digit string
-      uint8_t val = g_input_state.pots.values[i];
-      val_buf[0] = '0' + (val / 100);
-      val_buf[1] = '0' + ((val / 10) % 10);
-      val_buf[2] = '0' + (val % 10);
-      val_buf[3] = '\0';
-      
-      display_draw_string(x, 24, val_buf);
-      last_pots[i] = g_input_state.pots.values[i];
-    }
-  }
-  
-  // === Page 4-5: Encoders (signed delta values) ===
-  for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
-    if (g_input_state.encoders.delta[i] != last_encoders[i]) {
-      // 3 encoders per row
-      uint8_t x = 30 + ((i % 3) * 30);
-      uint8_t y = 32 + ((i / 3) * 8);
-      
-      display_clear_rect(x, y, 24, 8);
-      
-      // Convert signed value to string with sign
-      int8_t delta = g_input_state.encoders.delta[i];
-      if (delta < 0) {
-        val_buf[0] = '-';
-        delta = -delta;
-      } else {
-        val_buf[0] = '+';
-      }
-      val_buf[1] = '0' + (delta / 10);
-      val_buf[2] = '0' + (delta % 10);
-      val_buf[3] = '\0';
-      
-      display_draw_string(x, y, val_buf);
-      last_encoders[i] = g_input_state.encoders.delta[i];
-    }
-  }
-  
-  // Update display (only dirty pages will be sent)
-  // Only flush framebuffer. All drawing is driven by 32U4 commands via INT0.
-  // Disable interrupts while OLED uses SPI (shared with 32U4 link).
   uint8_t sreg = SREG;
   cli();
   display_update();

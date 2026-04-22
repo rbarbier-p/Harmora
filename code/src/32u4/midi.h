@@ -6,7 +6,6 @@
 // MIDI Message Types 
 #define MIDI_NOTE_OFF       0x80
 #define MIDI_NOTE_ON        0x90
-#define MIDI_AFTERTOUCH     0xA0
 #define MIDI_CC             0xB0
 #define MIDI_PROGRAM_CHANGE 0xC0
 #define MIDI_CHANNEL_PRESSURE 0xD0
@@ -88,8 +87,7 @@
 
 // UNUSED
 // Controller state 
-typedef struct
-{
+typedef struct {
     uint8_t current_channel;
     uint8_t current_program;
     uint8_t current_bank;
@@ -100,8 +98,7 @@ typedef struct
 
 // MCU state
 #define LCD_TEXT_MAX_SIZE 112
-typedef struct
-{
+typedef struct {
     uint8_t fader_position[8];
     uint8_t vpot_position[8];
     uint8_t vpot_led_mode[8];
@@ -109,31 +106,18 @@ typedef struct
     uint8_t meter_level[8];
 } mcu_state_t;
 
-extern const uint8_t PROGMEM chord_major[]; 
-extern const uint8_t PROGMEM chord_minor[]; 
-extern const uint8_t PROGMEM chord_dim[]; 
-extern const uint8_t PROGMEM chord_aug[];
-extern const uint8_t PROGMEM chord_maj7[];
-extern const uint8_t PROGMEM chord_min7[];
-extern const uint8_t PROGMEM chord_dom7[];
 
-
-void midi_send_3byte(uint8_t cable, uint8_t b1, uint8_t b2, uint8_t b3);
-void midi_send_2byte(uint8_t cable, uint8_t b1, uint8_t b2);
+void midi_send_3byte(uint8_t cin_cable, uint8_t b1, uint8_t b2, uint8_t b3);
+void midi_send_2byte(uint8_t cin_cable, uint8_t b1, uint8_t b2);
 void midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity);
 void midi_note_off(uint8_t channel, uint8_t note, uint8_t velocity);
 void midi_cc(uint8_t channel, uint8_t cc, uint8_t value);
 void midi_program_change(uint8_t channel, uint8_t program);
-void midi_pitch_bend(uint8_t channel, int16_t bend);
-void midi_channel_pressure(uint8_t channel, uint8_t pressure);
-void midi_poly_aftertouch(uint8_t channel, uint8_t note, uint8_t pressure);
 void midi_play_chord(uint8_t channel, const uint8_t *notes, uint8_t count, uint8_t velocity);
 void midi_stop_chord(uint8_t channel, const uint8_t *notes, uint8_t count);
 void midi_set_instrument(uint8_t channel, uint8_t bank, uint8_t program);
 void midi_all_notes_off(uint8_t channel);
 void midi_reset_controllers(uint8_t channel);
-void midi_sustain(uint8_t channel, uint8_t on);
-void midi_play_chord_type(uint8_t channel, uint8_t root, const uint8_t *pattern, uint8_t count, uint8_t velocity);
 
 void midi_send_sysex(const uint8_t *data, uint8_t length);
 void send_custom_sysex(const uint8_t *data, uint8_t length);
@@ -142,13 +126,13 @@ void midi_debug(const char *msg);
 void process_incoming_midi(void);
 
 void mcu_send_device_query_response(void);
-void mcu_send_device_query_response(void);
+void mcu_send_version_reply(void);
 void mcu_lcd_write(uint8_t position, const char *text, uint8_t length);
 void mcu_button(uint8_t button, uint8_t pressed);
 void mcu_set_fader(uint8_t channel, uint16_t position);
 void mcu_set_vpot(uint8_t channel, uint8_t value);
 void mcu_set_vpot_led(uint8_t channel, uint8_t mode, uint8_t position);
-void mcu_set_vpot_led(uint8_t channel, uint8_t mode, uint8_t position);
+void mcu_set_meter(uint8_t channel, uint8_t level);
 void mcu_send_timecode(const char *timecode);
 
 

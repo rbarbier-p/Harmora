@@ -12,7 +12,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include <stdio.h>
 // 328P main loop: scan inputs, forward deltas to 32U4, execute draw commands in INT0.
 
 int main(void) {
@@ -22,16 +21,11 @@ int main(void) {
   stopwatch_init(); 
   input_state_init();
   expander_init();
-  // Display reset is controlled via the GPIO expander.
   expander_display_reset_pulse(10);
   display_init(DISPLAY_SSD1309, DISPLAY_BUS_SPI, DISPLAY_MODE_DIRTYPAGES);
   mcu_comm_init();
   interrupts_init();
   scheduler_init();
-  
-  // Default scheduler enables all tasks; keep MCU comm enabled.
-  scheduler_enable(TASK_MCU_COMM, 1);
-
 
   uint8_t loop_count = 0;
   while (1)

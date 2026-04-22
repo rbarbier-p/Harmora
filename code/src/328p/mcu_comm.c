@@ -13,6 +13,8 @@
 // Flag to track if we're currently processing display commands
 // Prevents re-entrancy if interrupt fires during processing
 static volatile uint8_t g_processing_display = 0;
+static volatile uint32_t g_diag_tx_frame_count = 0;
+static volatile uint32_t g_diag_tx_byte_count = 0;
 
 // INITIALIZATION
 
@@ -288,6 +290,7 @@ void mcu_comm_handle_display(void) {
 // INPUT EVENT TRANSMISSION
 
 static inline void mcu_comm_write_byte(uint8_t data) {
+    g_diag_tx_byte_count++;
     spi_transfer(data);  // We ignore the returned byte from 32U4
 }
 
@@ -375,6 +378,8 @@ void mcu_comm_send_inputs(void) {
 
     // Restore INT0 mask
     EIMSK = prev_eimsk;
+
+    g_diag_tx_frame_count++;
     
     // If we drained all changes, clear any remaining encoder deltas and flags.
     // (The per-event send path already clears what it sent; leaving remaining
@@ -382,4 +387,12 @@ void mcu_comm_send_inputs(void) {
     if (!input_state_has_changes()) {
         input_state_clear_dirty();
     }
+}
+
+uint32_t mcu_comm_diag_tx_frame_count(void) {
+    return g_diag_tx_frame_count;
+}
+
+uint32_t mcu_comm_diag_tx_byte_count(void) {
+    return g_diag_tx_byte_count;
 }

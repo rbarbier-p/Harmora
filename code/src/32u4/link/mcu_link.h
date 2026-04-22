@@ -15,5 +15,9 @@ uint8_t mcu_link_queue_display_frame(const uint8_t *payload, uint8_t payload_len
 uint8_t mcu_link_rx_frame_ready(void);
 uint8_t mcu_link_read_rx_bytes(uint8_t *dst, uint8_t max_len);
 
+// Diagnostics counters for link bring-up.
+uint32_t mcu_link_diag_rx_byte_count(void);
+uint32_t mcu_link_diag_rx_frame_count(void);
+
 
 #endif // MCU_LINK_32U4_H

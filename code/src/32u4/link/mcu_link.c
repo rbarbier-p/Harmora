@@ -40,6 +40,9 @@ static volatile uint8_t s_tx_active = 0;
 
 static volatile uint8_t s_seq_display = 0;
 
+static volatile uint32_t s_diag_rx_byte_count = 0;
+static volatile uint32_t s_diag_rx_frame_count = 0;
+
 static inline void rx_reset(void);
 
 // Temporarily suspend USB interrupts during SS-low transactions.
@@ -201,13 +204,14 @@ uint8_t mcu_link_read_rx_bytes(uint8_t *dst, uint8_t max_len)
     return 0;
   }
 
+  uint8_t sreg = SREG;
+  cli();
+
   uint8_t n = s_rx_len;
   if (n > max_len) {
     n = max_len;
   }
 
-  uint8_t sreg = SREG;
-  cli();
   for (uint8_t i = 0; i < n; i++) {
     dst[i] = s_rx_buf[i];
   }
@@ -218,6 +222,26 @@ uint8_t mcu_link_read_rx_bytes(uint8_t *dst, uint8_t max_len)
   SREG = sreg;
 
   return n;
+}
+
+uint32_t mcu_link_diag_rx_byte_count(void)
+{
+  uint32_t v;
+  uint8_t sreg = SREG;
+  cli();
+  v = s_diag_rx_byte_count;
+  SREG = sreg;
+  return v;
+}
+
+uint32_t mcu_link_diag_rx_frame_count(void)
+{
+  uint32_t v;
+  uint8_t sreg = SREG;
+  cli();
+  v = s_diag_rx_frame_count;
+  SREG = sreg;
+  return v;
 }
 
 // SS edge handler (PB0 / PCINT0).
@@ -249,13 +273,19 @@ ISR(PCINT0_vect)
 
 static inline void rx_reset(void)
 {
-  s_rx_len = 0;
+  // Preserve a completed frame until main loop consumes it.
+  // If we clear s_rx_len while s_rx_ready=1, consumer may observe n=0.
+  if (!s_rx_ready) {
+    s_rx_len = 0;
+  }
   s_rx_state = RX_WAIT_MAGIC;
   s_rx_expected_total = 0;
 }
 
 static inline void rx_push(uint8_t b)
 {
+  s_diag_rx_byte_count++;
+
   // Single-frame buffer: if main loop hasn't consumed it, drop incoming bytes.
   if (s_rx_ready) {
     return;
@@ -327,6 +357,7 @@ static inline void rx_push(uint8_t b)
 
       if (s_rx_expected_total && s_rx_len >= s_rx_expected_total) {
         s_rx_ready = 1;
+        s_diag_rx_frame_count++;
         // Keep buffer/len as-is for main loop.
         s_rx_state = RX_WAIT_MAGIC;
         s_rx_expected_total = 0;
