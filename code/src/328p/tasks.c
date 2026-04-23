@@ -154,47 +154,63 @@ void task_button_scan(void) {
   }
 
   // Expander 1 Port A
+  {
+    uint8_t drain_guard = 0;
+    while (((g_exp_interrupt & INT_EXP1_PORT_A) || !GPIO_READ(PIN_EXP1_INTA)) && drain_guard < 4) {
+      cli();
+      g_exp_interrupt &= ~INT_EXP1_PORT_A;
+      sei();
 
-  if (g_exp_interrupt & INT_EXP1_PORT_A) {
-    cli();
-    g_exp_interrupt &= ~INT_EXP1_PORT_A;  // Clear flag
-    sei();
-    uint8_t current = expander_read_raw(0, 0);  // Reading GPIO clears interrupt
-    uint8_t changed = current ^ last_exp1_a;
-    
-    if (changed) {
-      for (uint8_t i = 0; i < 8; i++) {
-        if (changed & (1 << i)) {
-          uint8_t pressed = !(current & (1 << i));
-          input_state_update_button(i, pressed);
-        }
+      uint8_t intf = expander_read_intf(0, 0);
+      if (intf == 0) {
+        break;
       }
-      last_exp1_a = current;
+
+      uint8_t captured = expander_read_intcap(0, 0);
+      uint8_t changed = captured ^ last_exp1_a;
+      if (changed) {
+        for (uint8_t i = 0; i < 8; i++) {
+          if (changed & (1 << i)) {
+            uint8_t pressed = !(captured & (1 << i));
+            input_state_update_button(i, pressed);
+          }
+        }
+        last_exp1_a = captured;
+      }
+      drain_guard++;
     }
   }
 
-  // Expander 1 Port B (buttons 8-14, pin 7 is display_rst)
+  // Expander 1 Port B (buttons 8-15)
+  {
+    uint8_t drain_guard = 0;
+    while (((g_exp_interrupt & INT_EXP1_PORT_B) || !GPIO_READ(PIN_EXP1_INTB)) && drain_guard < 4) {
+      cli();
+      g_exp_interrupt &= ~INT_EXP1_PORT_B;
+      sei();
 
-  if (g_exp_interrupt & INT_EXP1_PORT_B) {
-    cli();
-    g_exp_interrupt &= ~INT_EXP1_PORT_B;  // Clear flag
-    sei();
-    uint8_t current = expander_read_raw(0, 1);  // Reading GPIO clears interrupt
-    current |= (1 << 7);  // Mask out display_rst pin
-    uint8_t changed = current ^ last_exp1_b;
-    
-    if (changed) {
-      for (uint8_t i = 0; i < 7; i++) {
-        if (changed & (1 << i)) {
-          uint8_t pressed = !(current & (1 << i));
-          input_state_update_button(8 + i, pressed);
-        }
+      uint8_t intf = expander_read_intf(0, 1);
+      if (intf == 0) {
+        break;
       }
-      last_exp1_b = current;
+
+      uint8_t captured = expander_read_intcap(0, 1);
+      uint8_t changed = captured ^ last_exp1_b;
+
+      if (changed) {
+        for (uint8_t i = 0; i < 8; i++) {
+          if (changed & (1 << i)) {
+            uint8_t pressed = !(captured & (1 << i));
+            input_state_update_button(8 + i, pressed);
+          }
+        }
+        last_exp1_b = captured;
+      }
+      drain_guard++;
     }
   }
 
-  // Expander 2 (buttons 16-31)
+  // Expander 2 (buttons 16-30, pin B7 is display_rst)
 
   if (g_exp_interrupt & INT_EXP2_PORTS) {
     cli();
@@ -220,13 +236,14 @@ void task_button_scan(void) {
       }
     }
     
-    // Port B
+    // Port B (mask out display_rst pin B7)
     if (intf_b) {
       uint8_t current = expander_read_raw(1, 1);  // Reading GPIO clears interrupt
+      current |= (1 << 7);
       uint8_t changed = current ^ last_exp2_b;
       
       if (changed) {
-        for (uint8_t i = 0; i < 8; i++) {
+        for (uint8_t i = 0; i < 7; i++) {
           if (changed & (1 << i)) {
             uint8_t pressed = !(current & (1 << i));
             input_state_update_button(24 + i, pressed);

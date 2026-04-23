@@ -9,8 +9,8 @@
 #define GPIO_EXP1_ADDR 0x20
 #define GPIO_EXP2_ADDR 0x21
 
-// Display reset pin location (on expander 1)
-#define DISPLAY_RST_EXPANDER 0       // Expander 1
+// Display reset pin location (on expander 2)
+#define DISPLAY_RST_EXPANDER 1       // Expander 2
 #define DISPLAY_RST_PORT     1       // Port B
 #define DISPLAY_RST_PIN      7       // Pin 7
 
@@ -38,5 +38,6 @@ void expander_display_reset_pulse(uint8_t delay_ms);
 
 uint8_t expander_read_raw(uint8_t expander, uint8_t port);
 uint8_t expander_read_intf(uint8_t expander, uint8_t port);
+uint8_t expander_read_intcap(uint8_t expander, uint8_t port);
 
 #endif
