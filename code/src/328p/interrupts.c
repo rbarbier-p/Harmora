@@ -44,14 +44,9 @@ ISR(PCINT1_vect) {
     // Read all port C pins once to avoid race conditions
     uint8_t pinc = PINC;
     
-    // Check expander 1 port A (PC1 = EXP1_INTA) - active LOW
-    if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTA))) {
-        g_exp_interrupt |= INT_EXP1_PORT_A;
-    }
-    
-    // Check expander 1 port B (PC2 = EXP1_INTB) - active LOW
-    if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTB))) {
-        g_exp_interrupt |= INT_EXP1_PORT_B;
+    // Check expander 1 port A (PC1 = EXP1_INTA) or port B (PC2 = EXP1_INTB) - active LOW
+    if (!(pinc & GPIO_BIT_MASK(PIN_EXP1_INTA)) || !(pinc & GPIO_BIT_MASK(PIN_EXP1_INTB))) {
+        g_exp_interrupt |= INT_EXP1_PORTS;
     }
     
     // Check expander 2 (PC3 = EXP2_INT, both ports OR'd) - active LOW

@@ -153,60 +153,44 @@ void task_button_scan(void) {
     return;
   }
 
-  // Expander 1 Port A
-  {
-    uint8_t drain_guard = 0;
-    while (((g_exp_interrupt & INT_EXP1_PORT_A) || !GPIO_READ(PIN_EXP1_INTA)) && drain_guard < 4) {
-      cli();
-      g_exp_interrupt &= ~INT_EXP1_PORT_A;
-      sei();
-
-      uint8_t intf = expander_read_intf(0, 0);
-      if (intf == 0) {
-        break;
-      }
-
-      uint8_t captured = expander_read_intcap(0, 0);
-      uint8_t changed = captured ^ last_exp1_a;
+  if (g_exp_interrupt & INT_EXP1_PORTS) {
+    cli();
+    g_exp_interrupt &= ~INT_EXP1_PORTS;  // Clear flag
+    sei();
+    // Read INTF to see which port(s) triggered
+    uint8_t intf_a = expander_read_intf(0, 0);
+    uint8_t intf_b = expander_read_intf(0, 1);
+    
+    // Port A
+    if (intf_a) {
+      uint8_t current = expander_read_raw(0, 0);  // Reading GPIO clears interrupt
+      uint8_t changed = current ^ last_exp1_a;
+      
       if (changed) {
         for (uint8_t i = 0; i < 8; i++) {
           if (changed & (1 << i)) {
-            uint8_t pressed = !(captured & (1 << i));
+            uint8_t pressed = !(current & (1 << i));
             input_state_update_button(i, pressed);
           }
         }
-        last_exp1_a = captured;
+        last_exp1_a = current;
       }
-      drain_guard++;
     }
-  }
-
-  // Expander 1 Port B (buttons 8-15)
-  {
-    uint8_t drain_guard = 0;
-    while (((g_exp_interrupt & INT_EXP1_PORT_B) || !GPIO_READ(PIN_EXP1_INTB)) && drain_guard < 4) {
-      cli();
-      g_exp_interrupt &= ~INT_EXP1_PORT_B;
-      sei();
-
-      uint8_t intf = expander_read_intf(0, 1);
-      if (intf == 0) {
-        break;
-      }
-
-      uint8_t captured = expander_read_intcap(0, 1);
-      uint8_t changed = captured ^ last_exp1_b;
-
+    
+    // Port B
+    if (intf_b) {
+      uint8_t current = expander_read_raw(0, 1);  // Reading GPIO clears interrupt
+      uint8_t changed = current ^ last_exp1_b;
+      
       if (changed) {
         for (uint8_t i = 0; i < 8; i++) {
           if (changed & (1 << i)) {
-            uint8_t pressed = !(captured & (1 << i));
+            uint8_t pressed = !(current & (1 << i));
             input_state_update_button(8 + i, pressed);
           }
         }
-        last_exp1_b = captured;
+        last_exp1_b = current;
       }
-      drain_guard++;
     }
   }
 
