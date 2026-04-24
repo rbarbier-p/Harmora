@@ -31,7 +31,11 @@ void task_hall_scan(void) {
   static const uint8_t key_to_channel[12] = {
     0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15
   };
-  
+
+  static const uint8_t key_to_note[12] = { // this could be in the 32u4
+    1, 11, 9, 7, 5, 4, 2, 0, 3, 6, 8, 10
+  };
+
   // Scan all 12 keys
   adc_select_channel(7);
   for (uint8_t key = 0; key < 12; key++) {
@@ -44,7 +48,7 @@ void task_hall_scan(void) {
     uint8_t is_pressed = (value < press_threshold[key]);
     
     // Update key state (handles change detection internally)
-    input_state_update_key(key, is_pressed);
+    input_state_update_key(key_to_note[key], is_pressed);
   }
 }
 

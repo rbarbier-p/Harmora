@@ -28,9 +28,11 @@
 #define BUTTON_EXT_11 6
 #define BUTTON_EXT_13 4
 
-#define BUTTON_PATTERN_BLOCK 100 //not a button
-#define BUTTON_PATTERN_ARP_UP 100
-#define BUTTON_PATTERN_ARP_DOWN 100
+#define BUTTON_PATTERN_BLOCK 25 //not a button
+#define BUTTON_PATTERN_ARP_UP 26
+#define BUTTON_PATTERN_ARP_DOWN 27
+
+#define BUTTON_CHORD_MODE 24
 
 #define BUTTON_MODE_IONIAN 21
 #define BUTTON_MODE_DORIAN 20
@@ -139,22 +141,18 @@ static void chord_start(uint8_t key_id)
     }
 }
 
-static void select_triad(triad_type_t triad)
-{
-    if (s_live_ctx.triad == triad) {
-        s_live_ctx.triad = TRIAD_NONE;
-    } else {
+static void select_triad(triad_type_t triad, uint8_t pressed) {   
+    if (pressed)
         s_live_ctx.triad = triad;
-    }
+    else
+        s_live_ctx.triad = TRIAD_NONE;
 }
 
-static void select_first_ext(first_ext_t first_ext)
-{
-    if (s_live_ctx.first_ext == first_ext) {
-        s_live_ctx.first_ext = FIRST_EXT_NONE;
-    } else {
+static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
+    if (pressed)
         s_live_ctx.first_ext = first_ext;
-    }
+    else
+        s_live_ctx.first_ext = FIRST_EXT_NONE;
 }
 
 void chord_engine_init(void)
@@ -261,6 +259,7 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
     }
 
     if (pressed) {
+        
         chord_start(key_id);
     } else {
         chord_stop(&s_held[key_id]);
@@ -286,103 +285,99 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
         return;
     }
 
-    if (!pressed) {
-        return;
-    }
-
     if (button_id == BUTTON_TRIAD_MAJOR) {
-        select_triad(TRIAD_MAJOR);
+        select_triad(TRIAD_MAJOR, pressed);
         return;
     }
     if (button_id == BUTTON_TRIAD_MINOR) {
-        select_triad(TRIAD_MINOR);
+        select_triad(TRIAD_MINOR, pressed);
         return;
     }
     if (button_id == BUTTON_TRIAD_DIM) {
-        select_triad(TRIAD_DIMINISHED);
+        select_triad(TRIAD_DIMINISHED, pressed);
         return;
     }
     if (button_id == BUTTON_TRIAD_AUG) {
-        select_triad(TRIAD_AUGMENTED);
+        select_triad(TRIAD_AUGMENTED, pressed);
         return;
     }
     if (button_id == BUTTON_TRIAD_SUS4) {
-        select_triad(TRIAD_SUS4);
+        select_triad(TRIAD_SUS4, pressed);
         return;
     }
     if (button_id == BUTTON_TRIAD_SUS2) {
-        select_triad(TRIAD_SUS2);
+        select_triad(TRIAD_SUS2, pressed);
         return;
     }
 
     if (button_id == BUTTON_FIRST_EXT_6) {
-        select_first_ext(FIRST_EXT_6);
+        select_first_ext(FIRST_EXT_6, pressed);
         return;
     }
     if (button_id == BUTTON_FIRST_EXT_M7) {
-        select_first_ext(FIRST_EXT_M7);
+        select_first_ext(FIRST_EXT_M7, pressed);
         return;
     }
     if (button_id == BUTTON_FIRST_EXT_MAJ7) {
-        select_first_ext(FIRST_EXT_MAJ7);
+        select_first_ext(FIRST_EXT_MAJ7, pressed);
         return;
     }
 
     if (button_id == BUTTON_EXT_7) {
-        s_live_ctx.ext_7 ^= 1;
+        s_live_ctx.ext_7 = pressed;
         return;
     }
     if (button_id == BUTTON_EXT_9) {
-        s_live_ctx.ext_9 ^= 1;
+        s_live_ctx.ext_9 = pressed;
         return;
     }
     if (button_id == BUTTON_EXT_11) {
-        s_live_ctx.ext_11 ^= 1;
+        s_live_ctx.ext_11 = pressed;
         return;
     }
     if (button_id == BUTTON_EXT_13) {
-        s_live_ctx.ext_13 ^= 1;
+        s_live_ctx.ext_13 = pressed;
         return;
     }
 
-    if (button_id == BUTTON_MODE_IONIAN) {
+    if (pressed && button_id == BUTTON_MODE_IONIAN) {
         chord_engine_set_mode(HARMONY_MODE_IONIAN);
         return;
     }
-    if (button_id == BUTTON_MODE_DORIAN) {
+    if (pressed && button_id == BUTTON_MODE_DORIAN) {
         chord_engine_set_mode(HARMONY_MODE_DORIAN);
         return;
     }
-    if (button_id == BUTTON_MODE_PHRYGIAN) {
+    if (pressed && button_id == BUTTON_MODE_PHRYGIAN) {
         chord_engine_set_mode(HARMONY_MODE_PHRYGIAN);
         return;
     }
-    if (button_id == BUTTON_MODE_LYDIAN) {
+    if (pressed && button_id == BUTTON_MODE_LYDIAN) {
         chord_engine_set_mode(HARMONY_MODE_LYDIAN);
         return;
     }
-    if (button_id == BUTTON_MODE_MIXOLYDIAN) {
+    if (pressed && button_id == BUTTON_MODE_MIXOLYDIAN) {
         chord_engine_set_mode(HARMONY_MODE_MIXOLYDIAN);
         return;
     }
-    if (button_id == BUTTON_MODE_AEOLIAN) {
+    if (pressed && button_id == BUTTON_MODE_AEOLIAN) {
         chord_engine_set_mode(HARMONY_MODE_AEOLIAN);
         return;
     }
-    if (button_id == BUTTON_MODE_LOCRIAN) {
+    if (pressed && button_id == BUTTON_MODE_LOCRIAN) {
         chord_engine_set_mode(HARMONY_MODE_LOCRIAN);
         return;
     }
 
-    if (button_id == BUTTON_PATTERN_BLOCK) {
+    if (pressed && button_id == BUTTON_PATTERN_BLOCK) {
         chord_engine_set_pattern(CHORD_PATTERN_BLOCK);
         return;
     }
-    if (button_id == BUTTON_PATTERN_ARP_UP) {
+    if (pressed && button_id == BUTTON_PATTERN_ARP_UP) {
         chord_engine_set_pattern(CHORD_PATTERN_ARP_UP);
         return;
     }
-    if (button_id == BUTTON_PATTERN_ARP_DOWN) {
+    if (pressed && button_id == BUTTON_PATTERN_ARP_DOWN) {
         chord_engine_set_pattern(CHORD_PATTERN_ARP_DOWN);
         return;
     }

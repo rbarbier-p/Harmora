@@ -1,4 +1,5 @@
 #include "midi.h"
+#include <stdio.h>
 
 extern uint8_t usbConfigured;
 //mcu_state_t mcuState;
@@ -70,6 +71,10 @@ void midi_play_chord(uint8_t channel, const uint8_t *notes, uint8_t count, uint8
     uint8_t limit = (count > 8) ? 8 : count;
     for (uint8_t i = 0; i < limit; i++) {
         midi_note_on(channel, notes[i], velocity);
+        // make a debug message for the first note of the chord
+        char msg[18];
+        snprintf(msg, sizeof(msg), "playing note: %i", notes[i]);
+        midi_debug(msg);
     }
 }
 
