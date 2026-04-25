@@ -2,6 +2,8 @@
 RED = \033[1;31m
 GREEN = \033[1;32m
 PURPLE = \033[1;35m
+YELLOW = \033[1;33m
+BLUE = \033[1;34m
 RESET = \033[0m
 
 UNAME = $(shell uname -s)
@@ -244,13 +246,13 @@ size: $(ATMEGA328P_ELF) $(ATMEGA32U4_ELF)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
 	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
 	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
-	END {printf "[328p]\nFlash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
+	END {printf "\n$(PURPLE)[328p]$(RESET)\nFlash usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\nRAM usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 	@$(SIZE) --format=avr --mcu=$(ATMEGA32U4_MCU) $(ATMEGA32U4_ELF) > $(SIZE_TXT)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
 	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
 	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
-	END {printf "[32u4]\nFlash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
+	END {printf "\n$(PURPLE)[32u4]$(RESET)\nFlash usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\nRAM usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 
 # Clean build files

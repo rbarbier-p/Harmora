@@ -50,6 +50,8 @@ typedef struct {
 
     // Future hook: bass channel/note policy
     uint8_t bass_enabled;
+    
+    uint8_t chord_mode_enabled;
 } harmony_context_t;
 
 typedef struct {

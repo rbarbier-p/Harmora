@@ -140,7 +140,7 @@ static uint8_t send_input_change_debug_frame(const input_change_t *change)
         return 0;
     }
 
-    midi_debug(debug_msg);
+    //midi_debug(debug_msg);
     return 1;
 }
 

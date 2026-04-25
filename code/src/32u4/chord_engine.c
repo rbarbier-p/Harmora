@@ -2,6 +2,11 @@
 
 #include "midi.h"
 
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
+
 #define CHORD_ENGINE_MAX_HELD_KEYS 12
 #define CHORD_ENGINE_MAX_NOTES_PER_CHORD HARMONY_MAX_INTERVALS
 
@@ -60,6 +65,101 @@ static int8_t s_octave_offset = 0;
 static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
     60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71
 };
+
+static const char *note_names[12] = {
+    "C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"
+};
+
+// Fast append (no strlen / strcat)
+static inline char* append(char *p, const char *s) {
+    while (*s) *p++ = *s++;
+    *p = '\0';
+    return p;
+}
+
+void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
+    char *p = out;
+
+    // ---- Root ----
+    p = append(p, note_names[key_id % 12]);
+
+    // ---- Single pass: build flags ----
+    uint32_t mask = 0;
+
+    for (uint8_t i = 0; i < h->count; i++) {
+        uint8_t iv = h->intervals[i];
+        if (iv < 32) {
+            mask |= (1UL << iv);
+        }
+    }
+
+    // ---- Extract flags (O(1)) ----
+    bool m3  = mask & (1UL << 3);
+    bool M3  = mask & (1UL << 4);
+    bool P5  = mask & (1UL << 7);
+    bool d5  = mask & (1UL << 6);
+    bool A5  = mask & (1UL << 8);
+    bool sus2= mask & (1UL << 2);
+    bool sus4= mask & (1UL << 5);
+
+    bool has6 = mask & (1UL << 9);
+    bool m7   = mask & (1UL << 10);
+    bool M7   = mask & (1UL << 11);
+
+    bool b9   = mask & (1UL << 13);
+    bool nat9 = mask & (1UL << 14);
+    bool s9   = mask & (1UL << 15);
+
+    bool p11  = mask & (1UL << 17);
+    bool s11  = mask & (1UL << 18);
+
+    bool b13  = mask & (1UL << 20);
+    bool nat13= mask & (1UL << 21);
+
+    // ---- TRIAD ----
+    if (sus2) {
+        p = append(p, "sus2");
+    } else if (sus4) {
+        p = append(p, "sus4");
+    } else if (m3 && P5) {
+        p = append(p, "m");
+    } else if (m3 && d5) {
+        p = append(p, "dim");
+    } else if (M3 && A5) {
+        p = append(p, "aug");
+    }
+    // major = no suffix
+
+    // ---- 7 / 6 ----
+    bool has7 = false;
+
+    if (M7) {
+        p = append(p, "maj7");
+        has7 = true;
+    } else if (m7) {
+        p = append(p, "7");
+        has7 = true;
+    } else if (has6) {
+        p = append(p, "6");
+    }
+
+    // ---- EXTENSIONS ----
+
+    // 9
+    if (nat9) p = append(p, has7 ? "9" : "add9");
+    if (b9)   p = append(p, has7 ? "b9" : "addb9");
+    if (s9)   p = append(p, has7 ? "#9" : "add#9");
+
+    // 11
+    if (p11)  p = append(p, has7 ? "11" : "add11");
+    if (s11)  p = append(p, has7 ? "#11" : "add#11");
+
+    // 13
+    if (nat13) p = append(p, has7 ? "13" : "add13");
+    if (b13)   p = append(p, has7 ? "b13" : "addb13");
+
+    midi_debug(out);
+}
 
 static uint8_t midi_note_clamp_u7(int16_t note)
 {
@@ -134,6 +234,8 @@ static void chord_start(uint8_t key_id)
 
     slot->active = 1;
 
+    char resolved_str[32];
+    spell_chord(resolved_str, key_id, &resolved);
     if (s_pattern == CHORD_PATTERN_BLOCK) {
         chord_play_block(slot);
     } else {
@@ -259,7 +361,6 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
     }
 
     if (pressed) {
-        
         chord_start(key_id);
     } else {
         chord_stop(&s_held[key_id]);
@@ -379,6 +480,11 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
     }
     if (pressed && button_id == BUTTON_PATTERN_ARP_DOWN) {
         chord_engine_set_pattern(CHORD_PATTERN_ARP_DOWN);
+        return;
+    }
+
+    if (button_id == BUTTON_CHORD_MODE) {
+        s_live_ctx.chord_mode_enabled = pressed;
         return;
     }
 }

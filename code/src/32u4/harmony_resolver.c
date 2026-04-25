@@ -73,6 +73,7 @@ void harmony_context_init(harmony_context_t *ctx)
     ctx->ext_13 = 0;
     ctx->voicing_id = 0;
     ctx->bass_enabled = 0;
+    ctx->chord_mode_enabled = 0;
 }
 
 uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, harmony_intervals_t *out)
@@ -86,7 +87,7 @@ uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, 
     const uint8_t *scale = s_mode_scales[(uint8_t)ctx->mode % HARMONY_MODE_COUNT];
 
     uint8_t root_pc = key_id;
-    uint8_t rel_pc = mod12_u8((int16_t)root_pc - (int16_t)(ctx->tonic_pc % 12));
+    uint8_t rel_pc = mod12_u8((int16_t)root_pc - (int16_t)(ctx->tonic_pc % 12)); 
     uint8_t degree = find_degree_for_pc(scale, rel_pc);
 
     append_interval(out, 0);
@@ -121,7 +122,7 @@ uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, 
             default:
                 break;
         }
-    } else {
+    } else if (ctx->chord_mode_enabled) {
         append_interval(out, diatonic_interval(scale, degree, 2));
         append_interval(out, diatonic_interval(scale, degree, 4));
     }
