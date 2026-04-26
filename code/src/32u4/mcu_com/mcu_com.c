@@ -1,4 +1,4 @@
-#include "mcu_link.h"
+#include "mcu_com.h"
 
 static void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value)
 {
@@ -89,6 +89,15 @@ uint8_t send_input_change_debug_frame(const input_change_t *change)
         return 0;
     }
 
-    //midi_debug(debug_msg);
+    midi_debug(debug_msg);
     return 1;
+}
+
+void mos_send_string(const char *str)
+{
+    uint8_t payload[MCU_LINK_MAX_PAYLOAD];
+    uint8_t idx = 0;
+    append_byte(payload, &idx, CMD_CLEAR);
+    append_string_cmd(payload, &idx, 10, 10, str);
+    mcu_link_queue_display_frame(payload, idx);
 }

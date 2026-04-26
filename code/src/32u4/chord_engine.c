@@ -1,6 +1,7 @@
 #include "chord_engine.h"
 
 #include "midi.h"
+#include "mcu_com.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -159,8 +160,7 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
     if (b13)   p = append(p, has7 ? "b13" : "addb13");
 
     midi_debug(out);
-    
-    
+    mos_send_string(out);
 }
 
 static uint8_t midi_note_clamp_u7(int16_t note)

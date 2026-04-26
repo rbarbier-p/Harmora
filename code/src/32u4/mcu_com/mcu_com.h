@@ -1,7 +1,9 @@
-#ifndef MCU_COM_32U4_H
-#define MCU_COM_32U4_H
+#ifndef MCU_COM_H
+#define MCU_COM_H
 
 #include <stdint.h>
+#include <stdio.h>
+#include "midi.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "SPI.h"
@@ -22,24 +24,27 @@ typedef enum {
 } rx_state_t;
 
 typedef struct rx_internal {
-    uint8_t buf[LINK_RX_BUF_SIZE];
-    uint8_t len;
-    uint8_t ready;
+    volatile uint8_t buf[LINK_RX_BUF_SIZE];
+    volatile uint8_t len;
+    volatile uint8_t ready;
   
-    rx_state_t state;
-    uint8_t expected_total;
+    volatile rx_state_t state;
+    volatile uint8_t expected_total;
   
-    uint32_t byte_count;
-    uint32_t frame_count;
+    volatile uint32_t byte_count;
+    volatile uint32_t frame_count;
 } rx_internal_t;
 
 typedef struct tx_internal {
-    uint8_t buf[LINK_TX_BUF_SIZE];
-    uint8_t len;
-    uint8_t pos;
-    uint8_t active;
-    uint8_t seq_display;
+    volatile uint8_t buf[LINK_TX_BUF_SIZE];
+    volatile uint8_t len;
+    volatile uint8_t pos;
+    volatile uint8_t active;
+    volatile uint8_t seq_display;
 } tx_internal_t;
+
+extern rx_internal_t rx;
+extern tx_internal_t tx;
 
 void mcu_link_init(void);
 
@@ -59,6 +64,7 @@ void mcu_int_assert(void);
 
 //mcu_com.c
 uint8_t send_input_change_debug_frame(const input_change_t *change);
+void mos_send_string(const char *str);
 
 //rx.c
 void rx_push(uint8_t b);

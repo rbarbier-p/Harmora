@@ -12,25 +12,14 @@
 //   buffer and parse in the main loop).
 // - TX mode: master is reading a display frame (we stream a prepared buffer).
 
-/*static volatile uint8_t s_rx_buf[LINK_RX_BUF_SIZE];
-static volatile uint8_t s_rx_len = 0;
-static volatile uint8_t s_rx_ready = 0;
 
-static volatile rx_state_t s_rx_state = RX_WAIT_MAGIC;
-static volatile uint8_t s_rx_expected_total = 0;
+ // initialize all 0
+rx_internal_t rx = {
+  .state = RX_WAIT_MAGIC,
+};
 
-static volatile uint8_t s_tx_buf[LINK_TX_BUF_SIZE];
-static volatile uint8_t s_tx_len = 0;
-static volatile uint8_t s_tx_pos = 0;
-static volatile uint8_t s_tx_active = 0;
-
-static volatile uint8_t s_seq_display = 0;
-
-static volatile uint32_t s_diag_rx_byte_count = 0;
-static volatile uint32_t s_diag_rx_frame_count = 0; */
-
-rx_internal_t *rx;
-tx_internal_t *tx;
+// initialize all 0
+tx_internal_t tx = {0};
 
 // Temporarily suspend USB interrupts during SS-low transactions.
 // Motivation: the SPI slave TX path needs to refill SPDR at byte boundaries.
@@ -103,21 +92,6 @@ void mcu_link_init(void) {
   mcu_int_set_output();
   mcu_int_deassert();
 
-  rx = (rx_internal_t *)malloc(sizeof(rx_internal_t));
-  tx = (tx_internal_t *)malloc(sizeof(tx_internal_t));
-
-  rx->len = 0;
-  rx->ready = 0;
-  rx->state = RX_WAIT_MAGIC;
-  rx->expected_total = 0;
-  rx->byte_count = 0;
-  rx->frame_count = 0;
-
-  tx->len = 0;
-  tx->pos = 0;
-  tx->active = 0;
-  tx->seq_display = 0;
-
   ss_pcint_init();
 
   spi_enable_interrupt();
@@ -133,9 +107,9 @@ ISR(PCINT0_vect)
 {
   if (PINB & (1 << SPI_SS)) {
     // SS high: transaction boundary. Abort any partial TX/RX frame.
-    tx->active = 0;
-    tx->len = 0;
-    tx->pos = 0;
+    tx.active = 0;
+    tx.len = 0;
+    tx.pos = 0;
     mcu_int_deassert();
     rx_reset();
     SPDR = 0x00;
@@ -145,9 +119,9 @@ ISR(PCINT0_vect)
 
   // SS low: start of a transaction.
   usb_irq_suspend_for_spi();
-  if (tx->active && tx->len) {
-    SPDR = tx->buf[0];
-    tx->pos = 1;
+  if (tx.active && tx.len) {
+    SPDR = tx.buf[0];
+    tx.pos = 1;
   } else {
     SPDR = 0x00;
   }
@@ -159,18 +133,18 @@ ISR(SPI_STC_vect)
 {
   uint8_t recieved = SPDR;
 
-  if (tx->active) {
+  if (tx.active) {
     // While TX is active, stream out bytes. Ignore RX dummy bytes.
-    uint8_t pos = tx->pos;
+    uint8_t pos = tx.pos;
     uint8_t out = 0x00;
-    if (pos < tx->len) {
-      out = tx->buf[pos];
-      tx->pos = (uint8_t)(pos + 1);
+    if (pos < tx.len) {
+      out = tx.buf[pos];
+      tx.pos = (uint8_t)(pos + 1);
     } else {
       // TX complete.
-      tx->active = 0;
-      tx->len = 0;
-      tx->pos = 0;
+      tx.active = 0;
+      tx.len = 0;
+      tx.pos = 0;
       // Release interrupt line once the master has drained the buffer.
       mcu_int_deassert();
       out = 0x00;
