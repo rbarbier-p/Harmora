@@ -90,7 +90,7 @@ CFLAGS += -DUSB_INIT_DELAY_MS=$(USB_INIT_DELAY_MS)
 32U4_INCLUDES = -Isrc/32u4
 32U4_INCLUDES += -Isrc/32u4/SPI
 32U4_INCLUDES += -Isrc/32u4/UART
-32U4_INCLUDES += -Isrc/32u4/link
+32U4_INCLUDES += -Isrc/32u4/mcu_com
 32U4_INCLUDES += -Isrc/shared
 
 # Linker flags
@@ -107,7 +107,7 @@ include src/328p/expander/expander.mk
 
 include src/32u4/SPI/SPI.mk
 include src/32u4/UART/UART.mk
-include src/32u4/link/link.mk
+include src/32u4/mcu_com/mcu_com.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c

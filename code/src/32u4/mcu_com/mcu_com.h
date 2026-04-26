@@ -1,0 +1,67 @@
+#ifndef MCU_COM_32U4_H
+#define MCU_COM_32U4_H
+
+#include <stdint.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "SPI.h"
+#include "input_tracker.h"
+
+#include "../../shared/mcu_link.h"
+
+// Keep buffers small; display frames are kept short.
+#define LINK_RX_BUF_SIZE 192
+#define LINK_TX_BUF_SIZE 192
+
+typedef enum {
+  RX_WAIT_MAGIC = 0,
+  RX_WAIT_TYPE,
+  RX_WAIT_SEQ,
+  RX_WAIT_LEN,
+  RX_WAIT_PAYLOAD,
+} rx_state_t;
+
+typedef struct rx_internal {
+    uint8_t buf[LINK_RX_BUF_SIZE];
+    uint8_t len;
+    uint8_t ready;
+  
+    rx_state_t state;
+    uint8_t expected_total;
+  
+    uint32_t byte_count;
+    uint32_t frame_count;
+} rx_internal_t;
+
+typedef struct tx_internal {
+    uint8_t buf[LINK_TX_BUF_SIZE];
+    uint8_t len;
+    uint8_t pos;
+    uint8_t active;
+    uint8_t seq_display;
+} tx_internal_t;
+
+void mcu_link_init(void);
+
+// Queue a display frame (32U4 -> 328P).
+// Returns 1 if queued, 0 if busy.
+uint8_t mcu_link_queue_display_frame(const uint8_t *payload, uint8_t payload_len);
+
+// RX frame handling (328P -> 32U4).
+uint8_t mcu_link_rx_frame_ready(void);
+uint8_t mcu_link_read_rx_bytes(uint8_t *dst, uint8_t max_len);
+
+// Diagnostics counters for link bring-up.
+uint32_t mcu_link_diag_rx_byte_count(void);
+uint32_t mcu_link_diag_rx_frame_count(void);
+
+void mcu_int_assert(void);
+
+//mcu_com.c
+uint8_t send_input_change_debug_frame(const input_change_t *change);
+
+//rx.c
+void rx_push(uint8_t b);
+void rx_reset(void);
+
+#endif // MCU_LINK_32U4_H

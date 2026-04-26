@@ -159,6 +159,8 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
     if (b13)   p = append(p, has7 ? "b13" : "addb13");
 
     midi_debug(out);
+    
+    
 }
 
 static uint8_t midi_note_clamp_u7(int16_t note)
@@ -235,25 +237,25 @@ static void chord_start(uint8_t key_id)
     slot->active = 1;
 
     char resolved_str[32];
-    spell_chord(resolved_str, key_id, &resolved);
     if (s_pattern == CHORD_PATTERN_BLOCK) {
         chord_play_block(slot);
     } else {
         chord_play_arp_seed(slot);
     }
+    spell_chord(resolved_str, key_id, &resolved);
 }
 
 static void select_triad(triad_type_t triad, uint8_t pressed) {   
     if (pressed)
         s_live_ctx.triad = triad;
-    else
+    else if (s_live_ctx.triad == triad)
         s_live_ctx.triad = TRIAD_NONE;
 }
 
 static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
     if (pressed)
         s_live_ctx.first_ext = first_ext;
-    else
+    else if (s_live_ctx.first_ext == first_ext)
         s_live_ctx.first_ext = FIRST_EXT_NONE;
 }
 
