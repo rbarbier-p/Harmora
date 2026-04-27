@@ -33,22 +33,20 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t pressed = payload[i + 1];
             input_tracker_update_key(key_id, pressed);
             chord_engine_handle_key_event(key_id, pressed);
-        } else if (evt == EVT_ENCODER) {
+        } else if (evt == EVT_ENCODER_ROTATION) {
             uint8_t encoder_id = payload[i];
             int8_t delta = (int8_t)payload[i + 1];
             input_tracker_update_encoder(encoder_id, delta);
             ui_handle_encoder_turn(encoder_id, delta);
+        } else if (evt == EVT_ENCODER_PRESS) {
+            uint8_t encoder_id = payload[i];
+            uint8_t pressed = payload[i + 1];
+            ui_handle_encoder_press(encoder_id, pressed);
         } else if (evt == EVT_BUTTON) {
             uint8_t button_id = payload[i];
             uint8_t pressed = payload[i + 1];
             input_tracker_update_button(button_id, pressed);
-            // Encoder presses are currently wired as button ids.
-            if (button_id >= UI_ENCODER_PRESS_BUTTON_BASE &&
-                button_id < (uint8_t)(UI_ENCODER_PRESS_BUTTON_BASE + INPUT_TRACKER_ENCODER_COUNT)) {
-                ui_handle_encoder_press((uint8_t)(button_id - UI_ENCODER_PRESS_BUTTON_BASE), pressed);
-            } else {
-              chord_engine_handle_button_event(button_id, pressed);
-            }
+            chord_engine_handle_button_event(button_id, pressed);
 
         } else if (evt == EVT_POT) {
             uint8_t pot_id = payload[i];

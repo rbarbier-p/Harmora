@@ -1,6 +1,8 @@
 #include "ui.h"
 
 #include "chord_engine.h"
+#include "screen_engine.h"
+#include "screens.h"
 
 // Hard-coded mapping for now.
 // TODO: replace with pinout-driven mapping once LED order is finalized.
@@ -8,6 +10,7 @@
 static ui_state_t s_ui;
 static ui_leds_t s_leds;
 static ui_scene_state_t s_scene;
+static screen_engine_t s_screen_engine;
 
 // Temporary encoder mapping until a proper scene/screen system exists.
 // 0: tonic (pitch class)
@@ -50,9 +53,9 @@ void ui_init(void)
 {
     ui_state_init(&s_ui);
     ui_leds_init(&s_leds);
+    screen_engine_init(&s_screen_engine);
 
     s_scene.active = UI_SCENE_MAIN;
-    s_scene.locked = 0;
     s_scene.timeout_ms = 0;
     s_scene.bpm = 120;
     s_scene.instrument_bank = 0;
@@ -81,133 +84,91 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         return;
     }
 
-    if (encoder_id == 0) {
-        if (!s_scene.locked) {
-            s_scene.active = UI_SCENE_BPM;
-            s_scene.timeout_ms = 1500;
-        }
+    if (encoder_id == UI_ENC_ID_BPM) {
+        screen_engine_touch(&s_screen_engine, UI_SCENE_BPM, UI_SCENE_TIMEOUT_MS);
 
-        // BPM adjust
         int16_t bpm = (int16_t)s_scene.bpm + (delta > 0 ? 1 : -1);
         if (bpm < 20) bpm = 20;
         if (bpm > 300) bpm = 300;
         s_scene.bpm = (uint16_t)bpm;
-        s_ui.dirty = 1;
 
-        // Rotate tonic (delegate to chord engine so harmony state stays canonical).
+        s_ui.dirty_display = 1;
+        return;
+    }
+
+    if (encoder_id == UI_ENC_ID_KEY) {
+        screen_engine_touch(&s_screen_engine, UI_SCENE_KEY, UI_SCENE_TIMEOUT_MS);
+        s_ui.dirty_display = 1;
+
+        // For now, rotate tonic. (Later: change keyboard mapping/transposition.)
         int16_t next = (int16_t)s_ui.tonic_pc + (delta > 0 ? 1 : -1);
         while (next < 0) next += 12;
         while (next >= 12) next -= 12;
         chord_engine_set_tonic((uint8_t)next);
+        // chord_engine -> ui_set_tonic will mark dirties.
         return;
     }
 
-    if (encoder_id == 1) {
-        if (!s_scene.locked) {
-            s_scene.active = UI_SCENE_KEY;
-            s_scene.timeout_ms = 1500;
-        }
+    if (encoder_id == UI_ENC_ID_INSTRUMENT) {
+        screen_engine_touch(&s_screen_engine, UI_SCENE_INSTRUMENT, UI_SCENE_TIMEOUT_MS);
 
-        // Rotate mode (delegate to chord engine so harmony state stays canonical).
-        int16_t next = (int16_t)s_ui.mode + (delta > 0 ? 1 : -1);
-        while (next < 0) next += (int16_t)HARMONY_MODE_COUNT;
-        while (next >= (int16_t)HARMONY_MODE_COUNT) next -= (int16_t)HARMONY_MODE_COUNT;
-        chord_engine_set_mode((harmony_mode_t)next);
-        s_ui.dirty = 1;
-        return;
-    }
-
-    if (encoder_id == 2) {
-        if (!s_scene.locked) {
-            s_scene.active = UI_SCENE_INSTRUMENT;
-            s_scene.timeout_ms = 1500;
-        }
-
-        // Instrument selection is UI-owned for now.
         int16_t prg = (int16_t)s_scene.instrument_program + (delta > 0 ? 1 : -1);
         if (prg < 0) prg = 0;
         if (prg > 127) prg = 127;
         s_scene.instrument_program = (uint8_t)prg;
-        s_ui.dirty = 1;
 
-        // Quick ext toggles so we can validate UI plumbing without buttons.
-        // (Still set on the UI only for now; chord_engine currently owns ext state via buttons.)
-        uint8_t on = (delta > 0) ? 1 : 0;
-        ui_state_set_extensions(&s_ui, on, on, on, on);
+        s_ui.dirty_display = 1;
         return;
     }
 
-    if (encoder_id == 3) {
-        if (!s_scene.locked) {
-            s_scene.active = UI_SCENE_PATTERN;
-            s_scene.timeout_ms = 1500;
-        }
+    if (encoder_id == UI_ENC_ID_PATTERN) {
+        screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
 
         int16_t p = (int16_t)s_scene.pattern + (delta > 0 ? 1 : -1);
         while (p < 0) p += 3;
         while (p >= 3) p -= 3;
         s_scene.pattern = (uint8_t)p;
-
         chord_engine_set_pattern((chord_pattern_t)s_scene.pattern);
-        s_ui.dirty = 1;
+
+        s_ui.dirty_display = 1;
         return;
     }
 }
 
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
 {
-    if (!pressed) {
-        return;
-    }
-
-    if (encoder_id == 0) {
-        s_scene.active = UI_SCENE_BPM;
-    } else if (encoder_id == 1) {
-        s_scene.active = UI_SCENE_KEY;
-    } else if (encoder_id == 2) {
-        s_scene.active = UI_SCENE_INSTRUMENT;
-    } else if (encoder_id == 3) {
-        s_scene.active = UI_SCENE_PATTERN;
-    } else {
-        s_scene.active = UI_SCENE_MAIN;
-    }
-
-    s_scene.locked ^= 1;
-    if (!s_scene.locked) {
-        s_scene.timeout_ms = 1000;
-    } else {
-        s_scene.timeout_ms = 0;
-    }
-    s_ui.dirty = 1;
+    // No lock behavior. Keep hook for future (e.g. "select" or "confirm").
+    (void)encoder_id;
+    (void)pressed;
 }
 
 void ui_tick(uint8_t elapsed_ms)
 {
-    if (elapsed_ms > 0 && !s_scene.locked && s_scene.active != UI_SCENE_MAIN) {
-        if (s_scene.timeout_ms > elapsed_ms) {
-            s_scene.timeout_ms = (uint16_t)(s_scene.timeout_ms - elapsed_ms);
-        } else {
-            s_scene.timeout_ms = 0;
-            s_scene.active = UI_SCENE_MAIN;
-            s_ui.dirty = 1;
-        }
+    screen_engine_tick(&s_screen_engine, elapsed_ms);
+    ui_scene_id_t active_screen = screen_engine_active_screen(&s_screen_engine);
+    if (active_screen != s_scene.active) {
+        s_scene.active = active_screen;
+        s_ui.dirty_display = 1;
     }
 
     // Render from state. If the link is busy, keep dirty set so we retry.
     if (!s_leds.has_last) {
-        s_ui.dirty = 1;
-    }
-    if (!s_ui.dirty) {
-        return;
+        s_ui.dirty_leds = 1;
+        s_ui.dirty_display = 1;
     }
 
-    ui_render_leds(&s_ui, &g_ui_led_map, &s_leds);
+    if (s_ui.dirty_leds) {
+        ui_render_leds(&s_ui, &g_ui_led_map, &s_leds);
+        if (!ui_flush_leds(&s_leds)) {
+            return;
+        }
+        s_ui.dirty_leds = 0;
+    }
 
-    if (!ui_flush_leds(&s_leds)) {
-        return;
+    if (s_ui.dirty_display) {
+        if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
+            return;
+        }
+        s_ui.dirty_display = 0;
     }
-    if (!ui_flush_display(&s_ui, &s_scene)) {
-        return;
-    }
-    s_ui.dirty = 0;
 }

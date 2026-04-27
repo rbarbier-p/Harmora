@@ -8,10 +8,14 @@
 // Shared LED definitions (LED_COUNT + led_preset_t)
 #include "leds.h"
 
-// Encoder-presses currently arrive as EVT_BUTTON ids.
-// Pick a base range that doesn't conflict with existing button mappings.
-// You said you'll remap later.
-#define UI_ENCODER_PRESS_BUTTON_BASE 28
+// Scene UI timeout (ms) before returning to MAIN.
+#define UI_SCENE_TIMEOUT_MS 5000
+
+// Encoder mapping (edit these to remap behavior)
+#define UI_ENC_ID_INSTRUMENT 0
+#define UI_ENC_ID_BPM        1
+#define UI_ENC_ID_KEY        2
+#define UI_ENC_ID_PATTERN    3
 
 // -----------------------------------------------------------------------------
 // Scenes / Screens
@@ -27,7 +31,6 @@ typedef enum {
 
 typedef struct {
     ui_scene_id_t active;
-    uint8_t locked;
     uint16_t timeout_ms;
 
     // Parameters owned by UI (for now)
@@ -109,8 +112,9 @@ typedef struct {
     // Bit i corresponds to pitch class i (0=C ... 11=B).
     uint16_t scale_mask_12;
 
-    // Dirty flag: set when state changes and renderer should refresh outputs.
-    uint8_t dirty;
+    // Dirty flags: set when state changes and renderer should refresh outputs.
+    uint8_t dirty_leds;
+    uint8_t dirty_display;
 } ui_state_t;
 
 // Rendering target for LEDs.
@@ -176,6 +180,7 @@ void ui_leds_init(ui_leds_t *leds);
 void ui_render_leds(const ui_state_t *s, const ui_led_map_t *map, ui_leds_t *out);
 uint8_t ui_flush_leds(ui_leds_t *leds);
 
-uint8_t ui_flush_display(const ui_state_t *ui, const ui_scene_state_t *scene);
+// Display flushing is handled by the screens module.
+// (ui_render.c only handles LEDs)
 
 #endif // UI_H

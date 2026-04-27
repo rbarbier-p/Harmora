@@ -37,7 +37,8 @@ void ui_state_init(ui_state_t *s)
     s->ext_11 = 0;
     s->ext_13 = 0;
     s->scale_mask_12 = 0;
-    s->dirty = 1;
+    s->dirty_leds = 1;
+    s->dirty_display = 1;
 
     ui_state_recompute(s);
 }
@@ -53,7 +54,8 @@ void ui_state_set_tonic(ui_state_t *s, uint8_t tonic_pc)
         return;
     }
     s->tonic_pc = tonic_pc;
-    s->dirty = 1;
+    s->dirty_leds = 1;
+    s->dirty_display = 1;
     ui_state_recompute(s);
 }
 
@@ -70,7 +72,8 @@ void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode)
     }
 
     s->mode = mode;
-    s->dirty = 1;
+    s->dirty_leds = 1;
+    s->dirty_display = 1;
     ui_state_recompute(s);
 }
 
@@ -93,7 +96,8 @@ void ui_state_set_extensions(ui_state_t *s, uint8_t ext7, uint8_t ext9, uint8_t 
     s->ext_9 = ext9;
     s->ext_11 = ext11;
     s->ext_13 = ext13;
-    s->dirty = 1;
+    s->dirty_leds = 1;
+    s->dirty_display = 1;
 }
 
 void ui_state_recompute(ui_state_t *s)

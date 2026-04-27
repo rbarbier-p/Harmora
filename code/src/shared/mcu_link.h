@@ -72,19 +72,26 @@ static inline uint8_t mcu_link_cmd_param_len(uint8_t cmd)
 
 typedef enum {
   EVT_KEY     = 0x11,
-  EVT_ENCODER = 0x12,
+  // Renamed for clarity: rotary motion.
+  EVT_ENCODER_ROTATION = 0x12,
   EVT_BUTTON  = 0x13,
   EVT_POT     = 0x14,
+  // Encoder switch presses.
+  EVT_ENCODER_PRESS = 0x15,
   EVT_END     = 0x1F,
 } mcu_link_input_evt_t;
+
+// Backward-compatible alias.
+#define EVT_ENCODER EVT_ENCODER_ROTATION
 
 static inline uint8_t mcu_link_evt_param_len(uint8_t evt)
 {
   switch (evt) {
     case EVT_KEY:     return 2; // id, state
-    case EVT_ENCODER: return 2; // id, delta
+    case EVT_ENCODER_ROTATION: return 2; // id, delta
     case EVT_BUTTON:  return 2; // id, state
     case EVT_POT:     return 2; // id, value
+    case EVT_ENCODER_PRESS: return 2; // id, state
     case EVT_END:     return 0;
     default:          return 0xFF;
   }

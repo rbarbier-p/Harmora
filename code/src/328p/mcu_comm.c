@@ -336,7 +336,7 @@ void mcu_comm_send_inputs(void) {
     for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
         int8_t delta = g_input_state.encoders.delta[i];
         if (delta != 0 && budget >= 3) {
-            mcu_comm_write_byte(EVT_ENCODER);
+            mcu_comm_write_byte(EVT_ENCODER_ROTATION);
             mcu_comm_write_byte(i);
             mcu_comm_write_byte((uint8_t)delta);
             g_input_state.encoders.delta[i] = 0;

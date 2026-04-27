@@ -2,8 +2,6 @@
 
 #include "mcu_com.h"
 
-#include <stdio.h>
-
 static void leds_fill(uint8_t *dst, uint8_t v)
 {
     for (uint8_t i = 0; i < LED_COUNT; i++) {
@@ -108,94 +106,4 @@ uint8_t ui_flush_leds(ui_leds_t *leds)
     return 1;
 }
 
-static const char *s_note_names[12] = {
-    "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"
-};
-
-static const char *s_mode_names[HARMONY_MODE_COUNT] = {
-    "Ionian",
-    "Dorian",
-    "Phrygian",
-    "Lydian",
-    "Mixolydian",
-    "Aeolian",
-    "Locrian",
-};
-
-static const char *pattern_name(uint8_t pattern)
-{
-    switch (pattern) {
-        case 0: return "BLOCK";
-        case 1: return "ARP UP";
-        case 2: return "ARP DOWN";
-        default: return "?";
-    }
-}
-
-uint8_t ui_flush_display(const ui_state_t *ui, const ui_scene_state_t *scene)
-{
-    if (!ui || !scene) {
-        return 0;
-    }
-
-    uint8_t payload[MCU_LINK_MAX_PAYLOAD];
-    uint8_t idx = 0;
-
-    append_byte(payload, &idx, CMD_CLEAR);
-
-    char line0[32];
-    char line1[32];
-    char line2[32];
-    line0[0] = '\0';
-    line1[0] = '\0';
-    line2[0] = '\0';
-
-    const char *lock = scene->locked ? "*" : "";
-
-    switch (scene->active) {
-        case UI_SCENE_BPM:
-            (void)snprintf(line0, sizeof(line0), "BPM%s", lock);
-            (void)snprintf(line1, sizeof(line1), "%u", (unsigned)scene->bpm);
-            (void)snprintf(line2, sizeof(line2), "ENC0");
-            break;
-        case UI_SCENE_KEY:
-            (void)snprintf(line0, sizeof(line0), "KEY%s", lock);
-            (void)snprintf(line1, sizeof(line1), "%s %s",
-                           s_note_names[ui->tonic_pc % 12],
-                           s_mode_names[(uint8_t)ui->mode % HARMONY_MODE_COUNT]);
-            (void)snprintf(line2, sizeof(line2), "ENC1");
-            break;
-        case UI_SCENE_INSTRUMENT:
-            (void)snprintf(line0, sizeof(line0), "INSTR%s", lock);
-            (void)snprintf(line1, sizeof(line1), "BANK %u", (unsigned)scene->instrument_bank);
-            (void)snprintf(line2, sizeof(line2), "PRG %u", (unsigned)scene->instrument_program);
-            break;
-        case UI_SCENE_PATTERN:
-            (void)snprintf(line0, sizeof(line0), "PATTERN%s", lock);
-            (void)snprintf(line1, sizeof(line1), "%s", pattern_name(scene->pattern));
-            (void)snprintf(line2, sizeof(line2), "ENC3");
-            break;
-        case UI_SCENE_MAIN:
-        default:
-            (void)snprintf(line0, sizeof(line0), "Harmora");
-            (void)snprintf(line1, sizeof(line1), "Key %s %s",
-                           s_note_names[ui->tonic_pc % 12],
-                           s_mode_names[(uint8_t)ui->mode % HARMONY_MODE_COUNT]);
-            (void)snprintf(line2, sizeof(line2), "BPM %u  %s",
-                           (unsigned)scene->bpm,
-                           pattern_name(scene->pattern));
-            break;
-    }
-
-    if (!append_string_cmd(payload, &idx, 2, 8, line0)) {
-        return 0;
-    }
-    if (!append_string_cmd(payload, &idx, 2, 24, line1)) {
-        return 0;
-    }
-    if (!append_string_cmd(payload, &idx, 2, 40, line2)) {
-        return 0;
-    }
-
-    return mcu_link_queue_display_frame(payload, idx);
-}
+// Display flushing lives in screens.c and is called from ui.c.
