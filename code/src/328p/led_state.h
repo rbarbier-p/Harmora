@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "../shared/leds.h"
+
 /**
  * LED State Management
  * 
@@ -11,22 +13,7 @@
  * task_led_update() converts presets to APA102 colors.
  */
 
-// Number of LEDs in the chain
-#define LED_COUNT 30
-
-// LED Presets (sent from 32U4, defines color/brightness)
-typedef enum {
-    LED_OFF         = 0,  // LED off
-    LED_IDLE        = 1,  // Default idle state (dim yellow-green)
-    LED_ACTIVE      = 2,  // Active/pressed (bright red)
-    LED_HIGHLIGHT   = 3,  // Highlighted/selected (bright white)
-    LED_SUCCESS     = 4,  // Success indicator (green)
-    LED_WARNING     = 5,  // Warning indicator (orange)
-    LED_ERROR       = 6,  // Error indicator (red, blinking handled by 32U4)
-    LED_ACCENT      = 7,  // Accent color (blue/purple)
-    
-    LED_PRESET_COUNT
-} led_preset_t;
+// LED_COUNT and led_preset_t are defined in shared/leds.h
 
 // APA102 color structure (matches APA102 frame format)
 typedef struct {

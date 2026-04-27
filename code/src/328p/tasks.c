@@ -22,7 +22,7 @@ static uint8_t led_initialized = 0;
 
 void task_hall_scan(void) {
   static uint8_t press_threshold[12] = {
-    117, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
+    122, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
     82, 89, 86, 87,
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
@@ -282,7 +282,7 @@ void task_led_update(void) {
   if ((uint32_t)(now - hb_last_toggle) >= 250000UL) { // 1s / 4us
     hb_last_toggle = now;
     hb_on ^= 1;
-    led_state_set(0, hb_on ? LED_ACTIVE : LED_OFF);
+    led_state_set(25, hb_on ? LED_ACTIVE : LED_OFF);
   }
 
   // Initialize SPI on first run
@@ -323,7 +323,7 @@ void task_led_update(void) {
   }
   
   // End frame (need at least (LED_COUNT + 1) / 2 bits of clock)
-  // For 30 LEDs, need 15 bits = 2 bytes
+  // Note: we currently just send a conservative 4 bytes of 0xFF.
   for (uint8_t i = 0; i < 4; i++) {
     softspi_send(&led_spi, 0xFF);
   }

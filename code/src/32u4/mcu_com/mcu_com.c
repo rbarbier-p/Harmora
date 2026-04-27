@@ -1,34 +1,5 @@
 #include "mcu_com.h"
 
-static void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value)
-{
-    if (*idx < MCU_LINK_MAX_PAYLOAD) {
-        buf[(*idx)++] = value;
-    }
-}
-
-static uint8_t append_string_cmd(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, const char *text)
-{
-    uint8_t len = 0;
-    while (text[len] != '\0' && len < 64) {
-        len++;
-    }
-
-    if ((uint16_t)(*idx) + (uint16_t)(4 + len) > MCU_LINK_MAX_PAYLOAD) {
-        return 0;
-    }
-
-    append_byte(payload, idx, CMD_STRING);
-    append_byte(payload, idx, x);
-    append_byte(payload, idx, y);
-    append_byte(payload, idx, len);
-    for (uint8_t i = 0; i < len; i++) {
-        append_byte(payload, idx, (uint8_t)text[i]);
-    }
-
-    return 1;
-}
-
 static uint8_t format_input_change_lines(const input_change_t *change, char *line0, uint8_t line0_len, char *line1, uint8_t line1_len, char *debug_msg, uint8_t debug_len)
 {
     line0[0] = '\0';

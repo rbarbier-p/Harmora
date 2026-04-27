@@ -2,6 +2,7 @@
 
 #include "midi.h"
 #include "mcu_com.h"
+#include "ui/ui.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -273,6 +274,11 @@ void chord_engine_init(void)
     s_pattern = CHORD_PATTERN_BLOCK;
     s_velocity = 96;
     s_octave_offset = 0;
+
+    // Seed UI from initial harmony state.
+    ui_set_tonic(s_live_ctx.tonic_pc);
+    ui_set_mode(s_live_ctx.mode);
+    ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
 }
 
 void chord_engine_tick(uint8_t elapsed_ms)
@@ -349,11 +355,13 @@ void chord_engine_set_mode(harmony_mode_t mode)
         return;
     }
     s_live_ctx.mode = mode;
+    ui_set_mode(mode);
 }
 
 void chord_engine_set_tonic(uint8_t tonic_pc)
 {
     s_live_ctx.tonic_pc = (uint8_t)(tonic_pc % 12);
+    ui_set_tonic(s_live_ctx.tonic_pc);
 }
 
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
@@ -428,18 +436,22 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
 
     if (button_id == BUTTON_EXT_7) {
         s_live_ctx.ext_7 = pressed;
+        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
         return;
     }
     if (button_id == BUTTON_EXT_9) {
         s_live_ctx.ext_9 = pressed;
+        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
         return;
     }
     if (button_id == BUTTON_EXT_11) {
         s_live_ctx.ext_11 = pressed;
+        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
         return;
     }
     if (button_id == BUTTON_EXT_13) {
         s_live_ctx.ext_13 = pressed;
+        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
         return;
     }
 

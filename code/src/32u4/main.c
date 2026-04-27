@@ -4,6 +4,7 @@
 #include "mcu_com.h"
 #include "chord_engine.h"
 #include "input_tracker.h"
+#include "ui/ui.h"
 
 #include <stdio.h>
 
@@ -36,11 +37,19 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t encoder_id = payload[i];
             int8_t delta = (int8_t)payload[i + 1];
             input_tracker_update_encoder(encoder_id, delta);
+            ui_handle_encoder_turn(encoder_id, delta);
         } else if (evt == EVT_BUTTON) {
             uint8_t button_id = payload[i];
             uint8_t pressed = payload[i + 1];
             input_tracker_update_button(button_id, pressed);
-            chord_engine_handle_button_event(button_id, pressed);
+            // Encoder presses are currently wired as button ids.
+            if (button_id >= UI_ENCODER_PRESS_BUTTON_BASE &&
+                button_id < (uint8_t)(UI_ENCODER_PRESS_BUTTON_BASE + INPUT_TRACKER_ENCODER_COUNT)) {
+                ui_handle_encoder_press((uint8_t)(button_id - UI_ENCODER_PRESS_BUTTON_BASE), pressed);
+            } else {
+              chord_engine_handle_button_event(button_id, pressed);
+            }
+
         } else if (evt == EVT_POT) {
             uint8_t pot_id = payload[i];
             uint8_t value = payload[i + 1];
@@ -54,10 +63,13 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
 static void process_link_rx_frame(void)
 {
     uint8_t frame[4 + MCU_LINK_MAX_PAYLOAD];
+
+    // Check if a new frame is ready. If not, return immediately to avoid blocking the main loop.
     if (!mcu_link_rx_frame_ready()) {
         return;
     }
 
+    // Read the frame bytes into a local buffer. This also marks the frame as consumed so the next one can be received.
     uint8_t n = mcu_link_read_rx_bytes(frame, sizeof(frame));
     if (n < 4) {
         return;
@@ -88,6 +100,7 @@ int main(void)
     usb_init();
     spi_init(SPI_MODE_0, SPI_MSB_FIRST);
     mcu_link_init();
+    ui_init();
     chord_engine_init();
     input_tracker_init();
 
@@ -98,20 +111,10 @@ int main(void)
 
     while (1)
     {
-        //static uint8_t pending_valid = 0;
-        static input_change_t pending_change;
-
         process_incoming_midi();
         process_link_rx_frame();
         chord_engine_tick(5);
-
-        if (input_tracker_has_changes()) {
-            input_tracker_pop_next_change(&pending_change);
-        }
-
-        //if (pending_valid && send_input_change_debug_frame(&pending_change)) {
-        //    pending_valid = 0;
-        //}
+        ui_tick(5);
 
         _delay_ms(5);
     }

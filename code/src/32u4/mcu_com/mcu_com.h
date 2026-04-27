@@ -62,12 +62,16 @@ uint32_t mcu_link_diag_rx_frame_count(void);
 
 void mcu_int_assert(void);
 
-//mcu_com.c
-uint8_t send_input_change_debug_frame(const input_change_t *change);
-void mos_send_string(const char *str);
-
 //rx.c
 void rx_push(uint8_t b);
 void rx_reset(void);
 
-#endif // MCU_LINK_32U4_H
+//tx.c
+uint8_t append_string_cmd(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, const char *text);
+void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value);
+
+//mcu_com.c
+uint8_t send_input_change_debug_frame(const input_change_t *change);
+void mos_send_string(const char *str);
+
+#endif
