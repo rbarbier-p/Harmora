@@ -59,8 +59,23 @@ void task_encoder_scan(void) {
     {4, 5},   // EN3: A=CH4, B=CH5
     {6, 7},   // EN4: A=CH6, B=CH7
     {10, 11}, // EN5: A=CH10, B=CH11
-    {12, 13}  // EN6: A=CH12, B=CH13
+     {12, 13}  // EN6: A=CH12, B=CH13
   };
+
+  // Encoder switches for EN4/EN5/EN6 are wired to the digital mux.
+  // Pinout:
+  //   BI7 EN4SW, BI1 EN5SW, BI0 EN6SW
+  // Mux channel mapping: AI0..AI7 => 0..7, BI0..BI7 => 8..15
+  static const uint8_t encoder_sw_channels[3] = {
+    15, // EN4SW (encoder id 3)
+    9,  // EN5SW (encoder id 4)
+    8,  // EN6SW (encoder id 5)
+  };
+
+  // Simple integrator debounce (cheap and robust)
+  #define ENC_SW_DEBOUNCE_MAX 5
+  static uint8_t sw_cnt[3] = {0, 0, 0};
+  static uint8_t sw_stable_pressed = 0; // bit0=EN4SW, bit1=EN5SW, bit2=EN6SW
   
   static const int8_t transition_table[16] = {
      0, -1, +1,  0,   // previous=00
@@ -110,6 +125,50 @@ void task_encoder_scan(void) {
       
       last_state[enc] = current;
     }
+  }
+
+  // Scan encoder switches EN4/EN5/EN6 via digital mux (no interrupts available).
+  for (uint8_t i = 0; i < 3; i++) {
+    mux_select(encoder_sw_channels[i]);
+    _delay_us(10);
+
+    // Inputs use pull-ups, active-low to ground.
+    uint8_t pressed = digital_mux_read() ? 0 : 1;
+
+    // Update debounce integrator.
+    /*if (pressed) {
+      if (sw_cnt[i] < ENC_SW_DEBOUNCE_MAX) {
+        sw_cnt[i]++;
+      }
+    } else {
+      if (sw_cnt[i] > 0) {
+        sw_cnt[i]--;
+      }
+      
+    }
+
+    uint8_t mask = (uint8_t)(1U << i);
+    uint8_t stable_now;
+    if (sw_cnt[i] >= ENC_SW_DEBOUNCE_MAX) {
+      stable_now = 1;
+    } else if (sw_cnt[i] == 0) {
+      stable_now = 0;
+    } else {
+      // Not yet stable: keep previous stable state.
+      stable_now = (sw_stable_pressed & mask) ? 1 : 0;
+    }
+
+    uint8_t stable_prev = (sw_stable_pressed & mask) ? 1 : 0;
+    if (stable_now != stable_prev) {
+      if (stable_now) {
+        sw_stable_pressed |= mask;
+      } else {
+        sw_stable_pressed &= (uint8_t)~mask;
+      }
+
+      // Map i(0..2) to encoder id (3..5)
+      input_state_update_encoder_press((uint8_t)(3 + i), stable_now);
+    }*/
   }
 }
 
@@ -224,17 +283,32 @@ void task_button_scan(void) {
       }
     }
     
-    // Port B (mask out display_rst pin B7)
+    // Port B
     if (intf_b) {
       uint8_t current = expander_read_raw(1, 1);  // Reading GPIO clears interrupt
-      current |= (1 << 7);
+      // Mask out display_rst output bit so it never appears as a "press" change.
+      current |= (1 << DISPLAY_RST_PIN);
       uint8_t changed = current ^ last_exp2_b;
-      
+
       if (changed) {
-        for (uint8_t i = 0; i < 7; i++) {
+        for (uint8_t i = 0; i < 8; i++) {
           if (changed & (1 << i)) {
+            // Active-low inputs on MCP23017
             uint8_t pressed = !(current & (1 << i));
-            input_state_update_button(24 + i, pressed);
+
+            // Encoder switches on expander 2 port B:
+            // GPB5=EN1SW (encoder 0), GPB6=EN2SW (encoder 1), GPB4=EN3SW (encoder 2)
+            if (i == 5) {
+              input_state_update_encoder_press(0, pressed);
+            } else if (i == 6) {
+              input_state_update_encoder_press(1, pressed);
+            } else if (i == 4) {
+              input_state_update_encoder_press(2, pressed);
+            } else if (i == DISPLAY_RST_PIN) {
+              // Skip display reset line (output)
+            } else {
+              input_state_update_button(24 + i, pressed);
+            }
           }
         }
         last_exp2_b = current;

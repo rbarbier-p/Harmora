@@ -1,53 +1,12 @@
-#include "chord_engine.h"
-
-#include "midi.h"
-#include "mcu_com.h"
-#include "ui/ui.h"
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 
-#define CHORD_ENGINE_MAX_HELD_KEYS 12
-#define CHORD_ENGINE_MAX_NOTES_PER_CHORD HARMONY_MAX_INTERVALS
-
-#define MIDI_CHANNEL_DEFAULT 0
-#define ARP_STEP_MS 80
-
-// Button mapping is centralized here so it can be remapped easily.
-#define BUTTON_OCTAVE_UP 1
-#define BUTTON_OCTAVE_DOWN 0
-
-#define BUTTON_TRIAD_MAJOR 19
-#define BUTTON_TRIAD_MINOR 9
-#define BUTTON_TRIAD_DIM 12
-#define BUTTON_TRIAD_AUG 2
-#define BUTTON_TRIAD_SUS4 10
-#define BUTTON_TRIAD_SUS2 18
-
-#define BUTTON_FIRST_EXT_6 3
-#define BUTTON_FIRST_EXT_M7 11
-#define BUTTON_FIRST_EXT_MAJ7 8
-
-#define BUTTON_EXT_7 7
-#define BUTTON_EXT_9 5
-#define BUTTON_EXT_11 6
-#define BUTTON_EXT_13 4
-
-#define BUTTON_PATTERN_BLOCK 25 //not a button
-#define BUTTON_PATTERN_ARP_UP 26
-#define BUTTON_PATTERN_ARP_DOWN 27
-
-#define BUTTON_CHORD_MODE 24
-
-#define BUTTON_MODE_IONIAN 21
-#define BUTTON_MODE_DORIAN 20
-#define BUTTON_MODE_PHRYGIAN 17
-#define BUTTON_MODE_LYDIAN 16
-#define BUTTON_MODE_MIXOLYDIAN 13
-#define BUTTON_MODE_AEOLIAN 14
-#define BUTTON_MODE_LOCRIAN 15
+#include "chord_engine.h"
+#include "midi.h"
+#include "mcu_com.h"
+#include "ui/ui.h"
 
 typedef struct {
     uint8_t active;
@@ -63,6 +22,16 @@ static harmony_context_t s_live_ctx;
 static chord_pattern_t s_pattern = CHORD_PATTERN_BLOCK;
 static uint8_t s_velocity = 96;
 static int8_t s_octave_offset = 0;
+
+static uint8_t any_chord_active(void)
+{
+    for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
+        if (s_held[i].active) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
     60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71
@@ -148,20 +117,23 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
     // ---- EXTENSIONS ----
 
     // 9
-    if (nat9) p = append(p, has7 ? "9" : "add9");
-    if (b9)   p = append(p, has7 ? "b9" : "addb9");
-    if (s9)   p = append(p, has7 ? "#9" : "add#9");
+    if (nat9) p = append(p, has7 ? "9" : "(add9)");
+    if (b9)   p = append(p, has7 ? "b9" : "(addb9)");
+    if (s9)   p = append(p, has7 ? "#9" : "(add#9)");
 
     // 11
-    if (p11)  p = append(p, has7 ? "11" : "add11");
-    if (s11)  p = append(p, has7 ? "#11" : "add#11");
+    if (p11)  p = append(p, has7 ? "11" : "(add11)");
+    if (s11)  p = append(p, has7 ? "#11" : "(add#11)");
 
     // 13
-    if (nat13) p = append(p, has7 ? "13" : "add13");
-    if (b13)   p = append(p, has7 ? "b13" : "addb13");
+    if (nat13) p = append(p, has7 ? "13" : "(add13)");
+    if (b13)   p = append(p, has7 ? "b13" : "(addb13)");
 
     midi_debug(out);
-    mos_send_string(out);
+    //mos_send_string(out);
+
+    // UI overlay spelling (best-effort, async)
+    ui_set_chord_spelling(out);
 }
 
 static uint8_t midi_note_clamp_u7(int16_t note)
@@ -185,6 +157,11 @@ static void chord_stop(held_chord_t *slot)
     slot->note_count = 0;
     slot->arp_index = 0;
     slot->arp_accum_ms = 0;
+
+    // If this was the last active chord, drop the overlay.
+    if (!any_chord_active()) {
+        ui_set_chord_overlay(0);
+    }
 }
 
 static void chord_play_block(const held_chord_t *slot)
@@ -236,6 +213,9 @@ static void chord_start(uint8_t key_id)
     }
 
     slot->active = 1;
+
+    // Ensure overlay is visible while any chord is active.
+    ui_set_chord_overlay(1);
 
     char resolved_str[32];
     if (s_pattern == CHORD_PATTERN_BLOCK) {

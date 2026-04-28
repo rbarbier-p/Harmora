@@ -5,6 +5,46 @@
 
 #include "harmony_resolver.h"
 
+#define CHORD_ENGINE_MAX_HELD_KEYS 12
+#define CHORD_ENGINE_MAX_NOTES_PER_CHORD HARMONY_MAX_INTERVALS
+
+#define MIDI_CHANNEL_DEFAULT 0
+#define ARP_STEP_MS 80
+
+// Button mapping is centralized here so it can be remapped easily.
+#define BUTTON_OCTAVE_UP 1
+#define BUTTON_OCTAVE_DOWN 0
+
+#define BUTTON_TRIAD_MAJOR 19
+#define BUTTON_TRIAD_MINOR 9
+#define BUTTON_TRIAD_DIM 12
+#define BUTTON_TRIAD_AUG 2
+#define BUTTON_TRIAD_SUS4 10
+#define BUTTON_TRIAD_SUS2 18
+
+#define BUTTON_FIRST_EXT_6 3
+#define BUTTON_FIRST_EXT_M7 11
+#define BUTTON_FIRST_EXT_MAJ7 8
+
+#define BUTTON_EXT_7 7
+#define BUTTON_EXT_9 5
+#define BUTTON_EXT_11 6
+#define BUTTON_EXT_13 4
+
+#define BUTTON_PATTERN_BLOCK 25 //not a button
+#define BUTTON_PATTERN_ARP_UP 26
+#define BUTTON_PATTERN_ARP_DOWN 27
+
+#define BUTTON_CHORD_MODE 24
+
+#define BUTTON_MODE_IONIAN 21
+#define BUTTON_MODE_DORIAN 20
+#define BUTTON_MODE_PHRYGIAN 17
+#define BUTTON_MODE_LYDIAN 16
+#define BUTTON_MODE_MIXOLYDIAN 13
+#define BUTTON_MODE_AEOLIAN 14
+#define BUTTON_MODE_LOCRIAN 15
+
 typedef enum {
     CHORD_PATTERN_BLOCK = 0,
     CHORD_PATTERN_ARP_UP,

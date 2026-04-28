@@ -16,6 +16,8 @@
 #define UI_ENC_ID_BPM        1
 #define UI_ENC_ID_KEY        2
 #define UI_ENC_ID_PATTERN    3
+#define UI_ENC_ID_MENU       4
+#define UI_ENC_ID_VOLUME     5
 
 // -----------------------------------------------------------------------------
 // Scenes / Screens
@@ -27,6 +29,9 @@ typedef enum {
     UI_SCENE_KEY,
     UI_SCENE_INSTRUMENT,
     UI_SCENE_PATTERN,
+    UI_SCENE_CHORD,
+    UI_SCENE_MENU,
+    UI_SCENE_VOLUME,
 } ui_scene_id_t;
 
 typedef struct {
@@ -37,6 +42,11 @@ typedef struct {
     uint16_t bpm;
     uint8_t instrument_bank;
     uint8_t instrument_program;
+
+    // Pending selections (for "select"-style screens)
+    uint8_t pending_tonic_pc;
+    uint8_t pending_pattern;
+    uint8_t pending_instrument_program;
 
     // Mirror of chord_engine pattern (0=block,1=up,2=down)
     uint8_t pattern;
@@ -160,6 +170,10 @@ void ui_tick(uint8_t elapsed_ms);
 // UI input hooks (called from main loop input processing)
 void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta);
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed);
+
+// Chord overlay API (called from chord_engine)
+void ui_set_chord_overlay(uint8_t active);
+void ui_set_chord_spelling(const char *text);
 
 // State mutation API (called by chord engine / menu engine / etc.)
 void ui_set_tonic(uint8_t tonic_pc);

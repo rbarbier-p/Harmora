@@ -49,6 +49,23 @@ void input_state_update_encoder(uint8_t encoder_id, int8_t delta) {
   g_input_state.encoders.delta[encoder_id] = (int8_t)new_delta;
 }
 
+void input_state_update_encoder_press(uint8_t encoder_id, uint8_t is_pressed) {
+  if (encoder_id >= ENCODER_COUNT)
+    return;
+
+  uint8_t mask = (uint8_t)(1U << encoder_id);
+  uint8_t was_pressed = (g_input_state.encoder_press.pressed & mask) ? 1 : 0;
+
+  if (is_pressed != was_pressed) {
+    if (is_pressed) {
+      g_input_state.encoder_press.pressed |= mask;
+    } else {
+      g_input_state.encoder_press.pressed &= (uint8_t)~mask;
+    }
+    g_input_state.encoder_press.changed |= mask;
+  }
+}
+
 void input_state_update_button(uint8_t button_id, uint8_t is_pressed) {
   if (button_id >= BUTTON_COUNT)
     return;
@@ -97,6 +114,9 @@ void input_state_clear_dirty(void) {
   // Clear encoder deltas
   memset(g_input_state.encoders.delta, 0, sizeof(g_input_state.encoders.delta));
 
+  // Clear encoder press changed flags (keep pressed state)
+  g_input_state.encoder_press.changed = 0;
+
   // Clear button changed flags (keep pressed state)
   g_input_state.buttons.changed = 0;
 
@@ -115,6 +135,11 @@ uint8_t input_state_has_changes(void) {
     if (g_input_state.encoders.delta[i] != 0) {
       return 1;
     }
+  }
+
+  // Check encoder press changes
+  if (g_input_state.encoder_press.changed != 0) {
+    return 1;
   }
 
   // Check button changes

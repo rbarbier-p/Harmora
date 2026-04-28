@@ -30,6 +30,13 @@ typedef struct {
     int8_t delta[ENCODER_COUNT];  // Accumulated rotation since last send (-128 to +127)
 } encoder_state_t;
 
+// Encoder Switches
+// Bitfield: bit N corresponds to encoder N (0=EN1 ... 5=EN6)
+typedef struct {
+    uint8_t pressed;
+    uint8_t changed;
+} encoder_press_state_t;
+
 
 // Push Buttons
 #define BUTTON_COUNT 32
@@ -52,6 +59,7 @@ typedef struct {
 typedef struct {
     key_state_t keys;
     encoder_state_t encoders;
+    encoder_press_state_t encoder_press;
     button_state_t buttons;
     pot_state_t pots;
 } input_state_t;
@@ -69,6 +77,9 @@ void input_state_update_key(uint8_t key_id, uint8_t is_pressed);
 
 // Update encoder delta (called by task_encoder_scan)
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta);
+
+// Update encoder switch state (called by task_button_scan)
+void input_state_update_encoder_press(uint8_t encoder_id, uint8_t is_pressed);
 
 // Update button state (called by task_button_scan)
 void input_state_update_button(uint8_t button_id, uint8_t is_pressed);

@@ -71,6 +71,18 @@ static uint8_t mcu_comm_compute_input_payload_len(uint8_t max_payload)
         }
     }
 
+    if (g_input_state.encoder_press.changed != 0) {
+        for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
+            if (g_input_state.encoder_press.changed & (1U << i)) {
+                if (budget < 3) {
+                    goto done;
+                }
+                budget -= 3;
+                len += 3;
+            }
+        }
+    }
+
     if (g_input_state.buttons.changed != 0) {
         for (uint8_t i = 0; i < BUTTON_COUNT; i++) {
             if (g_input_state.buttons.changed & (1UL << i)) {
@@ -341,6 +353,19 @@ void mcu_comm_send_inputs(void) {
             mcu_comm_write_byte((uint8_t)delta);
             g_input_state.encoders.delta[i] = 0;
             budget -= 3;
+        }
+    }
+
+    if (g_input_state.encoder_press.changed != 0) {
+        for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
+            uint8_t mask = (uint8_t)(1U << i);
+            if ((g_input_state.encoder_press.changed & mask) && budget >= 3) {
+                mcu_comm_write_byte(EVT_ENCODER_PRESS);
+                mcu_comm_write_byte(i);
+                mcu_comm_write_byte((g_input_state.encoder_press.pressed >> i) & 1U);
+                g_input_state.encoder_press.changed &= (uint8_t)~mask;
+                budget -= 3;
+            }
         }
     }
 

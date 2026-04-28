@@ -4,6 +4,8 @@
 #include "screen_engine.h"
 #include "screens.h"
 
+#include "mcu_com.h" // append_byte/append_string_cmd + mcu_link_queue_display_frame
+
 // Hard-coded mapping for now.
 // TODO: replace with pinout-driven mapping once LED order is finalized.
 
@@ -11,6 +13,9 @@ static ui_state_t s_ui;
 static ui_leds_t s_leds;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
+
+static uint8_t s_chord_overlay_active = 0;
+static char s_chord_spelling[32] = {0};
 
 // Temporary encoder mapping until a proper scene/screen system exists.
 // 0: tonic (pitch class)
@@ -61,6 +66,10 @@ void ui_init(void)
     s_scene.instrument_bank = 0;
     s_scene.instrument_program = 0;
     s_scene.pattern = 0;
+
+    s_scene.pending_tonic_pc = s_ui.tonic_pc;
+    s_scene.pending_pattern = s_scene.pattern;
+    s_scene.pending_instrument_program = s_scene.instrument_program;
 }
 
 void ui_set_tonic(uint8_t tonic_pc)
@@ -84,6 +93,8 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         return;
     }
 
+    ui_scene_id_t active_screen = screen_engine_active_screen(&s_screen_engine);
+
     if (encoder_id == UI_ENC_ID_BPM) {
         screen_engine_touch(&s_screen_engine, UI_SCENE_BPM, UI_SCENE_TIMEOUT_MS);
 
@@ -97,38 +108,50 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
     }
 
     if (encoder_id == UI_ENC_ID_KEY) {
-        screen_engine_touch(&s_screen_engine, UI_SCENE_KEY, UI_SCENE_TIMEOUT_MS);
-        s_ui.dirty_display = 1;
+        // "Select" behavior: rotate updates pending tonic; press commits.
+        if (active_screen != UI_SCENE_KEY) {
+            s_scene.pending_tonic_pc = s_ui.tonic_pc;
+        }
 
-        // For now, rotate tonic. (Later: change keyboard mapping/transposition.)
-        int16_t next = (int16_t)s_ui.tonic_pc + (delta > 0 ? 1 : -1);
+        screen_engine_touch(&s_screen_engine, UI_SCENE_KEY, UI_SCENE_TIMEOUT_MS);
+
+        int16_t next = (int16_t)s_scene.pending_tonic_pc + (delta > 0 ? 1 : -1);
         while (next < 0) next += 12;
         while (next >= 12) next -= 12;
-        chord_engine_set_tonic((uint8_t)next);
-        // chord_engine -> ui_set_tonic will mark dirties.
+        s_scene.pending_tonic_pc = (uint8_t)next;
+        s_ui.dirty_display = 1;
         return;
     }
 
     if (encoder_id == UI_ENC_ID_INSTRUMENT) {
+        // "Select" behavior: rotate updates pending program; press commits.
+        if (active_screen != UI_SCENE_INSTRUMENT) {
+            s_scene.pending_instrument_program = s_scene.instrument_program;
+        }
+
         screen_engine_touch(&s_screen_engine, UI_SCENE_INSTRUMENT, UI_SCENE_TIMEOUT_MS);
 
-        int16_t prg = (int16_t)s_scene.instrument_program + (delta > 0 ? 1 : -1);
+        int16_t prg = (int16_t)s_scene.pending_instrument_program + (delta > 0 ? 1 : -1);
         if (prg < 0) prg = 0;
         if (prg > 127) prg = 127;
-        s_scene.instrument_program = (uint8_t)prg;
+        s_scene.pending_instrument_program = (uint8_t)prg;
 
         s_ui.dirty_display = 1;
         return;
     }
 
     if (encoder_id == UI_ENC_ID_PATTERN) {
+        // "Select" behavior: rotate updates pending pattern; press commits.
+        if (active_screen != UI_SCENE_PATTERN) {
+            s_scene.pending_pattern = s_scene.pattern;
+        }
+
         screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
 
-        int16_t p = (int16_t)s_scene.pattern + (delta > 0 ? 1 : -1);
+        int16_t p = (int16_t)s_scene.pending_pattern + (delta > 0 ? 1 : -1);
         while (p < 0) p += 3;
         while (p >= 3) p -= 3;
-        s_scene.pattern = (uint8_t)p;
-        chord_engine_set_pattern((chord_pattern_t)s_scene.pattern);
+        s_scene.pending_pattern = (uint8_t)p;
 
         s_ui.dirty_display = 1;
         return;
@@ -137,9 +160,95 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
 
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
 {
-    // No lock behavior. Keep hook for future (e.g. "select" or "confirm").
-    (void)encoder_id;
-    (void)pressed;
+    if (!pressed) {
+        return;
+    }
+
+    ui_scene_id_t target;
+
+    if (encoder_id == UI_ENC_ID_BPM) {
+        target = UI_SCENE_BPM; midi_debug("BPM");
+    } else if (encoder_id == UI_ENC_ID_KEY) {
+        target = UI_SCENE_KEY; midi_debug("KEY");
+    } else if (encoder_id == UI_ENC_ID_INSTRUMENT) {
+        target = UI_SCENE_INSTRUMENT; midi_debug("INST");
+    } else if (encoder_id == UI_ENC_ID_PATTERN) {
+        target = UI_SCENE_PATTERN; midi_debug("PATTERN");
+    } else if (encoder_id == UI_ENC_ID_MENU) {
+        target = UI_SCENE_MENU; midi_debug("MENU");
+    } else if (encoder_id == UI_ENC_ID_VOLUME) {
+        target = UI_SCENE_VOLUME; midi_debug("VOLUME");
+    } else {
+        midi_debug("else...");
+        return;
+    }
+
+    ui_scene_id_t active_screen = screen_engine_active_screen(&s_screen_engine);
+
+    // If not active: activate screen and seed pending values.
+    if (active_screen != target) {
+        if (target == UI_SCENE_KEY) {
+            s_scene.pending_tonic_pc = s_ui.tonic_pc;
+        } else if (target == UI_SCENE_PATTERN) {
+            s_scene.pending_pattern = s_scene.pattern;
+        } else if (target == UI_SCENE_INSTRUMENT) {
+            s_scene.pending_instrument_program = s_scene.instrument_program;
+        }
+
+        screen_engine_touch(&s_screen_engine, target, UI_SCENE_TIMEOUT_MS);
+        s_ui.dirty_display = 1;
+        return;
+    }
+
+    // Active: treat as "select" (commit) for select-style screens.
+    if (target == UI_SCENE_KEY) {
+        chord_engine_set_tonic(s_scene.pending_tonic_pc);
+        // chord_engine -> ui_set_tonic will mark dirties.
+    } else if (target == UI_SCENE_PATTERN) {
+        s_scene.pattern = s_scene.pending_pattern;
+        chord_engine_set_pattern((chord_pattern_t)s_scene.pattern);
+        s_ui.dirty_display = 1;
+    } else if (target == UI_SCENE_INSTRUMENT) {
+        s_scene.instrument_program = s_scene.pending_instrument_program;
+        // TODO: Send MIDI program change when implemented.
+        s_ui.dirty_display = 1;
+    } else {
+        // BPM: no select action needed.
+    }
+}
+
+void ui_set_chord_overlay(uint8_t active)
+{
+    active = active ? 1 : 0;
+    if (active == s_chord_overlay_active) {
+        return;
+    }
+    s_chord_overlay_active = active;
+
+    if (active) {
+        screen_engine_overlay_on(&s_screen_engine, UI_SCENE_CHORD);
+    } else {
+        screen_engine_overlay_off(&s_screen_engine);
+    }
+    s_ui.dirty_display = 1;
+}
+
+void ui_set_chord_spelling(const char *text)
+{
+    // Copy into fixed buffer (avoid libc surprises).
+    uint8_t i = 0;
+    if (!text) {
+        s_chord_spelling[0] = '\0';
+    } else {
+        for (; i < (uint8_t)(sizeof(s_chord_spelling) - 1) && text[i]; i++) {
+            s_chord_spelling[i] = text[i];
+        }
+        s_chord_spelling[i] = '\0';
+    }
+
+    if (s_chord_overlay_active) {
+        s_ui.dirty_display = 1;
+    }
 }
 
 void ui_tick(uint8_t elapsed_ms)
@@ -166,7 +275,21 @@ void ui_tick(uint8_t elapsed_ms)
     }
 
     if (s_ui.dirty_display) {
-        if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
+        if (s_scene.active == UI_SCENE_CHORD) {
+            // Render chord overlay directly so we can show the latest spelling.
+            uint8_t payload[MCU_LINK_MAX_PAYLOAD];
+            uint8_t idx = 0;
+            append_byte(payload, &idx, CMD_CLEAR);
+            if (!append_string_cmd(payload, &idx, 2, 8, "CHORD")) {
+                return;
+            }
+            if (!append_string_cmd(payload, &idx, 2, 28, s_chord_spelling)) {
+                return;
+            }
+            if (!mcu_link_queue_display_frame(payload, idx)) {
+                return;
+            }
+        } else if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
             return;
         }
         s_ui.dirty_display = 0;

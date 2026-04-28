@@ -73,6 +73,30 @@ uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene)
     return screen_put_3lines(l0, l1, l2);
 }
 
+uint8_t screen_render_menu(const ui_state_t *ui, const ui_scene_state_t *scene)
+{
+    (void)ui;
+    char l0[32];
+    char l1[32];
+    char l2[32];
+    (void)snprintf(l0, sizeof(l0), "MENU");
+    l1[0] = '\0';
+    l2[0] = '\0';
+    return screen_put_3lines(l0, l1, l2);
+}
+
+uint8_t screen_render_volume(const ui_state_t *ui, const ui_scene_state_t *scene)
+{
+    (void)ui;
+    char l0[32];
+    char l1[32];
+    char l2[32];
+    (void)snprintf(l0, sizeof(l0), "VOLUME");
+    l1[0] = '\0';
+    l2[0] = '\0';
+    return screen_put_3lines(l0, l1, l2);
+}
+
 uint8_t screen_render_key(const ui_state_t *ui, const ui_scene_state_t *scene)
 {
     (void)scene;
@@ -81,7 +105,7 @@ uint8_t screen_render_key(const ui_state_t *ui, const ui_scene_state_t *scene)
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "KEY");
     (void)snprintf(l1, sizeof(l1), "%s %s",
-                   s_note_names[ui->tonic_pc % 12],
+                   s_note_names[scene->pending_tonic_pc % 12],
                    s_mode_names[(uint8_t)ui->mode % HARMONY_MODE_COUNT]);
     l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
@@ -95,7 +119,7 @@ uint8_t screen_render_instrument(const ui_state_t *ui, const ui_scene_state_t *s
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "INSTR");
     (void)snprintf(l1, sizeof(l1), "BANK %u", (unsigned)scene->instrument_bank);
-    (void)snprintf(l2, sizeof(l2), "PRG %u", (unsigned)scene->instrument_program);
+    (void)snprintf(l2, sizeof(l2), "PRG %u", (unsigned)scene->pending_instrument_program);
     return screen_put_3lines(l0, l1, l2);
 }
 
@@ -106,9 +130,24 @@ uint8_t screen_render_pattern(const ui_state_t *ui, const ui_scene_state_t *scen
     char l1[32];
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "PATTERN");
-    (void)snprintf(l1, sizeof(l1), "%s", pattern_name(scene->pattern));
+    (void)snprintf(l1, sizeof(l1), "%s", pattern_name(scene->pending_pattern));
     l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
+}
+
+uint8_t screen_render_chord(const ui_state_t *ui, const ui_scene_state_t *scene)
+{
+    (void)ui;
+
+    // The chord spelling string is owned by ui.c, but for now we display the
+    // scene pattern/bpm etc is irrelevant. This is a single-line overlay.
+    // ui.c will render this by calling screens_render(UI_SCENE_CHORD,...)
+    // and providing the spelling via ui_set_chord_spelling().
+    (void)scene;
+
+    // The overlay text is drawn by ui.c through mcu_com helpers, so here we
+    // just provide a placeholder in case it's called directly.
+    return screen_put_3lines("CHORD", "", "");
 }
 
 uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_scene_state_t *scene)
@@ -122,6 +161,8 @@ uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_s
             return screen_render_instrument(ui, scene);
         case UI_SCENE_PATTERN:
             return screen_render_pattern(ui, scene);
+        case UI_SCENE_CHORD:
+            return screen_render_chord(ui, scene);
         case UI_SCENE_MAIN:
         default:
             return screen_render_main(ui, scene);

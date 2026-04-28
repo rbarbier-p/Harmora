@@ -53,6 +53,9 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t value = payload[i + 1];
             input_tracker_update_pot(pot_id, value);
         }
+        char msg[10];
+        (void)snprintf(msg, sizeof(msg), "evt %u", (unsigned)evt);
+        midi_debug(msg);
 
         i = (uint8_t)(i + param_len);
     }
@@ -87,6 +90,8 @@ static void process_link_rx_frame(void)
 
     s_rx_last_payload_len = payload_len;
     s_rx_last_first_evt = (payload_len > 0) ? frame[4] : EVT_END;
+
+    midi_debug("frame valid");
 
     process_input_payload(&frame[4], payload_len);
 }
