@@ -12,6 +12,7 @@
 #include "stopwatch.h"
 #include "pins.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
@@ -21,10 +22,19 @@ static SoftSPI_t led_spi;
 static uint8_t led_initialized = 0;
 
 void task_hall_scan(void) {
+    /*
+  // Rene's board
   static uint8_t press_threshold[12] = {
     122, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
     82, 89, 86, 87,
     83, 89, 95, 80
+  }; // Pre-calibrated thresholds for each key
+    */
+   // Malo's board (10 lower than unpressed key)
+  static uint8_t press_threshold[12] = {
+      105, 108, 116, 105,
+      95, 101, 99, 119,
+      92, 103, 108, 117 
   }; // Pre-calibrated thresholds for each key
   
   // Channel mapping array (12 bytes in FLASH)
@@ -34,6 +44,12 @@ void task_hall_scan(void) {
 
   static const uint8_t key_to_note[12] = { // this could be in the 32u4
     1, 11, 9, 7, 5, 4, 2, 0, 3, 6, 8, 10
+  };
+
+  static uint8_t prev_value[12] = {
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      0, 0, 0, 0
   };
 
   // Scan all 12 keys
@@ -48,7 +64,11 @@ void task_hall_scan(void) {
     uint8_t is_pressed = (value < press_threshold[key]);
     
     // Update key state (handles change detection internally)
-    input_state_update_key(key_to_note[key], is_pressed);
+    uint8_t velocity = 0;
+    if (prev_value[key] != 0)
+        velocity = abs((int16_t)value - (int16_t)prev_value[key]);
+
+    input_state_update_key(key_to_note[key], is_pressed, velocity);
   }
 }
 

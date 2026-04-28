@@ -20,6 +20,7 @@
 typedef struct {
     uint16_t pressed;     // Bit field: 1 = currently pressed
     uint16_t changed;     // Bit field: 1 = changed since last send (dirty flag)
+    uint8_t velocity[KEY_COUNT];
 } key_state_t;
 
 
@@ -65,7 +66,7 @@ extern input_state_t g_input_state;
 void input_state_init(void);
 
 // Add a key event (called by task_hall_scan)
-void input_state_update_key(uint8_t key_id, uint8_t is_pressed);
+void input_state_update_key(uint8_t key_id, uint8_t is_pressed, uint8_t velocity);
 
 // Update encoder delta (called by task_encoder_scan)
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta);

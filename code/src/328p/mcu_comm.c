@@ -52,11 +52,11 @@ static uint8_t mcu_comm_compute_input_payload_len(uint8_t max_payload)
     if (g_input_state.keys.changed != 0) {
         for (uint8_t i = 0; i < KEY_COUNT; i++) {
             if (g_input_state.keys.changed & (1UL << i)) {
-                if (budget < 3) {
+                if (budget < 4) {
                     goto done;
                 }
-                budget -= 3;
-                len += 3;
+                budget -= 4;
+                len += 4;
             }
         }
     }
@@ -327,8 +327,9 @@ void mcu_comm_send_inputs(void) {
                 mcu_comm_write_byte(EVT_KEY);
                 mcu_comm_write_byte(i);
                 mcu_comm_write_byte((g_input_state.keys.pressed >> i) & 1);
+                mcu_comm_write_byte((g_input_state.keys.velocity[i]));
                 g_input_state.keys.changed &= (uint16_t)~mask;
-                budget -= 3;
+                budget -= 4;
             }
         }
     }

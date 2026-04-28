@@ -1,15 +1,15 @@
-#COLORS
+
 RED = \033[1;31m
 GREEN = \033[1;32m
 PURPLE = \033[1;35m
-YELLOW = \033[1;33m
-BLUE = \033[1;34m
 RESET = \033[0m
 
 UNAME = $(shell uname -s)
 PLATFORM = linux
-# USB_PORT: 32U4 application USB CDC port (used for first reset pulse only)
-# BOOTLOADER_PORT: 32U4 bootloader/programmable port (used for flashing)
+# TODO: probably create a script that finds the correct ports
+# also test on linux
+# USB_PORT: Port when 32U4 is running application firmware (USB device mode)
+# BOOTLOADER_PORT: Port when 32U4 is in bootloader mode (programmable)
 USB_PORT := /dev/ttyACM0
 BOOTLOADER_PORT := /dev/ttyACM0
 ISP_PROTOCOL = stk500v1
@@ -20,19 +20,19 @@ ifeq ($(UNAME),Darwin)
 	# After reset, the 32U4 re-enumerates with a different port number
     #Run 'ls /dev/cu.usbmodem*' after reset to find the correct bootloader port
 	# App / ArduinoISP (USB CDC) port
-	USB_PORT := /dev/cu.usbmodem12345673 #/dev/cu.usbmodem000000013
+	USB_PORT := /dev/cu.usbmodem000000013
 	# Caterina bootloader port (avr109)
 	BOOTLOADER_PORT := /dev/cu.usbmodem101
 	ISP_PROTOCOL = stk500v1
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
 	BOOTLOADER_PORT := COM12
-	USB_PORT := COM13
+	USB_PORT := COM15
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
 	BOOTLOADER_PORT := COM12
-	USB_PORT := COM13
+	USB_PORT := COM15
 	ISP_PROTOCOL = arduino
 endif
 
@@ -60,15 +60,13 @@ AVRDUDE_CONF = $(HOME)/opt/avr/etc/avrdude.conf
 ISP_BAUD = 19200
 ATMEGA328P_PROTOCOL = arduino
 ATMEGA32U4_PROTOCOL = avr109 
+ISP_BAUD = 19200
 BAUD = 115200
 SIZE = avr-size
 SRAM = 2048    # ATmega328P RAM in bytes
 FLASH = 32768  # ATmega328P Flash in bytes
 
 USB_REENUM_SLEEP ?= 1
-RESET_PULSE_BAUD ?= 1200
-RESET_SETTLE_SEC ?= 2 #previously 3, but it works
-ISP_SETTLE_SEC ?= 2 #previously 5
 
 BUILD_DIR = .build
 
@@ -126,10 +124,10 @@ ATMEGA328P_SRC += $(328P_SPI_SRC)
 
 ATMEGA32U4_SRC = src/32u4/main.c
 ATMEGA32U4_SRC += src/32u4/midi.c
+ATMEGA32U4_SRC += src/32u4/usb.c
 ATMEGA32U4_SRC += src/32u4/chord_engine.c
 ATMEGA32U4_SRC += src/32u4/harmony_resolver.c
 ATMEGA32U4_SRC += src/32u4/input_tracker.c
-ATMEGA32U4_SRC += src/32u4/usb.c
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(32U4_LINK_SRC)
 
@@ -149,7 +147,6 @@ MAKEFLAGS += --no-print-directory
 # Default target
 all: flash
 
-#Note: using printf instead because it works the same on linux and windows
 # Ensure build directory exists
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
@@ -157,11 +154,11 @@ $(BUILD_DIR):
 
 # Compile ATMEGA328P_ELF from sources
 $(ATMEGA328P_ELF): $(ATMEGA328P_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -DMOS_HOST $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
+	@$(CC) $(CFLAGS) $(328P_INCLUDES) -mmcu=$(ATMEGA328P_MCU) -o $@ $(ATMEGA328P_SRC)
 	@printf "$(GREEN)Compiled $@ $(RESET)\n"
 
 $(ATMEGA32U4_ELF): $(ATMEGA32U4_SRC) $(BUILD_DIR)
-	@$(CC) $(CFLAGS) -DMOS_DEVICE $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
+	@$(CC) $(CFLAGS) $(32U4_INCLUDES) -mmcu=$(ATMEGA32U4_MCU) -o $@ $(ATMEGA32U4_SRC)
 	@printf "$(GREEN)Compiled $@ $(RESET)\n"
 
 
@@ -174,18 +171,18 @@ $(ATMEGA32U4_HEX): $(ATMEGA32U4_ELF)
 
 
 reset-board-windows:
-	@echo "mode $(RESET_PORT): BAUD=$(RESET_PULSE_BAUD) PARITY=N DATA=8 STOP=1" | cmd /c
+	@echo "mode $(RESET_PORT): BAUD=1200 PARITY=N DATA=8 STOP=1" | cmd /c
 
 reset-board-linux:
-	@stty -F "$(call devpath,$(RESET_PORT))" $(RESET_PULSE_BAUD) hupcl 2>/dev/null
+	@stty -F "$(call devpath,$(RESET_PORT))" 1200 hupcl 2>/dev/null || true
 
 reset-board-mac:
-	@stty -f "$(call devpath,$(RESET_PORT))" $(RESET_PULSE_BAUD) hupcl 2>/dev/null
+	@stty -f "$(call devpath,$(RESET_PORT))" 1200 hupcl 2>/dev/null || true
 
-# Reset the board using the specified port (defaults to USB_PORT).
+# Reset the board using the specified port (defaults to USB_PORT)
 # Usage: make reset-board RESET_PORT=/dev/cu.usbmodemXXXX
-reset-board: RESET_PORT ?= $(USB_PORT)
 reset-board:
+	@$(eval RESET_PORT ?= $(USB_PORT))
 ifeq ($(PLATFORM),windows)
 	@$(MAKE) reset-board-windows RESET_PORT=$(RESET_PORT)
 else ifeq ($(PLATFORM),mac)
@@ -193,25 +190,15 @@ else ifeq ($(PLATFORM),mac)
 else
 	@$(MAKE) reset-board-linux RESET_PORT=$(RESET_PORT)
 endif
-	@printf "$(PURPLE)\nResetting board on $(call devpath,$(RESET_PORT))$(RESET)\n"
-	@sleep $(RESET_SETTLE_SEC)
-
-reset-board-usb:
-	@printf "$(PURPLE)Trying reset via USB port: $(call devpath,$(USB_PORT))$(RESET)\n"
-	@$(MAKE) reset-board RESET_PORT=$(USB_PORT) || { \
-		printf "$(RED)USB reset failed, trying bootloader port: $(call devpath,$(BOOTLOADER_PORT))$(RESET)\n"; \
-		$(MAKE) reset-board RESET_PORT=$(BOOTLOADER_PORT); \
-	}
-
-reset-board-bootloader:
-	@$(MAKE) reset-board RESET_PORT=$(BOOTLOADER_PORT)
+	@printf "$(PURPLE)\nResetting board! $(RESET)\n"
+	@sleep 3
 
 isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 
 32u4: $(ATMEGA32U4_HEX)
-	@$(MAKE) reset-board-usb
-	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
+	@$(MAKE) reset-board
+	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 # Flash target: generates ATMEGA328P_HEX if needed, flashes, and prints memory usage
@@ -221,22 +208,16 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	@printf "$(RED)USB Port: $(call devpath,$(USB_PORT)) $(RESET)\n"
 	@printf "$(RED)Boot Port: $(call devpath,$(BOOTLOADER_PORT)) $(RESET)\n"
 
-	@$(MAKE) reset-board-usb
+	@$(MAKE) reset-board
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ISP_HEX):i
 	@printf "$(PURPLE)Flashed ArduinoISP to atmega32u4! $(RESET)\n"
-	@printf "$(PURPLE)Flashing atmega328p code...$(RESET)\n"
-	@sleep $(ISP_SETTLE_SEC)
-	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
-	@printf "$(PURPLE)Flashed atmega328p code $(RESET)\n"
-	@$(MAKE) reset-board-bootloader
+	@printf "$(PURPLE)Waiting 5 second... $(RESET)\n"
+	@sleep 5
+	$(AVRDUDE) -p $(ATMEGA328P_MCU) -c $(ISP_PROTOCOL) -P $(call devpath,$(USB_PORT)) -b $(ISP_BAUD) -U flash:w:$(ATMEGA328P_HEX):i
+	@printf "$(PURPLE)Flashed atmega328p code! $(RESET)\n"
+	@$(MAKE) reset-board
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
-	@printf "$(PURPLE)Flashed atmega32u4 code $(RESET)\n"
-	@printf "$(GREEN)Firmware updated successfully! $(RESET)\n"
-
-# Didn't touch much after this
-#	@echo "\033[0;34m-------  Memory usage  --------\033[0m"
-#	@$(MAKE) -s size
-#	@echo "\n"
+	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
 
 # Print flash and RAM usage only (no Program/Data lines)
@@ -246,13 +227,13 @@ size: $(ATMEGA328P_ELF) $(ATMEGA32U4_ELF)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
 	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
 	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
-	END {printf "\n$(PURPLE)[328p]$(RESET)\nFlash usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\nRAM usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\n", \
+	END {printf "[328p]\nFlash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 	@$(SIZE) --format=avr --mcu=$(ATMEGA32U4_MCU) $(ATMEGA32U4_ELF) > $(SIZE_TXT)
 	@awk -v flash_total=$(FLASH) -v sram_total=$(SRAM) ' \
 	/Program:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { flash=$$i+0; break } } \
 	/Data:/ { for(i=1;i<=NF;i++) if($$i ~ /^[0-9]+$$/ && $$(i+1)=="bytes") { ram=$$i+0; break } } \
-	END {printf "\n$(PURPLE)[32u4]$(RESET)\nFlash usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\nRAM usage: %d bytes of %d KB [$(YELLOW)%.1f%%$(RESET)]\n", \
+	END {printf "[32u4]\nFlash usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\nRAM usage: \033[0;33m%d\033[0m bytes of %d KB (%.1f%%)\n", \
 	flash, flash_total/1024, flash/flash_total*100, ram, sram_total/1024, ram/sram_total*100}' $(SIZE_TXT)
 
 # Clean build files
@@ -262,4 +243,4 @@ clean:
 re: clean all
 
 # Declare phony targets
-.PHONY: all flash size clean re isp 32u4 reset-board reset-board-usb reset-board-bootloader
+.PHONY: all flash size clean re

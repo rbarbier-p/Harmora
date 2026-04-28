@@ -364,11 +364,14 @@ void chord_engine_set_tonic(uint8_t tonic_pc)
     ui_set_tonic(s_live_ctx.tonic_pc);
 }
 
-void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
+void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velocity)
 {
     if (key_id >= CHORD_ENGINE_MAX_HELD_KEYS) {
         return;
     }
+
+    s_velocity = velocity;
+    // HERE: trying to using velocity to play midi notes
 
     if (pressed) {
         chord_start(key_id);

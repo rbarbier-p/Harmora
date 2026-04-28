@@ -11,15 +11,19 @@ void input_state_init(void) {
   memset(&g_input_state, 0, sizeof(input_state_t));
 }
 
-void input_state_update_key(uint8_t key_id, uint8_t is_pressed) {
+void input_state_update_key(uint8_t key_id, uint8_t is_pressed, uint8_t velocity) {
   if (key_id >= KEY_COUNT)
     return;
 
   key_state_t *keys = &g_input_state.keys;
   uint16_t mask = (1U << key_id);
 
+  // Store velocity
+  keys->velocity[key_id] = velocity;
+
   // Get current state
   uint8_t was_pressed = (keys->pressed & mask) ? 1 : 0;
+
 
   // Check if changed
   if (is_pressed != was_pressed) {

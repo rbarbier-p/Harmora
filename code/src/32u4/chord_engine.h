@@ -20,7 +20,7 @@ void chord_engine_adjust_octave(int8_t delta);
 void chord_engine_set_mode(harmony_mode_t mode);
 void chord_engine_set_tonic(uint8_t tonic_pc);
 
-void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed);
+void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velocity);
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed);
 void chord_engine_all_notes_off(void);
 
