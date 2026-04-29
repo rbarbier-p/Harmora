@@ -68,6 +68,7 @@ void rx_reset(void);
 
 //tx.c
 uint8_t append_string_cmd(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, const char *text);
+uint8_t append_string_cmd_font(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, uint8_t font_id, const char *text);
 void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value);
 
 //mcu_com.c

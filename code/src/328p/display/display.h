@@ -50,6 +50,16 @@ void display_clear_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 void display_draw_char(uint8_t x, uint8_t y, char c);
 void display_draw_string(uint8_t x, uint8_t y, const char *str);
 
+// Font ids (match src/shared/mcu_link.h MCU_LINK_FONT_* values)
+#define DISPLAY_FONT_SMALL 0
+#define DISPLAY_FONT_BIG   1
+
+// Font-aware rendering helpers.
+// These are used by the inter-MCU draw protocol.
+uint8_t display_font_advance_x(uint8_t font_id);
+void display_draw_char_font(uint8_t x, uint8_t y, char c, uint8_t font_id);
+void display_draw_string_font(uint8_t x, uint8_t y, uint8_t font_id, const char *str);
+
 // ============================================================================
 // IMAGE/BITMAP RENDERING (display_images.c)
 // ============================================================================

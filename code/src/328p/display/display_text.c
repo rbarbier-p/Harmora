@@ -20,7 +20,7 @@
  * Performance: ~300-500µs for 14 chars vs ~2200µs with pixel-by-pixel
  */
 
-void display_draw_char(uint8_t x, uint8_t y, char c)
+static void display_draw_char_5x7(uint8_t x, uint8_t y, char c)
 {
     // Bounds check
     if (c < FONT_5X7_FIRST || c >= (FONT_5X7_FIRST + FONT_5X7_COUNT))
@@ -75,24 +75,81 @@ void display_draw_char(uint8_t x, uint8_t y, char c)
     }
 }
 
-void display_draw_string(uint8_t x, uint8_t y, const char *str)
+static void display_draw_char_5x7_scale3(uint8_t x, uint8_t y, char c)
+{
+    // Scale factor (integer).
+    // 5x7 becomes 15x21.
+    const uint8_t scale = 3;
+
+    if (c < FONT_5X7_FIRST || c >= (FONT_5X7_FIRST + FONT_5X7_COUNT)) {
+        return;
+    }
+    if (x >= DISPLAY_MAX_WIDTH || y >= DISPLAY_MAX_HEIGHT) {
+        return;
+    }
+
+    uint16_t font_offset = (uint16_t)(c - FONT_5X7_FIRST) * FONT_5X7_WIDTH;
+
+    for (uint8_t col = 0; col < FONT_5X7_WIDTH; col++) {
+        uint8_t glyph_col = pgm_read_byte(&font_5x7_data[font_offset + col]);
+        for (uint8_t row = 0; row < FONT_5X7_HEIGHT; row++) {
+            if (glyph_col & (1U << row)) {
+                // Draw a scale x scale block for each set pixel.
+                display_fill_rect((uint8_t)(x + (uint8_t)(col * scale)),
+                                  (uint8_t)(y + (uint8_t)(row * scale)),
+                                  scale, scale);
+            }
+        }
+    }
+}
+
+uint8_t display_font_advance_x(uint8_t font_id)
+{
+    // Includes 1px spacing.
+    if (font_id == DISPLAY_FONT_BIG) {
+        return (uint8_t)(FONT_5X7_WIDTH * 3 + 1);
+    }
+    return (uint8_t)(FONT_5X7_WIDTH + 1);
+}
+
+void display_draw_char_font(uint8_t x, uint8_t y, char c, uint8_t font_id)
+{
+    if (font_id == DISPLAY_FONT_BIG) {
+        display_draw_char_5x7_scale3(x, y, c);
+    } else {
+        display_draw_char_5x7(x, y, c);
+    }
+}
+
+void display_draw_char(uint8_t x, uint8_t y, char c)
+{
+    display_draw_char_font(x, y, c, DISPLAY_FONT_SMALL);
+}
+
+void display_draw_string_font(uint8_t x, uint8_t y, uint8_t font_id, const char *str)
 {
     if (!str) return;
 
     uint8_t cursor_x = x;
+    uint8_t adv = display_font_advance_x(font_id);
     
     while (*str) {
         // Draw character
-        display_draw_char(cursor_x, y, *str);
+        display_draw_char_font(cursor_x, y, *str, font_id);
         
         // Move cursor (5 pixels for char + 1 pixel spacing)
-        cursor_x += FONT_5X7_WIDTH + 1;
+        cursor_x = (uint8_t)(cursor_x + adv);
         
         // Check if we've gone off screen
         if (cursor_x >= 128) break;
         
         str++;
     }
+}
+
+void display_draw_string(uint8_t x, uint8_t y, const char *str)
+{
+    display_draw_string_font(x, y, DISPLAY_FONT_SMALL, str);
 }
 
 /*

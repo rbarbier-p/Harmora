@@ -10,18 +10,25 @@ void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value)
 
 uint8_t append_string_cmd(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, const char *text)
 {
+    return append_string_cmd_font(payload, idx, x, y, MCU_LINK_FONT_SMALL, text);
+}
+
+uint8_t append_string_cmd_font(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, uint8_t font_id, const char *text)
+{
     uint8_t len = 0;
     while (text[len] != '\0' && len < 64) {
         len++;
     }
 
-    if ((uint16_t)(*idx) + (uint16_t)(4 + len) > MCU_LINK_MAX_PAYLOAD) {
+    // opcode + x + y + font + len + chars
+    if ((uint16_t)(*idx) + (uint16_t)(5 + len) > MCU_LINK_MAX_PAYLOAD) {
         return 0;
     }
 
-    append_byte(payload, idx, CMD_STRING);
+    append_byte(payload, idx, CMD_STRING_FONT);
     append_byte(payload, idx, x);
     append_byte(payload, idx, y);
+    append_byte(payload, idx, font_id);
     append_byte(payload, idx, len);
     for (uint8_t i = 0; i < len; i++) {
         append_byte(payload, idx, (uint8_t)text[i]);

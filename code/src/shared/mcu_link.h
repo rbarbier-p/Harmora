@@ -46,8 +46,18 @@ typedef enum {
   CMD_STRING     = 0x08,
   CMD_BITMAP     = 0x09,
   CMD_LED        = 0x0A,
+  // Like CMD_STRING but includes a font id parameter.
+  // Params: x, y, font_id, len, then len chars.
+  CMD_STRING_FONT = 0x0B,
   CMD_END        = 0x0F,
 } mcu_link_draw_cmd_t;
+
+// Font ids used by CMD_STRING_FONT.
+// Keep this stable across both MCUs.
+typedef enum {
+  MCU_LINK_FONT_SMALL = 0, // 5x7
+  MCU_LINK_FONT_BIG   = 1, // 5x7 scaled up (currently 3x)
+} mcu_link_font_id_t;
 
 static inline uint8_t mcu_link_cmd_param_len(uint8_t cmd)
 {

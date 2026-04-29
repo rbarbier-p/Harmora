@@ -234,8 +234,29 @@ void mcu_comm_handle_display(void) {
                     if (remaining == 0) break;
                     char c = (char)mcu_comm_read_byte();
                     remaining--;
-                    display_draw_char(x, y, c);
-                    x += 6;  // Advance by font width (5) + spacing (1)
+                    display_draw_char_font(x, y, c, DISPLAY_FONT_SMALL);
+                    x = (uint8_t)(x + display_font_advance_x(DISPLAY_FONT_SMALL));
+                }
+                break;
+            }
+
+            case CMD_STRING_FONT: {
+                if (remaining < 4) { abort = 1; break; }
+                uint8_t x    = mcu_comm_read_byte(); remaining--;
+                uint8_t y    = mcu_comm_read_byte(); remaining--;
+                uint8_t font = mcu_comm_read_byte(); remaining--;
+                uint8_t slen = mcu_comm_read_byte(); remaining--;
+
+                uint8_t adv = display_font_advance_x(font);
+                for (uint8_t i = 0; i < slen; i++) {
+                    if (remaining == 0) break;
+                    char c = (char)mcu_comm_read_byte();
+                    remaining--;
+                    display_draw_char_font(x, y, c, font);
+                    x = (uint8_t)(x + adv);
+                    if (x >= DISPLAY_MAX_WIDTH) {
+                        break;
+                    }
                 }
                 break;
             }

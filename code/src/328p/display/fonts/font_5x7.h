@@ -208,12 +208,12 @@ static const uint8_t font_5x7_data[] PROGMEM = {
     0x51,
     0x09,
     0x06,
-    // ASCII 64 (@)
-    0x32,
-    0x49,
-    0x79,
-    0x41,
-    0x3E,
+    // ASCII 64 (@) (actually a flat 'b' symbol)
+    0x00,
+    0x7E,
+    0x50,
+    0x30,
+    0x00,
     // ASCII 65 (A)
     0x7E,
     0x11,

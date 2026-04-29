@@ -34,13 +34,13 @@ static uint8_t screen_put_3lines(const char *l0, const char *l1, const char *l2)
     uint8_t idx = 0;
 
     append_byte(payload, &idx, CMD_CLEAR);
-    if (!append_string_cmd(payload, &idx, 2, 8, l0)) {
+    if (!append_string_cmd_font(payload, &idx, 2, 8, MCU_LINK_FONT_SMALL, l0)) {
         return 0;
     }
-    if (!append_string_cmd(payload, &idx, 2, 24, l1)) {
+    if (!append_string_cmd_font(payload, &idx, 2, 24, MCU_LINK_FONT_SMALL, l1)) {
         return 0;
     }
-    if (!append_string_cmd(payload, &idx, 2, 40, l2)) {
+    if (!append_string_cmd_font(payload, &idx, 2, 40, MCU_LINK_FONT_SMALL, l2)) {
         return 0;
     }
     return mcu_link_queue_display_frame(payload, idx);

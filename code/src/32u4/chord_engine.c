@@ -38,7 +38,7 @@ static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
 };
 
 static const char *note_names[12] = {
-    "C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"
+    "C","C#","D","E@","E","F","F#","G","A@","A","B@","B"
 };
 
 // Fast append (no strlen / strcat)
@@ -118,7 +118,7 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
 
     // 9
     if (nat9) p = append(p, has7 ? "9" : "(add9)");
-    if (b9)   p = append(p, has7 ? "b9" : "(addb9)");
+    if (b9)   p = append(p, has7 ? "@9" : "(add@9)");
     if (s9)   p = append(p, has7 ? "#9" : "(add#9)");
 
     // 11
@@ -127,7 +127,7 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
 
     // 13
     if (nat13) p = append(p, has7 ? "13" : "(add13)");
-    if (b13)   p = append(p, has7 ? "b13" : "(addb13)");
+    if (b13)   p = append(p, has7 ? "@13" : "(add@13)");
 
     midi_debug(out);
     //mos_send_string(out);

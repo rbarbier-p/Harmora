@@ -49,10 +49,10 @@ uint8_t send_input_change_debug_frame(const input_change_t *change)
     append_byte(payload, &idx, 128);
     append_byte(payload, &idx, 64);
 
-    if (!append_string_cmd(payload, &idx, 2, 8, line0)) {
+    if (!append_string_cmd_font(payload, &idx, 2, 8, MCU_LINK_FONT_SMALL, line0)) {
         return 1;
     }
-    if (!append_string_cmd(payload, &idx, 2, 24, line1)) {
+    if (!append_string_cmd_font(payload, &idx, 2, 24, MCU_LINK_FONT_SMALL, line1)) {
         return 1;
     }
 
@@ -69,6 +69,6 @@ void mos_send_string(const char *str)
     uint8_t payload[MCU_LINK_MAX_PAYLOAD];
     uint8_t idx = 0;
     append_byte(payload, &idx, CMD_CLEAR);
-    append_string_cmd(payload, &idx, 10, 10, str);
+    append_string_cmd_font(payload, &idx, 10, 10, MCU_LINK_FONT_SMALL, str);
     mcu_link_queue_display_frame(payload, idx);
 }

@@ -280,10 +280,10 @@ void ui_tick(uint8_t elapsed_ms)
             uint8_t payload[MCU_LINK_MAX_PAYLOAD];
             uint8_t idx = 0;
             append_byte(payload, &idx, CMD_CLEAR);
-            if (!append_string_cmd(payload, &idx, 2, 8, "CHORD")) {
+            if (!append_string_cmd_font(payload, &idx, 2, 8, MCU_LINK_FONT_SMALL, "CHORD")) {
                 return;
             }
-            if (!append_string_cmd(payload, &idx, 2, 28, s_chord_spelling)) {
+            if (!append_string_cmd_font(payload, &idx, 2, 28, MCU_LINK_FONT_BIG, s_chord_spelling)) {
                 return;
             }
             if (!mcu_link_queue_display_frame(payload, idx)) {
