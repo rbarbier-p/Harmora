@@ -136,7 +136,7 @@ void task_encoder_scan(void) {
     uint8_t pressed = digital_mux_read() ? 0 : 1;
 
     // Update debounce integrator.
-    /*if (pressed) {
+    if (pressed) {
       if (sw_cnt[i] < ENC_SW_DEBOUNCE_MAX) {
         sw_cnt[i]++;
       }
@@ -166,11 +166,12 @@ void task_encoder_scan(void) {
         sw_stable_pressed &= (uint8_t)~mask;
       }
 
-      // Map i(0..2) to encoder id (3..5)
-      input_state_update_encoder_press((uint8_t)(3 + i), stable_now);
-    }*/
-  }
-}
+       // Map i(0..2) to encoder id (3..5)
+       // Report the debounced state (not the instantaneous sample).
+       input_state_update_encoder_press((uint8_t)(3 + i), stable_now);
+     }
+   }
+ }
 
 void task_mcu_comm(void) {
   g_mcu_int_fired = 0;

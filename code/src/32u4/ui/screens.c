@@ -161,6 +161,10 @@ uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_s
             return screen_render_instrument(ui, scene);
         case UI_SCENE_PATTERN:
             return screen_render_pattern(ui, scene);
+        case UI_SCENE_MENU:
+            return screen_render_menu(ui, scene);
+        case UI_SCENE_VOLUME:
+            return screen_render_volume(ui, scene);
         case UI_SCENE_CHORD:
             return screen_render_chord(ui, scene);
         case UI_SCENE_MAIN:

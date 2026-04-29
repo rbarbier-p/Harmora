@@ -69,6 +69,7 @@ static void process_link_rx_frame(void)
     if (!mcu_link_rx_frame_ready()) {
         return;
     }
+    midi_debug("SOMETHING CAME UP");
 
     // Read the frame bytes into a local buffer. This also marks the frame as consumed so the next one can be received.
     uint8_t n = mcu_link_read_rx_bytes(frame, sizeof(frame));

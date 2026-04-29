@@ -68,7 +68,7 @@ FLASH = 32768  # ATmega328P Flash in bytes
 USB_REENUM_SLEEP ?= 1
 RESET_PULSE_BAUD ?= 1200
 RESET_SETTLE_SEC ?= 2 #previously 3, but it works
-ISP_SETTLE_SEC ?= 2 #previously 5
+ISP_SETTLE_SEC ?= 3 #previously 5
 
 BUILD_DIR = .build
 

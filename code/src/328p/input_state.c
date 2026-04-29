@@ -1,4 +1,5 @@
 #include "input_state.h"
+#include "led_state.h"
 #include <string.h>
 
 // Global input state

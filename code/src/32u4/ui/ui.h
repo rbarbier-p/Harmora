@@ -29,9 +29,9 @@ typedef enum {
     UI_SCENE_KEY,
     UI_SCENE_INSTRUMENT,
     UI_SCENE_PATTERN,
+    UI_SCENE_VOLUME,
     UI_SCENE_CHORD,
     UI_SCENE_MENU,
-    UI_SCENE_VOLUME,
 } ui_scene_id_t;
 
 typedef struct {
