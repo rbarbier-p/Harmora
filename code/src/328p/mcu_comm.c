@@ -2,6 +2,7 @@
 #include "input_state.h"
 #include "led_state.h"
 #include "display.h"
+#include "expander.h"
 #include "SPI/SPI.h"
 #include "pins.h"
 #include <avr/io.h>
@@ -23,7 +24,6 @@ void mcu_comm_init(void) {
     GPIO_SET_OUTPUT(PIN_32U4_SS);
     GPIO_SET_HIGH(PIN_32U4_SS);
 }
-
 
 // DISPLAY COMMAND HANDLER
 
@@ -159,7 +159,12 @@ void mcu_comm_handle_display(void) {
             case CMD_NOP:
                 // No operation - skip
                 break;
-                
+            case CMD_INPUT_REQ:
+                // Request for input state - respond with a TX frame with S1 S2 and S3 states.
+                input_state_update_button(24, !(0x01 & expander_read_raw(1, 1))); // S1
+                input_state_update_button(22, !(0x40 & expander_read_raw(1, 0))); // S2
+                input_state_update_button(23, !(0x80 & expander_read_raw(1, 0))); // S3
+                break;
             case CMD_CLEAR:
                 display_clear();
                 break;
@@ -432,6 +437,19 @@ void mcu_comm_send_inputs(void) {
     // dirty flags set ensures we continue next tick if the frame filled up.)
     if (!input_state_has_changes()) {
         input_state_clear_dirty();
+    }
+}
+/*
+*/
+void mcu_sync(void) {
+    GPIO_SET_HIGH(PIN_32U4_SS);
+
+    uint8_t read;
+    read = spi_transfer(MCU_LINK_PING);
+    
+    while (read != MCU_LINK_PONG) {
+        read = spi_transfer(MCU_LINK_PING);
+        _delay_ms(10);
     }
 }
 

@@ -24,6 +24,8 @@
 typedef enum {
   MCU_LINK_FRAME_INPUT   = 0x01, // 328P -> 32U4 (inputs/events)
   MCU_LINK_FRAME_DISPLAY = 0x02, // 32U4 -> 328P (draw commands)
+  MCU_LINK_PING          = 0x7E, // 328P -> 32U4 (sync check)
+  MCU_LINK_PONG          = 0x7F, // 32U4 -> 328P (sync check response)
 } mcu_link_frame_type_t;
 
 // Keep payload sizes small to avoid long ISR transactions.
@@ -50,6 +52,7 @@ typedef enum {
   // Params: x, y, font_id, len, then len chars.
   CMD_STRING_FONT = 0x0B,
   CMD_END        = 0x0F,
+  CMD_INPUT_REQ  = 0x10, // Request master to send input state (for initial state)
 } mcu_link_draw_cmd_t;
 
 // Font ids used by CMD_STRING_FONT.

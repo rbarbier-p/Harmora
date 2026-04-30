@@ -107,7 +107,7 @@ uint8_t display_font_advance_x(uint8_t font_id)
 {
     // Includes 1px spacing.
     if (font_id == DISPLAY_FONT_BIG) {
-        return (uint8_t)(FONT_5X7_WIDTH * 3 + 1);
+        return (uint8_t)(FONT_5X7_WIDTH * 3 + 3);
     }
     return (uint8_t)(FONT_5X7_WIDTH + 1);
 }

@@ -2,6 +2,7 @@
 
 #include "adc.h"
 #include "I2C.h"
+#include "SPI.h"
 #include "multiplexer.h"
 #include "display.h"
 #include "expander.h"
@@ -26,6 +27,8 @@ int main(void) {
   mcu_comm_init();
   interrupts_init();
   scheduler_init();
+
+  display_draw_string_font(0, 20, DISPLAY_FONT_BIG, "HARMORA");
 
   uint8_t loop_count = 0;
 

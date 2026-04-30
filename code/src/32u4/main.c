@@ -79,10 +79,11 @@ static void process_link_rx_frame(void)
     if (n < 4) {
         return;
     }
+
     if (frame[0] != MCU_LINK_MAGIC) {
         return;
     }
-
+    
     uint8_t payload_len = frame[3];
     if ((uint8_t)(4 + payload_len) > n) {
         return;
@@ -108,6 +109,8 @@ int main(void)
     ui_init();
     chord_engine_init();
     input_tracker_init();
+    
+    mcu_input_request();
 
     /*while (!usbConfigured)
     {

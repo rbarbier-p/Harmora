@@ -86,6 +86,8 @@ void mcu_comm_handle_display(void);
  */
 void mcu_comm_send_inputs(void);
 
+void mcu_sync(void);
+
 // Diagnostics counters for link bring-up.
 uint32_t mcu_comm_diag_tx_frame_count(void);
 uint32_t mcu_comm_diag_tx_byte_count(void);

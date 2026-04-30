@@ -61,6 +61,7 @@ uint32_t mcu_link_diag_rx_byte_count(void);
 uint32_t mcu_link_diag_rx_frame_count(void);
 
 void mcu_int_assert(void);
+void mcu_input_request(void);
 
 //rx.c
 void rx_push(uint8_t b);

@@ -64,6 +64,13 @@ uint8_t send_input_change_debug_frame(const input_change_t *change)
     return 1;
 }
 
+void mcu_input_request(void) {
+    uint8_t payload[10];
+    uint8_t idx = 0;
+    append_byte(payload, &idx, CMD_INPUT_REQ);
+    mcu_link_queue_display_frame(payload, idx);
+}
+
 void mos_send_string(const char *str)
 {
     uint8_t payload[MCU_LINK_MAX_PAYLOAD];

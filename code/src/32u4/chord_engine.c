@@ -210,9 +210,11 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
     bool has7 = false;
 
     if (M7) {
-        p = append(p, "maj7");
+        p = append(p, "maj");
+        if (!nat9)
+            p = append(p, "7");
         has7 = true;
-    } else if (m7) {
+    } else if (m7 && !nat9) {
         p = append(p, "7");
         has7 = true;
     } else if (has6) {
