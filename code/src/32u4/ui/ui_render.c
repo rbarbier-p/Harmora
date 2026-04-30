@@ -42,15 +42,17 @@ void ui_render_leds(const ui_state_t *s, const ui_led_map_t *map, ui_leds_t *out
         }
     }
 
-    // 2) Tonic
-    set_led_safe(out->desired, map->pc_led_id[s->tonic_pc % 12], LED_SUCCESS);
-
-    // 3) Selected mode button
-    if ((uint8_t)s->mode < HARMONY_MODE_COUNT) {
-        set_led_safe(out->desired, map->mode_led_id[(uint8_t)s->mode], LED_HIGHLIGHT);
+    // 2) Mode select button LEDs
+    // - locked_mode: latched selection (highlight)
+    // - hold_mode: while holding a mode button (warning)
+    if ((uint8_t)s->locked_mode < HARMONY_MODE_COUNT) {
+        set_led_safe(out->desired, map->mode_led_id[(uint8_t)s->locked_mode], LED_HIGHLIGHT);
+    }
+    if (s->hold_mode_active && (uint8_t)s->hold_mode < HARMONY_MODE_COUNT) {
+        set_led_safe(out->desired, map->mode_led_id[(uint8_t)s->hold_mode], LED_WARNING);
     }
 
-    // 4) Selected extensions
+    // 3) Selected extensions
     if (s->ext_7) {
         set_led_safe(out->desired, map->ext7_led_id, LED_HIGHLIGHT);
     }

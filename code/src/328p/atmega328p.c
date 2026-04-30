@@ -12,6 +12,8 @@
 #include "stopwatch.h"
 #include "tasks.h"
 
+#include <util/delay.h>
+
 int main(void) {
   i2c_init();
   adc_init();

@@ -48,7 +48,7 @@ static uint8_t screen_put_3lines(const char *l0, const char *l1, const char *l2)
 
 uint8_t screen_render_main(const ui_state_t *ui, const ui_scene_state_t *scene)
 {
-    char l0[32];
+    /*char l0[32];
     char l1[32];
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "Harmora");
@@ -58,7 +58,11 @@ uint8_t screen_render_main(const ui_state_t *ui, const ui_scene_state_t *scene)
     (void)snprintf(l2, sizeof(l2), "BPM %u  %s",
                    (unsigned)scene->bpm,
                    pattern_name(scene->pattern));
-    return screen_put_3lines(l0, l1, l2);
+    return screen_put_3lines(l0, l1, l2);*/
+    uint8_t payload[MCU_LINK_MAX_PAYLOAD];
+    uint8_t idx = 0;
+    append_byte(payload, &idx, CMD_CLEAR);
+    return mcu_link_queue_display_frame(payload, idx);
 }
 
 uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene)

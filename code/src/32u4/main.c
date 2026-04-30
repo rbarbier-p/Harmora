@@ -47,6 +47,10 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t pressed = payload[i + 1];
             input_tracker_update_button(button_id, pressed);
             chord_engine_handle_button_event(button_id, pressed);
+            //send button id
+            char msg[20];
+            (void)snprintf(msg, sizeof(msg), "btn %u", (unsigned)button_id);
+            midi_debug(msg);
 
         } else if (evt == EVT_POT) {
             uint8_t pot_id = payload[i];
@@ -69,7 +73,6 @@ static void process_link_rx_frame(void)
     if (!mcu_link_rx_frame_ready()) {
         return;
     }
-    midi_debug("SOMETHING CAME UP");
 
     // Read the frame bytes into a local buffer. This also marks the frame as consumed so the next one can be received.
     uint8_t n = mcu_link_read_rx_bytes(frame, sizeof(frame));
@@ -91,8 +94,6 @@ static void process_link_rx_frame(void)
 
     s_rx_last_payload_len = payload_len;
     s_rx_last_first_evt = (payload_len > 0) ? frame[4] : EVT_END;
-
-    midi_debug("frame valid");
 
     process_input_payload(&frame[4], payload_len);
 }

@@ -63,6 +63,7 @@ void ui_init(void)
     s_scene.active = UI_SCENE_MAIN;
     s_scene.timeout_ms = 0;
     s_scene.bpm = 120;
+    chord_engine_set_bpm(s_scene.bpm);
     s_scene.instrument_bank = 0;
     s_scene.instrument_program = 0;
     s_scene.pattern = 0;
@@ -80,6 +81,16 @@ void ui_set_tonic(uint8_t tonic_pc)
 void ui_set_mode(harmony_mode_t mode)
 {
     ui_state_set_mode(&s_ui, mode);
+}
+
+void ui_set_mode_locked(harmony_mode_t mode)
+{
+    ui_state_set_mode_locked(&s_ui, mode);
+}
+
+void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
+{
+    ui_state_set_mode_held(&s_ui, mode, held);
 }
 
 void ui_set_extensions(uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
@@ -102,6 +113,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         if (bpm < 20) bpm = 20;
         if (bpm > 300) bpm = 300;
         s_scene.bpm = (uint16_t)bpm;
+        chord_engine_set_bpm(s_scene.bpm);
 
         s_ui.dirty_display = 1;
         return;
@@ -149,8 +161,8 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
 
         int16_t p = (int16_t)s_scene.pending_pattern + (delta > 0 ? 1 : -1);
-        while (p < 0) p += 3;
-        while (p >= 3) p -= 3;
+        while (p < 0) p += (int16_t)CHORD_PATTERN_COUNT;
+        while (p >= (int16_t)CHORD_PATTERN_COUNT) p -= (int16_t)CHORD_PATTERN_COUNT;
         s_scene.pending_pattern = (uint8_t)p;
 
         s_ui.dirty_display = 1;

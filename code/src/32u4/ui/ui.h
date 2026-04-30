@@ -112,6 +112,13 @@ typedef struct {
     uint8_t tonic_pc;            // 0-11
     harmony_mode_t mode;
 
+    // Mode button UI behavior
+    // - locked_mode: the mode that is latched/locked (LED_HIGHLIGHT)
+    // - hold_mode: a temporarily-held mode while its button is pressed (LED_WARNING)
+    harmony_mode_t locked_mode;
+    harmony_mode_t hold_mode;
+    uint8_t hold_mode_active;
+
     // Extensions
     uint8_t ext_7;
     uint8_t ext_9;
@@ -178,6 +185,8 @@ void ui_set_chord_spelling(const char *text);
 // State mutation API (called by chord engine / menu engine / etc.)
 void ui_set_tonic(uint8_t tonic_pc);
 void ui_set_mode(harmony_mode_t mode);
+void ui_set_mode_locked(harmony_mode_t mode);
+void ui_set_mode_held(harmony_mode_t mode, uint8_t held);
 void ui_set_extensions(uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13);
 
 // -----------------------------------------------------------------------------
@@ -187,6 +196,8 @@ void ui_set_extensions(uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
 void ui_state_init(ui_state_t *s);
 void ui_state_set_tonic(ui_state_t *s, uint8_t tonic_pc);
 void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode);
+void ui_state_set_mode_locked(ui_state_t *s, harmony_mode_t mode);
+void ui_state_set_mode_held(ui_state_t *s, harmony_mode_t mode, uint8_t held);
 void ui_state_set_extensions(ui_state_t *s, uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13);
 void ui_state_recompute(ui_state_t *s);
 

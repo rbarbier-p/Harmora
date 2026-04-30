@@ -32,6 +32,9 @@ void ui_state_init(ui_state_t *s)
 
     s->tonic_pc = 0;
     s->mode = HARMONY_MODE_IONIAN;
+    s->locked_mode = HARMONY_MODE_IONIAN;
+    s->hold_mode = HARMONY_MODE_IONIAN;
+    s->hold_mode_active = 0;
     s->ext_7 = 0;
     s->ext_9 = 0;
     s->ext_11 = 0;
@@ -77,6 +80,40 @@ void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode)
     ui_state_recompute(s);
 }
 
+void ui_state_set_mode_locked(ui_state_t *s, harmony_mode_t mode)
+{
+    if (!s) {
+        return;
+    }
+    if (mode >= HARMONY_MODE_COUNT) {
+        return;
+    }
+    if (s->locked_mode == mode) {
+        return;
+    }
+    s->locked_mode = mode;
+    s->dirty_leds = 1;
+}
+
+void ui_state_set_mode_held(ui_state_t *s, harmony_mode_t mode, uint8_t held)
+{
+    if (!s) {
+        return;
+    }
+    held = held ? 1 : 0;
+    if (mode >= HARMONY_MODE_COUNT) {
+        mode = HARMONY_MODE_IONIAN;
+    }
+
+    if (s->hold_mode_active == held && (!held || s->hold_mode == mode)) {
+        return;
+    }
+
+    s->hold_mode_active = held;
+    s->hold_mode = mode;
+    s->dirty_leds = 1;
+}
+
 void ui_state_set_extensions(ui_state_t *s, uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
 {
     if (!s) {
@@ -109,7 +146,8 @@ void ui_state_recompute(ui_state_t *s)
     uint16_t mask = 0;
     const uint8_t *scale = s_mode_scales[(uint8_t)s->mode % HARMONY_MODE_COUNT];
     for (uint8_t i = 0; i < UI_SCALE_STEPS; i++) {
-        uint8_t pc = mod12_u8((int16_t)s->tonic_pc + (int16_t)scale[i]);
+        // LED scale display is anchored to the first key (no tonic offset).
+        uint8_t pc = mod12_u8((int16_t)scale[i]);
         mask |= (uint16_t)(1U << pc);
     }
     s->scale_mask_12 = mask;

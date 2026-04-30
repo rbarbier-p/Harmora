@@ -9,7 +9,6 @@
 #define CHORD_ENGINE_MAX_NOTES_PER_CHORD HARMONY_MAX_INTERVALS
 
 #define MIDI_CHANNEL_DEFAULT 0
-#define ARP_STEP_MS 80
 
 // Button mapping is centralized here so it can be remapped easily.
 #define BUTTON_OCTAVE_UP 1
@@ -35,7 +34,9 @@
 #define BUTTON_PATTERN_ARP_UP 26
 #define BUTTON_PATTERN_ARP_DOWN 27
 
+// switches
 #define BUTTON_CHORD_MODE 24
+#define BUTTON_BASS_MODE 22
 
 #define BUTTON_MODE_IONIAN 21
 #define BUTTON_MODE_DORIAN 20
@@ -49,16 +50,20 @@ typedef enum {
     CHORD_PATTERN_BLOCK = 0,
     CHORD_PATTERN_ARP_UP,
     CHORD_PATTERN_ARP_DOWN,
+    CHORD_PATTERN_COUNT,
 } chord_pattern_t;
 
 void chord_engine_init(void);
 void chord_engine_tick(uint8_t elapsed_ms);
+
+void chord_engine_set_bpm(uint16_t bpm);
 
 void chord_engine_set_pattern(chord_pattern_t pattern);
 void chord_engine_set_velocity(uint8_t velocity);
 void chord_engine_adjust_octave(int8_t delta);
 void chord_engine_set_mode(harmony_mode_t mode);
 void chord_engine_set_tonic(uint8_t tonic_pc);
+void chord_engine_set_bass_enabled(uint8_t enabled);
 
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed);
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed);
