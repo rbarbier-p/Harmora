@@ -28,7 +28,8 @@ int main(void) {
   interrupts_init();
   scheduler_init();
 
-  display_draw_string_font(0, 20, DISPLAY_FONT_BIG, "HARMORA");
+  display_draw_string_font(3, 20, DISPLAY_FONT_BIG, "HARMORA");
+  display_draw_string_font(28, 45, DISPLAY_FONT_SMALL, "booting up...");
 
   uint8_t loop_count = 0;
 
