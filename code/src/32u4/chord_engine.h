@@ -53,6 +53,22 @@ typedef enum {
     CHORD_PATTERN_COUNT,
 } chord_pattern_t;
 
+typedef enum {
+    CHORD_VOICING_CLOSED = 0,
+    CHORD_VOICING_OPEN,
+    CHORD_VOICING_DROP2,
+    CHORD_VOICING_DROP3,
+} chord_voicing_t;
+
+typedef struct {
+    uint8_t bass_enabled;
+    uint8_t chord_mode_enabled;
+    chord_pattern_t playing_pattern;
+    chord_voicing_t chord_voicing;
+    uint8_t bpm;
+    uint8_t instrument;
+} settings_context_t;
+
 void chord_engine_init(void);
 void chord_engine_tick(uint8_t elapsed_ms);
 

@@ -21,12 +21,12 @@ typedef struct {
     uint8_t bass_note;
 } held_chord_t;
 
-static held_chord_t s_held[CHORD_ENGINE_MAX_HELD_KEYS];
-static harmony_context_t s_live_ctx;
-static chord_pattern_t s_pattern = CHORD_PATTERN_BLOCK;
+static held_chord_t s_held_chord[CHORD_ENGINE_MAX_HELD_KEYS];
+static harmony_context_t s_harmony_ctx;
+static settings_context_t s_settings_ctx;
+
 static uint8_t s_velocity = 96;
 static int8_t s_octave_offset = 0;
-static uint16_t s_bpm = 120;
 
 // Keyboard mapping transpose in semitones (signed).
 // This is applied to the generated MIDI notes, and also to the pitch class used
@@ -57,23 +57,16 @@ typedef struct {
     uint8_t (*next_index)(const held_chord_t *slot, uint8_t current_idx);
 } chord_pattern_def_t;
 
-static uint16_t tempo_quarter_ms(uint16_t bpm)
+static uint16_t tempo_quarter_ms() 
 {
-    if (bpm < 20) {
-        bpm = 20;
-    }
-    if (bpm > 300) {
-        bpm = 300;
-    }
-
     // quarter_ms = 60000 / bpm
     // Rounded to nearest to reduce bias at low BPM.
-    return (uint16_t)((60000UL + (uint32_t)(bpm / 2u)) / (uint32_t)bpm);
+    return (uint16_t)((60000UL + (uint32_t)(s_settings_ctx.bpm / 2u)) / (uint32_t)s_settings_ctx.bpm);
 }
 
 static uint16_t pattern_step_ms(const chord_pattern_def_t *def)
 {
-    uint32_t q = tempo_quarter_ms(s_bpm);
+    uint32_t q = tempo_quarter_ms();
     // step_ms = q * num / den (round half up)
     uint32_t n = (uint32_t)def->step_num;
     uint32_t d = (uint32_t)def->step_den;
@@ -131,7 +124,7 @@ static const chord_pattern_def_t s_patterns[CHORD_PATTERN_COUNT] = {
 static uint8_t any_chord_active(void)
 {
     for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        if (s_held[i].active) {
+        if (s_held_chord[i].active) {
             return 1;
         }
     }
@@ -291,7 +284,7 @@ static void chord_play_arp_seed(held_chord_t *slot)
     slot->arp_index = 0;
     slot->arp_accum_ms = 0;
 
-    if (s_pattern == CHORD_PATTERN_ARP_UP) {
+    if (s_settings_ctx.playing_pattern == CHORD_PATTERN_ARP_UP) {
         midi_note_on(MIDI_CHANNEL_DEFAULT, slot->notes[0], s_velocity);
     } else {
         uint8_t idx = (uint8_t)(slot->note_count - 1);
@@ -301,7 +294,7 @@ static void chord_play_arp_seed(held_chord_t *slot)
 }
 
 static void voicifie_chord(uint8_t *notes, uint8_t count) {
-    if (s_live_ctx.voicing_id == VOICING_ID_OPEN) {
+    if (s_harmony_ctx.voicing_id == VOICING_ID_OPEN) {
         for (uint8_t i = 0; i < count; i++) {
             if (i % 2 == 1) {
                 notes[i] += 12;
@@ -309,12 +302,12 @@ static void voicifie_chord(uint8_t *notes, uint8_t count) {
         }
     }
 
-    else if (s_live_ctx.voicing_id == VOICING_ID_DROP2 && count >= 4) {
+    else if (s_harmony_ctx.voicing_id == VOICING_ID_DROP2 && count >= 4) {
         // Drop 2: move the second-highest note down an octave.
         notes[count - 2] -= 12;
     }
 
-    else if (s_live_ctx.voicing_id == VOICING_ID_DROP3 && count >= 5) {
+    else if (s_harmony_ctx.voicing_id == VOICING_ID_DROP3 && count >= 5) {
         // Drop 3: move the third-highest note down an octave.
         notes[count - 3] -= 12;
     }
@@ -326,33 +319,36 @@ static void chord_start(uint8_t key_id)
         return;
     }
 
-    held_chord_t *slot = &s_held[key_id];
+    held_chord_t *slot = &s_held_chord[key_id];
     if (slot->active) {
         chord_stop(slot);
     }
 
-    // Apply keyboard transpose to pitch class (wrap within [0..11]) so harmony
-    // resolution matches what we actually play.
+    // Apply keyboard transpose to pitch class for harmony resolution and spelling.
     int16_t trans_pc = (int16_t)key_id + (int16_t)s_keyboard_transpose;
     while (trans_pc < 0) trans_pc += 12;
     while (trans_pc >= 12) trans_pc -= 12;
 
+    // Resolve intervals for this key + harmony context.
     harmony_intervals_t resolved;
-    if (!harmony_resolve_intervals((uint8_t)trans_pc, &s_live_ctx, &resolved) || resolved.count == 0) {
+    if (!harmony_resolve_intervals((uint8_t)trans_pc, &s_harmony_ctx, &resolved) || resolved.count == 0) {
         return;
     }
 
+    // Calculate MIDI notes from root + intervals, applying octave offset and transpose.
     int16_t root_base = (int16_t)s_root_note_lut[key_id] + ((int16_t)s_octave_offset * 12);
     int16_t root = (int16_t)(root_base + (int16_t)s_keyboard_transpose);
     slot->root_note = midi_note_clamp_u7(root);
     slot->note_count = resolved.count;
 
+    // Apply intervals to root and clamp to MIDI note range.
     for (uint8_t i = 0; i < resolved.count; i++) {
         int16_t note = root + (int16_t)resolved.intervals[i];
         slot->notes[i] = midi_note_clamp_u7(note);
     }
 
-    if (s_live_ctx.voicing_id != VOICING_ID_CLOSED)
+    // Apply voicing adjustments
+    if (s_harmony_ctx.voicing_id != VOICING_ID_CLOSED)
         voicifie_chord(slot->notes, slot->note_count);
 
     slot->active = 1;
@@ -360,7 +356,7 @@ static void chord_start(uint8_t key_id)
     slot->bass_note = 0;
 
     // Optional bass: double root one octave lower, sustained for chord duration.
-    if (s_live_ctx.bass_enabled) {
+    if (s_harmony_ctx.bass_enabled) {
         int16_t bass = (int16_t)root - 12;
         if (bass >= 0 && bass <= 127) {
             slot->bass_note = (uint8_t)bass;
@@ -373,7 +369,7 @@ static void chord_start(uint8_t key_id)
     ui_set_chord_overlay(1);
 
     char resolved_str[32];
-    if (s_pattern == CHORD_PATTERN_BLOCK) {
+    if (s_settings_ctx.playing_pattern == CHORD_PATTERN_BLOCK) {
         chord_play_block(slot);
     } else {
         chord_play_arp_seed(slot);
@@ -381,50 +377,30 @@ static void chord_start(uint8_t key_id)
     spell_chord(resolved_str, (uint8_t)trans_pc, &resolved);
 }
 
-static void select_triad(triad_type_t triad, uint8_t pressed) {   
+static void select_triad(triad_type_t triad, uint8_t pressed) {
     if (pressed)
-        s_live_ctx.triad = triad;
-    else if (s_live_ctx.triad == triad)
-        s_live_ctx.triad = TRIAD_NONE;
+        s_harmony_ctx.triad = triad;
+    else if (s_harmony_ctx.triad == triad)
+        s_harmony_ctx.triad = TRIAD_NONE;
 }
 
 static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
     if (pressed)
-        s_live_ctx.first_ext = first_ext;
-    else if (s_live_ctx.first_ext == first_ext)
-        s_live_ctx.first_ext = FIRST_EXT_NONE;
+        s_harmony_ctx.first_ext = first_ext;
+    else if (s_harmony_ctx.first_ext == first_ext)
+        s_harmony_ctx.first_ext = FIRST_EXT_NONE;
 }
 
-void chord_engine_init(void)
-{
-    for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        s_held[i].active = 0;
-        s_held[i].root_note = 0;
-        s_held[i].note_count = 0;
-        s_held[i].arp_index = 0;
-        s_held[i].arp_accum_ms = 0;
-        s_held[i].bass_active = 0;
-        s_held[i].bass_note = 0;
-    }
-
-    harmony_context_init(&s_live_ctx);
-    s_pattern = CHORD_PATTERN_BLOCK;
-    s_velocity = 96;
-    s_octave_offset = 0;
-    s_bpm = 120;
-
-    s_mode_locked = s_live_ctx.mode;
-    s_mode_hold_active = 0;
-    s_mode_hold = s_live_ctx.mode;
-    s_last_mode_tap = HARMONY_MODE_COUNT;
-    s_last_mode_tap_age_ms = 0;
+void chord_engine_init(void) {
+    // probably can just delete all this inits (all 0)
+    harmony_context_init(&s_harmony_ctx);
 
     // Seed UI from initial harmony state.
-    ui_set_tonic(s_live_ctx.tonic_pc);
-    ui_set_mode(s_live_ctx.mode);
+    ui_set_tonic(s_harmony_ctx.tonic_pc);
+    ui_set_mode(s_harmony_ctx.mode);
     ui_set_mode_locked(s_mode_locked);
-    ui_set_mode_held(s_live_ctx.mode, 0);
-    ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
+    ui_set_mode_held(s_harmony_ctx.mode, 0);
+    ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
 }
 
 void chord_engine_tick(uint8_t elapsed_ms)
@@ -440,22 +416,22 @@ void chord_engine_tick(uint8_t elapsed_ms)
         }
     }
 
-    if (s_pattern >= CHORD_PATTERN_COUNT) {
-        s_pattern = CHORD_PATTERN_BLOCK;
+    if (s_settings_ctx.playing_pattern >= CHORD_PATTERN_COUNT) {
+        s_settings_ctx.playing_pattern = CHORD_PATTERN_BLOCK;
     }
 
-    if (s_pattern == CHORD_PATTERN_BLOCK) {
+    if (s_settings_ctx.playing_pattern == CHORD_PATTERN_BLOCK) {
         return;
     }
 
-    const chord_pattern_def_t *pat = &s_patterns[s_pattern];
+    const chord_pattern_def_t *pat = &s_patterns[s_settings_ctx.playing_pattern];
     if (!pat->next_index) {
         return;
     }
     const uint16_t step_ms = pattern_step_ms(pat);
 
     for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        held_chord_t *slot = &s_held[i];
+        held_chord_t *slot = &s_held_chord[i];
         if (!slot->active || slot->note_count == 0) {
             continue;
         }
@@ -524,12 +500,12 @@ void chord_engine_set_bpm(uint16_t bpm)
     if (bpm > 300) {
         bpm = 300;
     }
-    s_bpm = bpm;
+    s_settings_ctx.bpm = bpm;
 }
 
 void chord_engine_set_pattern(chord_pattern_t pattern)
 {
-    if (s_pattern == pattern) {
+    if (s_settings_ctx.playing_pattern == pattern) {
         return;
     }
 
@@ -538,7 +514,7 @@ void chord_engine_set_pattern(chord_pattern_t pattern)
     }
 
     chord_engine_all_notes_off();
-    s_pattern = pattern;
+    s_settings_ctx.playing_pattern = pattern;
 }
 
 void chord_engine_set_velocity(uint8_t velocity)
@@ -566,18 +542,18 @@ void chord_engine_set_mode(harmony_mode_t mode)
     if (mode >= HARMONY_MODE_COUNT) {
         return;
     }
-    s_live_ctx.mode = mode;
+    s_harmony_ctx.mode = mode;
     ui_set_mode(mode);
 }
 
 void chord_engine_set_tonic(uint8_t tonic_pc)
 {
-    s_live_ctx.tonic_pc = (uint8_t)(tonic_pc % 12);
-    ui_set_tonic(s_live_ctx.tonic_pc);
+    s_harmony_ctx.tonic_pc = (uint8_t)(tonic_pc % 12);
+    ui_set_tonic(s_harmony_ctx.tonic_pc);
 
     // Map tonic pitch class to a signed transpose centered around 0.
     // Example: tonic=B (11) becomes -1 semitone, not +11.
-    int8_t t = (int8_t)(s_live_ctx.tonic_pc);
+    int8_t t = (int8_t)(s_harmony_ctx.tonic_pc);
     if (t > 6) {
         t = (int8_t)(t - 12);
     }
@@ -586,7 +562,7 @@ void chord_engine_set_tonic(uint8_t tonic_pc)
 
 void chord_engine_set_bass_enabled(uint8_t enabled)
 {
-    s_live_ctx.bass_enabled = enabled ? 1 : 0;
+    s_harmony_ctx.bass_enabled = enabled ? 1 : 0;
 }
 
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
@@ -598,14 +574,14 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
     if (pressed) {
         chord_start(key_id);
     } else {
-        chord_stop(&s_held[key_id]);
+        chord_stop(&s_held_chord[key_id]);
     }
 }
 
 void chord_engine_all_notes_off(void)
 {
     for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        chord_stop(&s_held[i]);
+        chord_stop(&s_held_chord[i]);
     }
     midi_all_notes_off(MIDI_CHANNEL_DEFAULT);
 }
@@ -660,23 +636,23 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
     }
 
     if (button_id == BUTTON_EXT_7) {
-        s_live_ctx.ext_7 = pressed;
-        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
+        s_harmony_ctx.ext_7 = pressed;
+        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
         return;
     }
     if (button_id == BUTTON_EXT_9) {
-        s_live_ctx.ext_9 = pressed;
-        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
+        s_harmony_ctx.ext_9 = pressed;
+        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
         return;
     }
     if (button_id == BUTTON_EXT_11) {
-        s_live_ctx.ext_11 = pressed;
-        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
+        s_harmony_ctx.ext_11 = pressed;
+        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
         return;
     }
     if (button_id == BUTTON_EXT_13) {
-        s_live_ctx.ext_13 = pressed;
-        ui_set_extensions(s_live_ctx.ext_7, s_live_ctx.ext_9, s_live_ctx.ext_11, s_live_ctx.ext_13);
+        s_harmony_ctx.ext_13 = pressed;
+        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
         return;
     }
 
@@ -718,11 +694,11 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
     }
 
     if (button_id == BUTTON_CHORD_MODE) {
-        s_live_ctx.chord_mode_enabled = pressed;
+        s_harmony_ctx.chord_mode_enabled = pressed;
         return;
     }
     if (button_id == BUTTON_BASS_MODE) {
-        s_live_ctx.bass_enabled = pressed;
+        s_harmony_ctx.bass_enabled = pressed;
         return;
     }
 }
