@@ -18,6 +18,13 @@ static const char *s_mode_names[HARMONY_MODE_COUNT] = {
     "Locrian",
 };
 
+static const char *s_voicing_names[] = {
+    "Closed",
+    "Open",
+    "Drop2",
+    "Drop3",
+};
+
 static const char *pattern_name(uint8_t pattern)
 {
     switch (pattern) {
@@ -83,8 +90,8 @@ uint8_t screen_render_menu(const ui_state_t *ui, const ui_scene_state_t *scene)
     char l0[32];
     char l1[32];
     char l2[32];
-    (void)snprintf(l0, sizeof(l0), "MENU");
-    l1[0] = '\0';
+    (void)snprintf(l0, sizeof(l0), "VOICING");
+    (void)snprintf(l1, sizeof(l1), "%s", s_voicing_names[scene->pending_pattern]);
     l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
 }
@@ -165,7 +172,7 @@ uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_s
             return screen_render_instrument(ui, scene);
         case UI_SCENE_PATTERN:
             return screen_render_pattern(ui, scene);
-        case UI_SCENE_MENU:
+        case UI_SCENE_VOICING:
             return screen_render_menu(ui, scene);
         case UI_SCENE_VOLUME:
             return screen_render_volume(ui, scene);

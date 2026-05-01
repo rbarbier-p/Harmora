@@ -1,16 +1,35 @@
 #include "harmony_resolver.h"
+#include <stdlib.h>
 
-#define SCALE_STEPS 7
-
-static const uint8_t s_mode_scales[HARMONY_MODE_COUNT][SCALE_STEPS] = {
-    {0, 2, 4, 5, 7, 9, 11}, // Ionian
-    {0, 2, 3, 5, 7, 9, 10}, // Dorian
-    {0, 1, 3, 5, 7, 8, 10}, // Phrygian
-    {0, 2, 4, 6, 7, 9, 11}, // Lydian
-    {0, 2, 4, 5, 7, 9, 10}, // Mixolydian
-    {0, 2, 3, 5, 7, 8, 10}, // Aeolian
-    {0, 1, 3, 5, 6, 8, 10}, // Locrian
+static const uint8_t s_mode_scales[HARMONY_MODE_COUNT] = {
+    0b0110111, // Ionian step sequence
+    0b0101110, // Dorian
+    0b0011101, // Phrygian
+    0b0111011, // Lydian
+    0b0110110, // Mixolydian
+    0b0101101, // Aeolian
+    0b0011011, // Locrian
 };
+
+static const uint8_t *get_scale_with_mode(harmony_mode_t mode)
+{
+    if (mode >= HARMONY_MODE_COUNT) {
+        mode = HARMONY_MODE_IONIAN;
+    }
+    
+    static uint8_t scale[SCALE_STEPS];
+
+    // Build the scale by iterating through the step sequence (1=whole, 0=half).
+    for (uint8_t i = 0, s = 0; i < SCALE_STEPS; i++) {
+        scale[i] = s;
+        if (s_mode_scales[(uint8_t)mode] & (1U << (5 - i))) {
+            s += 2;
+        } else {
+            s += 1;
+        }
+    }
+    return scale;
+}
 
 static uint8_t mod12_u8(int16_t v)
 {
@@ -71,7 +90,7 @@ void harmony_context_init(harmony_context_t *ctx)
     ctx->ext_9 = 0;
     ctx->ext_11 = 0;
     ctx->ext_13 = 0;
-    ctx->voicing_id = 0;
+    ctx->voicing_id = 2;
     ctx->bass_enabled = 0;
     ctx->chord_mode_enabled = 0;
 }
@@ -84,7 +103,7 @@ uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, 
 
     out->count = 0;
 
-    const uint8_t *scale = s_mode_scales[(uint8_t)ctx->mode % HARMONY_MODE_COUNT];
+    const uint8_t *scale = get_scale_with_mode(ctx->mode);
 
     uint8_t root_pc = key_id;
     uint8_t rel_pc = mod12_u8((int16_t)root_pc - (int16_t)(ctx->tonic_pc % 12)); 

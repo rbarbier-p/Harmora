@@ -300,6 +300,26 @@ static void chord_play_arp_seed(held_chord_t *slot)
     }
 }
 
+static void voicifie_chord(uint8_t *notes, uint8_t count) {
+    if (s_live_ctx.voicing_id == VOICING_ID_OPEN) {
+        for (uint8_t i = 0; i < count; i++) {
+            if (i % 2 == 1) {
+                notes[i] += 12;
+            }
+        }
+    }
+
+    else if (s_live_ctx.voicing_id == VOICING_ID_DROP2 && count >= 4) {
+        // Drop 2: move the second-highest note down an octave.
+        notes[count - 2] -= 12;
+    }
+
+    else if (s_live_ctx.voicing_id == VOICING_ID_DROP3 && count >= 5) {
+        // Drop 3: move the third-highest note down an octave.
+        notes[count - 3] -= 12;
+    }
+}
+
 static void chord_start(uint8_t key_id)
 {
     if (key_id >= CHORD_ENGINE_MAX_HELD_KEYS) {
@@ -331,6 +351,9 @@ static void chord_start(uint8_t key_id)
         int16_t note = root + (int16_t)resolved.intervals[i];
         slot->notes[i] = midi_note_clamp_u7(note);
     }
+
+    if (s_live_ctx.voicing_id != VOICING_ID_CLOSED)
+        voicifie_chord(slot->notes, slot->note_count);
 
     slot->active = 1;
     slot->bass_active = 0;

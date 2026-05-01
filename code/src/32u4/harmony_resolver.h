@@ -4,6 +4,12 @@
 #include <stdint.h>
 
 #define HARMONY_MAX_INTERVALS 8
+#define SCALE_STEPS 7
+
+#define VOICING_ID_CLOSED 0
+#define VOICING_ID_OPEN 1
+#define VOICING_ID_DROP2 2
+#define VOICING_ID_DROP3 3
 
 typedef enum {
     HARMONY_MODE_IONIAN = 0,

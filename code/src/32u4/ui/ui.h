@@ -16,7 +16,7 @@
 #define UI_ENC_ID_BPM        1
 #define UI_ENC_ID_KEY        2
 #define UI_ENC_ID_PATTERN    3
-#define UI_ENC_ID_MENU       4
+#define UI_ENC_ID_VOICING    4
 #define UI_ENC_ID_VOLUME     5
 
 // -----------------------------------------------------------------------------
@@ -31,7 +31,7 @@ typedef enum {
     UI_SCENE_PATTERN,
     UI_SCENE_VOLUME,
     UI_SCENE_CHORD,
-    UI_SCENE_MENU,
+    UI_SCENE_VOICING,
 } ui_scene_id_t;
 
 typedef struct {
@@ -47,9 +47,11 @@ typedef struct {
     uint8_t pending_tonic_pc;
     uint8_t pending_pattern;
     uint8_t pending_instrument_program;
+    uint8_t pending_voicing;
 
     // Mirror of chord_engine pattern (0=block,1=up,2=down)
     uint8_t pattern;
+    uint8_t voicing;
 } ui_scene_state_t;
 
 // -----------------------------------------------------------------------------

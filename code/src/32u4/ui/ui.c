@@ -168,6 +168,23 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         s_ui.dirty_display = 1;
         return;
     }
+
+    /*if (encoder_id == UI_ENC_ID_VOICING) {
+        // "Select" behavior: rotate updates pending pattern; press commits.
+        if (active_screen != UI_SCENE_VOICING) {
+            s_scene.pending_voicing = s_.;
+        }
+
+        screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
+
+        int16_t p = (int16_t)s_scene.pending_pattern + (delta > 0 ? 1 : -1);
+        while (p < 0) p += (int16_t)CHORD_PATTERN_COUNT;
+        while (p >= (int16_t)CHORD_PATTERN_COUNT) p -= (int16_t)CHORD_PATTERN_COUNT;
+        s_scene.pending_pattern = (uint8_t)p;
+
+        s_ui.dirty_display = 1;
+        return;
+    }*/
 }
 
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
@@ -186,8 +203,8 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         target = UI_SCENE_INSTRUMENT; midi_debug("INST");
     } else if (encoder_id == UI_ENC_ID_PATTERN) {
         target = UI_SCENE_PATTERN; midi_debug("PATTERN");
-    } else if (encoder_id == UI_ENC_ID_MENU) {
-        target = UI_SCENE_MENU; midi_debug("MENU");
+    } else if (encoder_id == UI_ENC_ID_VOICING) {
+        target = UI_SCENE_VOICING; midi_debug("VOICINGS");
     } else if (encoder_id == UI_ENC_ID_VOLUME) {
         target = UI_SCENE_VOLUME; midi_debug("VOLUME");
     } else {
