@@ -90,7 +90,6 @@ void harmony_context_init(harmony_context_t *ctx)
     ctx->ext_9 = 0;
     ctx->ext_11 = 0;
     ctx->ext_13 = 0;
-    ctx->voicing_id = 2;
     ctx->bass_enabled = 0;
     ctx->chord_mode_enabled = 0;
 }

@@ -39,7 +39,6 @@ typedef struct {
     uint16_t timeout_ms;
 
     // Parameters owned by UI (for now)
-    uint16_t bpm;
     uint8_t instrument_bank;
     uint8_t instrument_program;
 
@@ -111,7 +110,6 @@ typedef struct {
 
 typedef struct {
     // Harmony selections
-    uint8_t tonic_pc;            // 0-11
     harmony_mode_t mode;
 
     // Mode button UI behavior

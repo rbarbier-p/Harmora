@@ -52,7 +52,6 @@ typedef struct {
     uint8_t ext_13;
 
     // Future hook: voicing selector (drop2, doublings, etc.)
-    uint8_t voicing_id;
 
     // Future hook: bass channel/note policy
     uint8_t bass_enabled;

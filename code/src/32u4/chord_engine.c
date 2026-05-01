@@ -55,7 +55,7 @@ typedef struct {
     // One tick advances by one note.
     // The seed note (on chord start) is handled by chord_play_arp_seed().
     uint8_t (*next_index)(const held_chord_t *slot, uint8_t current_idx);
-} chord_pattern_def_t;
+} play_pattern_def_t;
 
 static uint16_t tempo_quarter_ms() 
 {
@@ -64,7 +64,7 @@ static uint16_t tempo_quarter_ms()
     return (uint16_t)((60000UL + (uint32_t)(s_settings_ctx.bpm / 2u)) / (uint32_t)s_settings_ctx.bpm);
 }
 
-static uint16_t pattern_step_ms(const chord_pattern_def_t *def)
+static uint16_t pattern_step_ms(const play_pattern_def_t *def)
 {
     uint32_t q = tempo_quarter_ms();
     // step_ms = q * num / den (round half up)
@@ -100,8 +100,8 @@ static uint8_t arp_down_next(const held_chord_t *slot, uint8_t current_idx)
     return (uint8_t)(current_idx - 1);
 }
 
-static const chord_pattern_def_t s_patterns[CHORD_PATTERN_COUNT] = {
-    [CHORD_PATTERN_BLOCK] = {
+static const play_pattern_def_t s_patterns[PLAY_PATTERN_COUNT] = {
+    [PLAY_PATTERN_BLOCK] = {
         .step_num = 1,
         .step_den = 1,
         .next_index = 0,
@@ -109,17 +109,21 @@ static const chord_pattern_def_t s_patterns[CHORD_PATTERN_COUNT] = {
 
     // Legacy ARP_STEP_MS was 80ms. At 120BPM, quarter=500ms.
     // 1/16T = quarter/6 ~= 83.33ms, close to the old feel.
-    [CHORD_PATTERN_ARP_UP] = {
+    [PLAY_PATTERN_ARP_UP] = {
         .step_num = 1,
         .step_den = 6,
         .next_index = arp_up_next,
     },
-    [CHORD_PATTERN_ARP_DOWN] = {
+    [PLAY_PATTERN_ARP_DOWN] = {
         .step_num = 1,
         .step_den = 6,
         .next_index = arp_down_next,
     },
 };
+
+uint8_t chord_engine_get_bpm(void) { return s_settings_ctx.bpm; }
+uint8_t chord_engine_get_tonic(void) { return s_harmony_ctx.tonic_pc; }
+uint8_t chord_engine_get_voicing(void) { return s_settings_ctx.chord_voicing; }
 
 static uint8_t any_chord_active(void)
 {
@@ -284,7 +288,7 @@ static void chord_play_arp_seed(held_chord_t *slot)
     slot->arp_index = 0;
     slot->arp_accum_ms = 0;
 
-    if (s_settings_ctx.playing_pattern == CHORD_PATTERN_ARP_UP) {
+    if (s_settings_ctx.playing_pattern == PLAY_PATTERN_ARP_UP) {
         midi_note_on(MIDI_CHANNEL_DEFAULT, slot->notes[0], s_velocity);
     } else {
         uint8_t idx = (uint8_t)(slot->note_count - 1);
@@ -294,7 +298,7 @@ static void chord_play_arp_seed(held_chord_t *slot)
 }
 
 static void voicifie_chord(uint8_t *notes, uint8_t count) {
-    if (s_harmony_ctx.voicing_id == VOICING_ID_OPEN) {
+    if (s_settings_ctx.chord_voicing == VOICING_ID_OPEN) {
         for (uint8_t i = 0; i < count; i++) {
             if (i % 2 == 1) {
                 notes[i] += 12;
@@ -302,12 +306,12 @@ static void voicifie_chord(uint8_t *notes, uint8_t count) {
         }
     }
 
-    else if (s_harmony_ctx.voicing_id == VOICING_ID_DROP2 && count >= 4) {
+    else if (s_settings_ctx.chord_voicing == VOICING_ID_DROP2 && count >= 4) {
         // Drop 2: move the second-highest note down an octave.
         notes[count - 2] -= 12;
     }
 
-    else if (s_harmony_ctx.voicing_id == VOICING_ID_DROP3 && count >= 5) {
+    else if (s_settings_ctx.chord_voicing == VOICING_ID_DROP3 && count >= 5) {
         // Drop 3: move the third-highest note down an octave.
         notes[count - 3] -= 12;
     }
@@ -348,7 +352,7 @@ static void chord_start(uint8_t key_id)
     }
 
     // Apply voicing adjustments
-    if (s_harmony_ctx.voicing_id != VOICING_ID_CLOSED)
+    if (s_settings_ctx.chord_voicing != VOICING_ID_CLOSED)
         voicifie_chord(slot->notes, slot->note_count);
 
     slot->active = 1;
@@ -369,7 +373,7 @@ static void chord_start(uint8_t key_id)
     ui_set_chord_overlay(1);
 
     char resolved_str[32];
-    if (s_settings_ctx.playing_pattern == CHORD_PATTERN_BLOCK) {
+    if (s_settings_ctx.playing_pattern == PLAY_PATTERN_BLOCK) {
         chord_play_block(slot);
     } else {
         chord_play_arp_seed(slot);
@@ -396,7 +400,6 @@ void chord_engine_init(void) {
     harmony_context_init(&s_harmony_ctx);
 
     // Seed UI from initial harmony state.
-    ui_set_tonic(s_harmony_ctx.tonic_pc);
     ui_set_mode(s_harmony_ctx.mode);
     ui_set_mode_locked(s_mode_locked);
     ui_set_mode_held(s_harmony_ctx.mode, 0);
@@ -416,15 +419,15 @@ void chord_engine_tick(uint8_t elapsed_ms)
         }
     }
 
-    if (s_settings_ctx.playing_pattern >= CHORD_PATTERN_COUNT) {
-        s_settings_ctx.playing_pattern = CHORD_PATTERN_BLOCK;
+    if (s_settings_ctx.playing_pattern >= PLAY_PATTERN_COUNT) {
+        s_settings_ctx.playing_pattern = PLAY_PATTERN_BLOCK;
     }
 
-    if (s_settings_ctx.playing_pattern == CHORD_PATTERN_BLOCK) {
+    if (s_settings_ctx.playing_pattern == PLAY_PATTERN_BLOCK) {
         return;
     }
 
-    const chord_pattern_def_t *pat = &s_patterns[s_settings_ctx.playing_pattern];
+    const play_pattern_def_t *pat = &s_patterns[s_settings_ctx.playing_pattern];
     if (!pat->next_index) {
         return;
     }
@@ -491,6 +494,14 @@ static void mode_set_hold(harmony_mode_t mode, uint8_t held)
     ui_set_mode_held(mode, held);
 }
 
+void chord_engine_set_voicing(chord_voicing_t voicing)
+{
+    if (voicing >= CHORD_VOICING_COUNT) {
+        return;
+    }
+    s_settings_ctx.chord_voicing = voicing;
+}
+
 void chord_engine_set_bpm(uint16_t bpm)
 {
     // Clamp to a sane range.
@@ -503,14 +514,14 @@ void chord_engine_set_bpm(uint16_t bpm)
     s_settings_ctx.bpm = bpm;
 }
 
-void chord_engine_set_pattern(chord_pattern_t pattern)
+void chord_engine_set_pattern(play_pattern_t pattern)
 {
     if (s_settings_ctx.playing_pattern == pattern) {
         return;
     }
 
-    if (pattern >= CHORD_PATTERN_COUNT) {
-        pattern = CHORD_PATTERN_BLOCK;
+    if (pattern >= PLAY_PATTERN_COUNT) {
+        pattern = PLAY_PATTERN_BLOCK;
     }
 
     chord_engine_all_notes_off();
@@ -549,7 +560,6 @@ void chord_engine_set_mode(harmony_mode_t mode)
 void chord_engine_set_tonic(uint8_t tonic_pc)
 {
     s_harmony_ctx.tonic_pc = (uint8_t)(tonic_pc % 12);
-    ui_set_tonic(s_harmony_ctx.tonic_pc);
 
     // Map tonic pitch class to a signed transpose centered around 0.
     // Example: tonic=B (11) becomes -1 semitone, not +11.
@@ -681,15 +691,15 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
     }
 
     if (pressed && button_id == BUTTON_PATTERN_BLOCK) {
-        chord_engine_set_pattern(CHORD_PATTERN_BLOCK);
+        chord_engine_set_pattern(PLAY_PATTERN_BLOCK);
         return;
     }
     if (pressed && button_id == BUTTON_PATTERN_ARP_UP) {
-        chord_engine_set_pattern(CHORD_PATTERN_ARP_UP);
+        chord_engine_set_pattern(PLAY_PATTERN_ARP_UP);
         return;
     }
     if (pressed && button_id == BUTTON_PATTERN_ARP_DOWN) {
-        chord_engine_set_pattern(CHORD_PATTERN_ARP_DOWN);
+        chord_engine_set_pattern(PLAY_PATTERN_ARP_DOWN);
         return;
     }
 

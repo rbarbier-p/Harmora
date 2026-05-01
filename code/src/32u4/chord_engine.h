@@ -47,23 +47,24 @@
 #define BUTTON_MODE_LOCRIAN 15
 
 typedef enum {
-    CHORD_PATTERN_BLOCK = 0,
-    CHORD_PATTERN_ARP_UP,
-    CHORD_PATTERN_ARP_DOWN,
-    CHORD_PATTERN_COUNT,
-} chord_pattern_t;
+    PLAY_PATTERN_BLOCK = 0,
+    PLAY_PATTERN_ARP_UP,
+    PLAY_PATTERN_ARP_DOWN,
+    PLAY_PATTERN_COUNT,
+} play_pattern_t;
 
 typedef enum {
     CHORD_VOICING_CLOSED = 0,
     CHORD_VOICING_OPEN,
     CHORD_VOICING_DROP2,
     CHORD_VOICING_DROP3,
+    CHORD_VOICING_COUNT,
 } chord_voicing_t;
 
 typedef struct {
     uint8_t bass_enabled;
     uint8_t chord_mode_enabled;
-    chord_pattern_t playing_pattern;
+    play_pattern_t playing_pattern;
     chord_voicing_t chord_voicing;
     uint8_t bpm;
     uint8_t instrument;
@@ -73,13 +74,17 @@ void chord_engine_init(void);
 void chord_engine_tick(uint8_t elapsed_ms);
 
 void chord_engine_set_bpm(uint16_t bpm);
-
-void chord_engine_set_pattern(chord_pattern_t pattern);
+void chord_engine_set_voicing(chord_voicing_t voicing);
+void chord_engine_set_pattern(play_pattern_t pattern);
 void chord_engine_set_velocity(uint8_t velocity);
 void chord_engine_adjust_octave(int8_t delta);
 void chord_engine_set_mode(harmony_mode_t mode);
 void chord_engine_set_tonic(uint8_t tonic_pc);
 void chord_engine_set_bass_enabled(uint8_t enabled);
+
+uint8_t chord_engine_get_bpm(void);
+uint8_t chord_engine_get_tonic(void);
+uint8_t chord_engine_get_voicing(void);
 
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed);
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed);

@@ -1,6 +1,7 @@
 #include "screens.h"
 
 #include "mcu_com.h"
+#include "chord_engine.h"
 
 #include <stdio.h>
 
@@ -79,19 +80,19 @@ uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene)
     char l1[32];
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "BPM");
-    (void)snprintf(l1, sizeof(l1), "%u", (unsigned)scene->bpm);
+    (void)snprintf(l1, sizeof(l1), "%u", chord_engine_get_bpm());
     l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
 }
 
-uint8_t screen_render_menu(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_voicings(const ui_state_t *ui, const ui_scene_state_t *scene)
 {
     (void)ui;
     char l0[32];
     char l1[32];
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "VOICING");
-    (void)snprintf(l1, sizeof(l1), "%s", s_voicing_names[scene->pending_pattern]);
+    (void)snprintf(l1, sizeof(l1), "%s", s_voicing_names[scene->pending_voicing]);
     l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
 }
@@ -173,7 +174,7 @@ uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_s
         case UI_SCENE_PATTERN:
             return screen_render_pattern(ui, scene);
         case UI_SCENE_VOICING:
-            return screen_render_menu(ui, scene);
+            return screen_render_voicings(ui, scene);
         case UI_SCENE_VOLUME:
             return screen_render_volume(ui, scene);
         case UI_SCENE_CHORD:

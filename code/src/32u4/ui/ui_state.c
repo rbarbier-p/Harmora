@@ -30,7 +30,6 @@ void ui_state_init(ui_state_t *s)
         return;
     }
 
-    s->tonic_pc = 0;
     s->mode = HARMONY_MODE_IONIAN;
     s->locked_mode = HARMONY_MODE_IONIAN;
     s->hold_mode = HARMONY_MODE_IONIAN;
@@ -43,22 +42,6 @@ void ui_state_init(ui_state_t *s)
     s->dirty_leds = 1;
     s->dirty_display = 1;
 
-    ui_state_recompute(s);
-}
-
-void ui_state_set_tonic(ui_state_t *s, uint8_t tonic_pc)
-{
-    if (!s) {
-        return;
-    }
-
-    tonic_pc = (uint8_t)(tonic_pc % 12);
-    if (s->tonic_pc == tonic_pc) {
-        return;
-    }
-    s->tonic_pc = tonic_pc;
-    s->dirty_leds = 1;
-    s->dirty_display = 1;
     ui_state_recompute(s);
 }
 

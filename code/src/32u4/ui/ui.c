@@ -62,20 +62,13 @@ void ui_init(void)
 
     s_scene.active = UI_SCENE_MAIN;
     s_scene.timeout_ms = 0;
-    s_scene.bpm = 120;
-    chord_engine_set_bpm(s_scene.bpm);
     s_scene.instrument_bank = 0;
     s_scene.instrument_program = 0;
     s_scene.pattern = 0;
 
-    s_scene.pending_tonic_pc = s_ui.tonic_pc;
+    s_scene.pending_tonic_pc = 0;
     s_scene.pending_pattern = s_scene.pattern;
     s_scene.pending_instrument_program = s_scene.instrument_program;
-}
-
-void ui_set_tonic(uint8_t tonic_pc)
-{
-    ui_state_set_tonic(&s_ui, tonic_pc);
 }
 
 void ui_set_mode(harmony_mode_t mode)
@@ -109,11 +102,10 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
     if (encoder_id == UI_ENC_ID_BPM) {
         screen_engine_touch(&s_screen_engine, UI_SCENE_BPM, UI_SCENE_TIMEOUT_MS);
 
-        int16_t bpm = (int16_t)s_scene.bpm + (delta > 0 ? 1 : -1);
-        if (bpm < 20) bpm = 20;
-        if (bpm > 300) bpm = 300;
-        s_scene.bpm = (uint16_t)bpm;
-        chord_engine_set_bpm(s_scene.bpm);
+        int16_t bpm = chord_engine_get_bpm() + (delta > 0 ? 1 : -1);
+        if (bpm < 30) bpm = 30;
+        if (bpm > 250) bpm = 250;
+        chord_engine_set_bpm(bpm);
 
         s_ui.dirty_display = 1;
         return;
@@ -122,7 +114,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
     if (encoder_id == UI_ENC_ID_KEY) {
         // "Select" behavior: rotate updates pending tonic; press commits.
         if (active_screen != UI_SCENE_KEY) {
-            s_scene.pending_tonic_pc = s_ui.tonic_pc;
+            s_scene.pending_tonic_pc = chord_engine_get_tonic();
         }
 
         screen_engine_touch(&s_screen_engine, UI_SCENE_KEY, UI_SCENE_TIMEOUT_MS);
@@ -161,30 +153,30 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
 
         int16_t p = (int16_t)s_scene.pending_pattern + (delta > 0 ? 1 : -1);
-        while (p < 0) p += (int16_t)CHORD_PATTERN_COUNT;
-        while (p >= (int16_t)CHORD_PATTERN_COUNT) p -= (int16_t)CHORD_PATTERN_COUNT;
+        while (p < 0) p += (int16_t)PLAY_PATTERN_COUNT;
+        while (p >= (int16_t)PLAY_PATTERN_COUNT) p -= (int16_t)PLAY_PATTERN_COUNT;
         s_scene.pending_pattern = (uint8_t)p;
 
         s_ui.dirty_display = 1;
         return;
     }
 
-    /*if (encoder_id == UI_ENC_ID_VOICING) {
+    if (encoder_id == UI_ENC_ID_VOICING) {
         // "Select" behavior: rotate updates pending pattern; press commits.
         if (active_screen != UI_SCENE_VOICING) {
-            s_scene.pending_voicing = s_.;
+            s_scene.pending_voicing = chord_engine_get_voicing();
         }
 
-        screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
+        screen_engine_touch(&s_screen_engine, UI_SCENE_VOICING, UI_SCENE_TIMEOUT_MS);
 
-        int16_t p = (int16_t)s_scene.pending_pattern + (delta > 0 ? 1 : -1);
-        while (p < 0) p += (int16_t)CHORD_PATTERN_COUNT;
-        while (p >= (int16_t)CHORD_PATTERN_COUNT) p -= (int16_t)CHORD_PATTERN_COUNT;
-        s_scene.pending_pattern = (uint8_t)p;
+        int8_t voicing = (int16_t)s_scene.pending_voicing + (delta > 0 ? 1 : -1);
+        if (voicing < 0) voicing += (int16_t)CHORD_VOICING_COUNT;
+        if (voicing >= (int16_t)CHORD_VOICING_COUNT) voicing -= (int16_t)CHORD_VOICING_COUNT;
+        s_scene.pending_voicing = (uint8_t)voicing;
 
         s_ui.dirty_display = 1;
         return;
-    }*/
+    }
 }
 
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
@@ -217,11 +209,13 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
     // If not active: activate screen and seed pending values.
     if (active_screen != target) {
         if (target == UI_SCENE_KEY) {
-            s_scene.pending_tonic_pc = s_ui.tonic_pc;
+            s_scene.pending_tonic_pc = chord_engine_get_tonic();
         } else if (target == UI_SCENE_PATTERN) {
             s_scene.pending_pattern = s_scene.pattern;
         } else if (target == UI_SCENE_INSTRUMENT) {
             s_scene.pending_instrument_program = s_scene.instrument_program;
+        } else if (target == UI_SCENE_VOICING) {
+            s_scene.pending_voicing = chord_engine_get_voicing();
         }
 
         screen_engine_touch(&s_screen_engine, target, UI_SCENE_TIMEOUT_MS);
@@ -235,11 +229,14 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         // chord_engine -> ui_set_tonic will mark dirties.
     } else if (target == UI_SCENE_PATTERN) {
         s_scene.pattern = s_scene.pending_pattern;
-        chord_engine_set_pattern((chord_pattern_t)s_scene.pattern);
+        chord_engine_set_pattern((play_pattern_t)s_scene.pattern);
         s_ui.dirty_display = 1;
     } else if (target == UI_SCENE_INSTRUMENT) {
         s_scene.instrument_program = s_scene.pending_instrument_program;
         // TODO: Send MIDI program change when implemented.
+        s_ui.dirty_display = 1;
+    } else if (target == UI_SCENE_VOICING) {
+        chord_engine_set_voicing((chord_voicing_t)s_scene.pending_voicing);
         s_ui.dirty_display = 1;
     } else {
         // BPM: no select action needed.
