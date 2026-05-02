@@ -1,5 +1,8 @@
-#include "harmony_resolver.h"
+#include "chord_engine.h"
 #include <stdlib.h>
+
+extern harmony_context_t s_harmony_ctx;
+extern settings_context_t s_settings_ctx;
 
 static const uint8_t s_mode_scales[HARMONY_MODE_COUNT] = {
     0b0110111, // Ionian step sequence
@@ -29,17 +32,6 @@ static const uint8_t *get_scale_with_mode(harmony_mode_t mode)
         }
     }
     return scale;
-}
-
-static uint8_t mod12_u8(int16_t v)
-{
-    while (v < 0) {
-        v += 12;
-    }
-    while (v >= 12) {
-        v -= 12;
-    }
-    return (uint8_t)v;
 }
 
 static uint8_t append_interval(harmony_intervals_t *out, uint8_t interval)
@@ -90,8 +82,26 @@ void harmony_context_init(harmony_context_t *ctx)
     ctx->ext_9 = 0;
     ctx->ext_11 = 0;
     ctx->ext_13 = 0;
-    ctx->bass_enabled = 0;
-    ctx->chord_mode_enabled = 0;
+}
+
+void voicifie_chord(uint8_t *notes, uint8_t count) {
+    if (s_settings_ctx.chord_voicing == CHORD_VOICING_OPEN) {
+        for (uint8_t i = 0; i < count; i++) {
+            if (i % 2 == 1) {
+                notes[i] += 12;
+            }
+        }
+    }
+
+    else if (s_settings_ctx.chord_voicing == CHORD_VOICING_DROP2 && count >= 4) {
+        // Drop 2: move the second-highest note down an octave.
+        notes[count - 2] -= 12;
+    }
+
+    else if (s_settings_ctx.chord_voicing == CHORD_VOICING_DROP3 && count >= 5) {
+        // Drop 3: move the third-highest note down an octave.
+        notes[count - 3] -= 12;
+    }
 }
 
 uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, harmony_intervals_t *out)
@@ -140,7 +150,7 @@ uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, 
             default:
                 break;
         }
-    } else if (ctx->chord_mode_enabled) {
+    } else if (chord_engine_get_chord_mode()) {
         append_interval(out, diatonic_interval(scale, degree, 2));
         append_interval(out, diatonic_interval(scale, degree, 4));
     }

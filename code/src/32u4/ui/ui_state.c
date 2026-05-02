@@ -13,7 +13,7 @@ static const uint8_t s_mode_scales[HARMONY_MODE_COUNT][UI_SCALE_STEPS] = {
     {0, 1, 3, 5, 6, 8, 10}, // Locrian
 };
 
-static uint8_t mod12_u8(int16_t v)
+static uint8_t modify12_u8(int16_t v) // could be removed?
 {
     while (v < 0) {
         v += 12;
@@ -120,6 +120,7 @@ void ui_state_set_extensions(ui_state_t *s, uint8_t ext7, uint8_t ext9, uint8_t 
     s->dirty_display = 1;
 }
 
+// 
 void ui_state_recompute(ui_state_t *s)
 {
     if (!s) {
@@ -130,7 +131,7 @@ void ui_state_recompute(ui_state_t *s)
     const uint8_t *scale = s_mode_scales[(uint8_t)s->mode % HARMONY_MODE_COUNT];
     for (uint8_t i = 0; i < UI_SCALE_STEPS; i++) {
         // LED scale display is anchored to the first key (no tonic offset).
-        uint8_t pc = mod12_u8((int16_t)scale[i]);
+        uint8_t pc = modify12_u8((int16_t)scale[i]);
         mask |= (uint16_t)(1U << pc);
     }
     s->scale_mask_12 = mask;

@@ -91,6 +91,8 @@ CFLAGS += -DUSB_INIT_DELAY_MS=$(USB_INIT_DELAY_MS)
 32U4_INCLUDES += -Isrc/32u4/SPI
 32U4_INCLUDES += -Isrc/32u4/UART
 32U4_INCLUDES += -Isrc/32u4/mcu_com
+32U4_INCLUDES += -Isrc/32u4/ui
+32U4_INCLUDES += -Isrc/32u4/harmony
 32U4_INCLUDES += -Isrc/shared
 
 # Linker flags
@@ -108,6 +110,8 @@ include src/328p/expander/expander.mk
 include src/32u4/SPI/SPI.mk
 include src/32u4/UART/UART.mk
 include src/32u4/mcu_com/mcu_com.mk
+include src/32u4/ui/ui.mk
+include src/32u4/harmony/harmony.mk
 
 ATMEGA328P_SRC = src/328p/atmega328p.c 
 ATMEGA328P_SRC += src/328p/tasks.c
@@ -126,12 +130,12 @@ ATMEGA328P_SRC += $(328P_SPI_SRC)
 
 ATMEGA32U4_SRC = src/32u4/main.c
 ATMEGA32U4_SRC += src/32u4/midi.c
-ATMEGA32U4_SRC += src/32u4/chord_engine.c
-ATMEGA32U4_SRC += src/32u4/harmony_resolver.c
 ATMEGA32U4_SRC += src/32u4/input_tracker.c
 ATMEGA32U4_SRC += src/32u4/usb.c
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(32U4_LINK_SRC)
+ATMEGA32U4_SRC += $(UI_SRC)
+ATMEGA32U4_SRC += $(HARMONY_SRC)
 
 
 # Output files in build folder
@@ -147,7 +151,7 @@ SIZE_TXT = $(BUILD_DIR)/size.txt
 MAKEFLAGS += --no-print-directory
 
 # Default target
-all: flash
+all: flash 
 
 #Note: using printf instead because it works the same on linux and windows
 # Ensure build directory exists

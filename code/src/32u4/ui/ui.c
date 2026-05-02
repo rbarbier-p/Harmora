@@ -102,7 +102,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
     if (encoder_id == UI_ENC_ID_BPM) {
         screen_engine_touch(&s_screen_engine, UI_SCENE_BPM, UI_SCENE_TIMEOUT_MS);
 
-        int16_t bpm = chord_engine_get_bpm() + (delta > 0 ? 1 : -1);
+        int16_t bpm = chord_engine_get_bpm() + (delta > 0 ? -1 : 1);
         if (bpm < 30) bpm = 30;
         if (bpm > 250) bpm = 250;
         chord_engine_set_bpm(bpm);
@@ -119,7 +119,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
 
         screen_engine_touch(&s_screen_engine, UI_SCENE_KEY, UI_SCENE_TIMEOUT_MS);
 
-        int16_t next = (int16_t)s_scene.pending_tonic_pc + (delta > 0 ? 1 : -1);
+        int16_t next = (int16_t)s_scene.pending_tonic_pc + (delta > 0 ? -1 : 1);
         while (next < 0) next += 12;
         while (next >= 12) next -= 12;
         s_scene.pending_tonic_pc = (uint8_t)next;
@@ -135,7 +135,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
 
         screen_engine_touch(&s_screen_engine, UI_SCENE_INSTRUMENT, UI_SCENE_TIMEOUT_MS);
 
-        int16_t prg = (int16_t)s_scene.pending_instrument_program + (delta > 0 ? 1 : -1);
+        int16_t prg = (int16_t)s_scene.pending_instrument_program + (delta > 0 ? -1 : 1);
         if (prg < 0) prg = 0;
         if (prg > 127) prg = 127;
         s_scene.pending_instrument_program = (uint8_t)prg;

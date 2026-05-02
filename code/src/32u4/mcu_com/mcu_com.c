@@ -70,12 +70,3 @@ void mcu_input_request(void) {
     append_byte(payload, &idx, CMD_INPUT_REQ);
     mcu_link_queue_display_frame(payload, idx);
 }
-
-void mos_send_string(const char *str)
-{
-    uint8_t payload[MCU_LINK_MAX_PAYLOAD];
-    uint8_t idx = 0;
-    append_byte(payload, &idx, CMD_CLEAR);
-    append_string_cmd_font(payload, &idx, 10, 10, MCU_LINK_FONT_SMALL, str);
-    mcu_link_queue_display_frame(payload, idx);
-}

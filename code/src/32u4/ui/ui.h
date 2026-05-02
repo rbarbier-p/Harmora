@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "harmony_resolver.h"
+#include "chord_engine.h"
 
 // Shared LED definitions (LED_COUNT + led_preset_t)
 #include "leds.h"
