@@ -91,3 +91,10 @@ uint8_t mcu_link_queue_display_frame(const uint8_t *payload, uint8_t payload_len
   SREG = sreg;
   return 1;
 }
+
+void mcu_input_request(void) {
+    uint8_t payload[10];
+    uint8_t idx = 0;
+    append_byte(payload, &idx, CMD_INPUT_REQ);
+    mcu_link_queue_display_frame(payload, idx);
+}

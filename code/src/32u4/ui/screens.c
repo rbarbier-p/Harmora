@@ -148,10 +148,30 @@ uint8_t screen_render_pattern(const ui_state_t *ui, const ui_scene_state_t *scen
     char l0[32];
     char l1[32];
     char l2[32];
+    char l3[32];
+    uint8_t before = scene->pending_pattern == 0 ? 2 : scene->pending_pattern - 1;
+    uint8_t after = scene->pending_pattern == 2 ? 0 : scene->pending_pattern + 1;
     (void)snprintf(l0, sizeof(l0), "PATTERN");
-    (void)snprintf(l1, sizeof(l1), "%s", pattern_name(scene->pending_pattern));
-    l2[0] = '\0';
-    return screen_put_3lines(l0, l1, l2);
+    (void)snprintf(l1, sizeof(l1), "%s", pattern_name(before));
+    (void)snprintf(l2, sizeof(l2), "-> %s", pattern_name(scene->pending_pattern));
+    (void)snprintf(l3, sizeof(l3), "%s", pattern_name(after));
+    uint8_t payload[MCU_LINK_MAX_PAYLOAD];
+    uint8_t idx = 0;
+
+    append_byte(payload, &idx, CMD_CLEAR);
+    if (!append_string_cmd_font(payload, &idx, 2, 8, MCU_LINK_FONT_SMALL, l0)) {
+        return 0;
+    }
+    if (!append_string_cmd_font(payload, &idx, 2, 24, MCU_LINK_FONT_SMALL, l1)) {
+        return 0;
+    }
+    if (!append_string_cmd_font(payload, &idx, 2, 40, MCU_LINK_FONT_SMALL, l2)) {
+        return 0;
+    }
+    if (!append_string_cmd_font(payload, &idx, 2, 56, MCU_LINK_FONT_SMALL, l3)) {
+        return 0;
+    }
+    return mcu_link_queue_display_frame(payload, idx);
 }
 
 uint8_t screen_render_chord(const ui_state_t *ui, const ui_scene_state_t *scene)

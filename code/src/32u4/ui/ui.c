@@ -94,7 +94,7 @@ void ui_chord_screen_on(char *chord_spelling)
 
 void ui_chord_screen_off(void)
 {
-    screen_engine_touch(&s_screen_engine, s_screen_engine.previous, UI_SCENE_TIMEOUT_MS);
+    screen_engine_touch(&s_screen_engine, s_screen_engine.previous, UI_SCENE_TIMEOUT_MS / 3);
     s_ui.dirty_display = 1;
 }
 
@@ -233,18 +233,21 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
     // Active: treat as "select" (commit) for select-style screens.
     if (target == UI_SCENE_KEY) {
         chord_engine_set_tonic(s_scene.pending_tonic_pc);
-        // chord_engine -> ui_set_tonic will mark dirties.
+        screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
+        //s_ui.dirty_display = 1; // not needed?
     } else if (target == UI_SCENE_PATTERN) {
         chord_engine_set_pattern(s_scene.pending_pattern);
-        s_ui.dirty_display = 1;
+        screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
     } else if (target == UI_SCENE_INSTRUMENT) {
         chord_engine_set_instrument(s_scene.pending_instrument_program);
-        s_ui.dirty_display = 1;
+        screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
     } else if (target == UI_SCENE_VOICING) {
         chord_engine_set_voicing(s_scene.pending_voicing);
-        s_ui.dirty_display = 1;
-    } else {
-        // BPM: no select action needed.
+        screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
+    } else if (target == UI_SCENE_BPM) {
+        screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
+    } else if (target == UI_SCENE_VOLUME) {
+        screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
     }
 }
 

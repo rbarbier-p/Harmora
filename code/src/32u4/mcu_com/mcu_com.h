@@ -7,7 +7,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "SPI.h"
-#include "input_tracker.h"
 
 #include "../../shared/mcu_link.h"
 
@@ -71,9 +70,5 @@ void rx_reset(void);
 uint8_t append_string_cmd(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, const char *text);
 uint8_t append_string_cmd_font(uint8_t *payload, uint8_t *idx, uint8_t x, uint8_t y, uint8_t font_id, const char *text);
 void append_byte(uint8_t *buf, uint8_t *idx, uint8_t value);
-
-//mcu_com.c
-uint8_t send_input_change_debug_frame(const input_change_t *change);
-void mos_send_string(const char *str);
 
 #endif

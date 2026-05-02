@@ -3,7 +3,6 @@
 #include "SPI.h"
 #include "mcu_com.h"
 #include "chord_engine.h"
-#include "input_tracker.h"
 #include "ui/ui.h"
 
 #include <stdio.h>
@@ -31,12 +30,10 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
         if (evt == EVT_KEY) {
             uint8_t key_id = payload[i];
             uint8_t pressed = payload[i + 1];
-            input_tracker_update_key(key_id, pressed);
             chord_engine_handle_key_event(key_id, pressed);
         } else if (evt == EVT_ENCODER_ROTATION) {
             uint8_t encoder_id = payload[i];
             int8_t delta = (int8_t)payload[i + 1];
-            input_tracker_update_encoder(encoder_id, delta);
             ui_handle_encoder_turn(encoder_id, delta);
         } else if (evt == EVT_ENCODER_PRESS) {
             uint8_t encoder_id = payload[i];
@@ -45,21 +42,13 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
         } else if (evt == EVT_BUTTON) {
             uint8_t button_id = payload[i];
             uint8_t pressed = payload[i + 1];
-            input_tracker_update_button(button_id, pressed);
             chord_engine_handle_button_event(button_id, pressed);
-            //send button id
-            char msg[20];
-            (void)snprintf(msg, sizeof(msg), "btn %u", (unsigned)button_id);
-            midi_debug(msg);
 
         } else if (evt == EVT_POT) {
-            uint8_t pot_id = payload[i];
-            uint8_t value = payload[i + 1];
-            input_tracker_update_pot(pot_id, value);
+            //uint8_t pot_id = payload[i];
+            //uint8_t value = payload[i + 1];
+            //input_tracker_update_pot(pot_id, value);
         }
-        char msg[10];
-        (void)snprintf(msg, sizeof(msg), "evt %u", (unsigned)evt);
-        midi_debug(msg);
 
         i = (uint8_t)(i + param_len);
     }
@@ -108,7 +97,6 @@ int main(void)
     mcu_link_init();
     ui_init();
     chord_engine_init();
-    input_tracker_init();
     
     mcu_input_request();
 
