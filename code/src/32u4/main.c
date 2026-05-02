@@ -52,9 +52,11 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             }
 
         } else if (evt == EVT_POT) {
+            midi_debug("pot event!");
             uint8_t pot_id = payload[i];
             uint8_t value = payload[i + 1];
             input_tracker_update_pot(pot_id, value);
+            mcu_set_vpot(CC_REVERB, value);
         }
 
         i = (uint8_t)(i + param_len);

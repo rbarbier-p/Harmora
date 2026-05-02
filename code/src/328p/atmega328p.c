@@ -125,6 +125,9 @@ void debug_key_velocity(uint8_t key, uint8_t x, uint8_t y)
     input_state_update_key(key_to_note[key], is_pressed);
     if (!is_pressed)
     {
+        vels[key] = 0;
+        velocities[key] = 0;
+        pressed_time[key] = 0;
         was_bottomed = false;
         return;
     }
@@ -181,6 +184,20 @@ int main(void) {
       display_clear();
 
 #if !defined(DEBUG)
+      task_display_raw_velocity(7, 5, 0);
+      task_display_raw_velocity(6, 5, 10);
+      task_display_raw_velocity(5, 5, 20);
+      task_display_raw_velocity(4, 5, 30);
+      task_display_raw_velocity(3, 5, 40);
+      task_display_raw_velocity(2, 5, 50);
+      task_display_raw_velocity(1, 65, 0);
+      task_display_raw_velocity(0, 65, 10);
+      task_display_raw_velocity(8, 65, 20);
+      task_display_raw_velocity(9, 65, 30);
+      task_display_raw_velocity(10, 65, 40);
+      task_display_raw_velocity(11, 65, 50);
+
+      /*
       input_display_key_velocity(7, 5, 0);
       input_display_key_velocity(6, 5, 10);
       input_display_key_velocity(5, 5, 20);
@@ -193,23 +210,25 @@ int main(void) {
       input_display_key_velocity(9, 65, 30);
       input_display_key_velocity(10, 65, 40);
       input_display_key_velocity(11, 65, 50);
+      */
 #endif
 
 #if defined(DEBUG)
 
-      debug_key_velocity(7, 5, 0);
+      const uint8_t key = 6;
+      debug_key_velocity(key, 5, 0);
       /*
       debug_key_velocity(6, 5, 20);
       debug_key_velocity(5, 5, 40);
       */
       char text[15];
-      snprintf(text, 13, "%u", pressed_time[7]);
+      snprintf(text, 13, "%u", pressed_time[key]);
       display_draw_string(5, 0, text);
-      snprintf(text, 13, "%u", bottom_time[7]);
+      snprintf(text, 13, "%u", bottom_time[key]);
       display_draw_string(65, 0, text);
-      snprintf(text, 15, "%lu", vels[7]);
+      snprintf(text, 15, "%lu", vels[key]);
       display_draw_string(5, 10, text);
-      snprintf(text, 15, "%i", velocities[7]);
+      snprintf(text, 15, "%i", velocities[key]);
       display_draw_string(65, 10, text);
       /*
       snprintf(text, 15, "%i", velocities[6]);
