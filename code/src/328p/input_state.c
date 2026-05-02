@@ -11,15 +11,44 @@ void input_state_init(void) {
   memset(&g_input_state, 0, sizeof(input_state_t));
 }
 
-void input_state_update_key(uint8_t key_id, uint8_t is_pressed, uint8_t velocity) {
+//tmp function
+#include "display.h"
+void input_display_key_velocity(uint8_t key, uint8_t x, uint8_t y)
+{
+
+    /*
+      static const uint8_t key_to_channel[12] = {
+        0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15
+      };
+      */
+    char buffer[8] = "  :    ";
+    buffer[0] = key / 10 % 10 + '0';
+    buffer[1] = key % 10 + '0';
+    uint8_t velocity = g_input_state.keys.velocity[key];
+    buffer[4] = velocity / 100 % 10 + '0';
+    buffer[5] = velocity / 10 % 10 + '0';
+    buffer[6] = velocity % 10 + '0';
+    buffer[7] = '\0';
+    display_draw_string(x, y, buffer);
+
+}
+
+bool input_key_is_already_pressed(uint8_t key_id)
+{
+  key_state_t *keys = &g_input_state.keys;
+  uint16_t mask = (1U << key_id);
+
+  return ((keys->pressed & mask) ? 1 : 0);
+}
+        
+
+void input_state_update_key(uint8_t key_id, uint8_t is_pressed) {
   if (key_id >= KEY_COUNT)
     return;
 
   key_state_t *keys = &g_input_state.keys;
   uint16_t mask = (1U << key_id);
 
-  // Store velocity
-  keys->velocity[key_id] = velocity;
 
   // Get current state
   uint8_t was_pressed = (keys->pressed & mask) ? 1 : 0;
@@ -35,6 +64,19 @@ void input_state_update_key(uint8_t key_id, uint8_t is_pressed, uint8_t velocity
 
     keys->changed |= mask;
   }
+}
+void input_state_update_key_velocity(uint8_t key, uint8_t key_id, uint8_t velocity)
+{
+    if (key_id >= KEY_COUNT || key >= KEY_COUNT)
+        return;
+
+  key_state_t *keys = &g_input_state.keys;
+
+  if (keys->velocity[key] == 0 && velocity <= 3) // small threshold
+      return;
+  if (keys->velocity[key] == velocity)
+      return;
+  keys->velocity[key] = velocity;
 }
 
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta) {

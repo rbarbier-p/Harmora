@@ -27,12 +27,12 @@ ifeq ($(UNAME),Darwin)
 else ifeq ($(UNAME),windows)
 	PLATFORM = windows
 	BOOTLOADER_PORT := COM12
-	USB_PORT := COM15
+	USB_PORT := COM13
 	ISP_PROTOCOL = arduino
 else ifeq ($(UNAME),MSYS_NT-10.0-26200) 
 	PLATFORM = windows
 	BOOTLOADER_PORT := COM12
-	USB_PORT := COM15
+	USB_PORT := COM13
 	ISP_PROTOCOL = arduino
 endif
 
@@ -196,6 +196,7 @@ endif
 isp: $(ATMEGA32U4_HEX) $(BUILD_DIR)
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ISP_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 
+
 32u4: $(ATMEGA32U4_HEX)
 	@$(MAKE) reset-board
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(BOOTLOADER_PORT) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
@@ -219,6 +220,8 @@ flash: $(ATMEGA328P_HEX) $(ATMEGA32U4_HEX) $(ISP_HEX)
 	$(AVRDUDE) -p $(ATMEGA32U4_MCU) -c $(ATMEGA32U4_PROTOCOL) -P $(call devpath,$(BOOTLOADER_PORT)) -b $(BAUD) -U flash:w:$(ATMEGA32U4_HEX):i
 	@printf "$(PURPLE)Flashed atmega32u4 code! $(RESET)\n"
 
+debug: CFLAGS += -DDEBUG
+debug: all
 
 # Print flash and RAM usage only (no Program/Data lines)
 # Uses POSIX-compatible awk (works on both GNU awk and BSD awk on macOS)

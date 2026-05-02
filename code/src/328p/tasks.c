@@ -22,21 +22,20 @@ static SoftSPI_t led_spi;
 static uint8_t led_initialized = 0;
 
 void task_hall_scan(void) {
-    /*
+     /*
   // Rene's board
   static uint8_t press_threshold[12] = {
     122, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
     82, 89, 86, 87,
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
-    */
+  */
    // Malo's board (10 lower than unpressed key)
   static uint8_t press_threshold[12] = {
-      105, 108, 116, 105,
-      95, 101, 99, 119,
-      92, 103, 108, 117 
+      108, 112, 120, 109,
+      101, 105, 104, 123,
+      97, 109, 113, 119 
   }; // Pre-calibrated thresholds for each key
-  
   // Channel mapping array (12 bytes in FLASH)
   static const uint8_t key_to_channel[12] = {
     0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15
@@ -51,6 +50,13 @@ void task_hall_scan(void) {
       0, 0, 0, 0,
       0, 0, 0, 0
   };
+  
+  static uint16_t last_time[12] = {
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      0, 0, 0, 0
+  };
+ 
 
   // Scan all 12 keys
   adc_select_channel(7);
@@ -59,16 +65,26 @@ void task_hall_scan(void) {
     _delay_us(10);  // Mux settling time
     adc_read();
     uint8_t value = adc_read();
+    uint16_t time = stopwatch_read();
     
     // Determine if key is currently pressed (hall sensor goes LOW when pressed)
     uint8_t is_pressed = (value < press_threshold[key]);
-    
-    // Update key state (handles change detection internally)
-    uint8_t velocity = 0;
-    if (prev_value[key] != 0)
-        velocity = abs((int16_t)value - (int16_t)prev_value[key]);
 
-    input_state_update_key(key_to_note[key], is_pressed, velocity);
+    
+    if (prev_value[key] != 0  && last_time[key] != 0
+            && !input_key_is_already_pressed(key_to_note[key]))
+    {
+        uint16_t distance = abs((int16_t)value - (int16_t)prev_value[key]); 
+        uint32_t elapsed_time = stopwatch_elapsed(last_time[key], time);
+        uint32_t velocity = (distance * 1000000UL) / (elapsed_time);
+        task_display_update();
+        input_state_update_key_velocity(key, key_to_note[key], (uint8_t)velocity);
+    }
+    last_time[key] = time;
+    prev_value[key] = value;
+    // Update key state (handles change detection internally)
+    input_state_update_key(key_to_note[key], is_pressed);
+
   }
 }
 

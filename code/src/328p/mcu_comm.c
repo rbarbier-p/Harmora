@@ -315,6 +315,10 @@ void mcu_comm_send_inputs(void) {
     mcu_comm_write_byte(s_seq++);
     mcu_comm_write_byte(payload_len);
 
+
+      static const uint8_t key_to_note[12] = { // this could be in the 32u4
+        1, 11, 9, 7, 5, 4, 2, 0, 3, 6, 8, 10
+      };
     // --- Events ---
     // Keep sending in a fixed order; if we run out of payload budget, leave
     // remaining dirty flags set for the next task tick.
@@ -322,11 +326,12 @@ void mcu_comm_send_inputs(void) {
 
     if (g_input_state.keys.changed != 0) {
         for (uint8_t i = 0; i < KEY_COUNT; i++) {
-            uint16_t mask = (1U << i);
-            if ((g_input_state.keys.changed & mask) && budget >= 3) {
+            uint16_t mask = (1U << key_to_note[i]);
+            if ((g_input_state.keys.changed & mask) && budget >= 4) {
                 mcu_comm_write_byte(EVT_KEY);
-                mcu_comm_write_byte(i);
-                mcu_comm_write_byte((g_input_state.keys.pressed >> i) & 1);
+                mcu_comm_write_byte(key_to_note[i]);
+                mcu_comm_write_byte((g_input_state.keys.pressed >> key_to_note[i]) & 1);
+                //HERE: miss match maybe
                 mcu_comm_write_byte((g_input_state.keys.velocity[i]));
                 g_input_state.keys.changed &= (uint16_t)~mask;
                 budget -= 4;
