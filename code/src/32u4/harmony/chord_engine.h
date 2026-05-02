@@ -143,18 +143,6 @@ typedef struct {
 void chord_engine_init(void);
 void chord_engine_tick(uint8_t elapsed_ms);
 
-void chord_engine_set_bpm(uint16_t bpm);
-void chord_engine_set_voicing(chord_voicing_t voicing);
-void chord_engine_set_pattern(play_pattern_t pattern);
-void chord_engine_set_velocity(uint8_t velocity);
-void chord_engine_adjust_octave(int8_t delta);
-void chord_engine_set_mode(harmony_mode_t mode);
-void chord_engine_set_tonic(uint8_t tonic_pc);
-
-uint8_t chord_engine_get_bpm(void);
-uint8_t chord_engine_get_tonic(void);
-uint8_t chord_engine_get_voicing(void);
-uint8_t chord_engine_get_chord_mode(void);
 
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed);
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed);
@@ -173,5 +161,21 @@ void mode_set_hold(harmony_mode_t mode, uint8_t held);
 int8_t mode_from_button(uint8_t button_id, harmony_mode_t *out);
 uint8_t mod12_u8(int16_t v);
 
+void chord_engine_set_bpm(uint16_t bpm);
+void chord_engine_set_voicing(chord_voicing_t voicing);
+void chord_engine_set_pattern(play_pattern_t pattern);
+void chord_engine_set_velocity(uint8_t velocity);
+void chord_engine_adjust_octave(int8_t delta);
+void chord_engine_set_mode(harmony_mode_t mode);
+void chord_engine_set_tonic(uint8_t tonic_pc);
+void chord_engine_set_instrument(uint8_t instrument);
+
+uint8_t chord_engine_get_bpm(void);
+uint8_t chord_engine_get_tonic(void);
+uint8_t chord_engine_get_voicing(void);
+uint8_t chord_engine_get_chord_mode(void);
+uint8_t chord_engine_get_instrument(void);
+uint8_t chord_engine_get_pattern(void);
+char *chord_engine_get_chord_spelling(void);
 
 #endif // CHORD_ENGINE_H

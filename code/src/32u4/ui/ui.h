@@ -39,18 +39,14 @@ typedef struct {
     uint16_t timeout_ms;
 
     // Parameters owned by UI (for now)
-    uint8_t instrument_bank;
-    uint8_t instrument_program;
+    //uint8_t instrument_bank;
+    //uint8_t instrument_program;
 
     // Pending selections (for "select"-style screens)
     uint8_t pending_tonic_pc;
     uint8_t pending_pattern;
     uint8_t pending_instrument_program;
     uint8_t pending_voicing;
-
-    // Mirror of chord_engine pattern (0=block,1=up,2=down)
-    uint8_t pattern;
-    uint8_t voicing;
 } ui_scene_state_t;
 
 // -----------------------------------------------------------------------------
@@ -69,7 +65,6 @@ typedef struct {
 // Edit these to match your APA102 chain order.
 //
 // Convention: define flats (Db/Eb/Gb/Ab/Bb) as the source of truth,
-// and provide sharp aliases below.
 #define UI_LED_ID_PC_C   11
 #define UI_LED_ID_PC_DB  4
 #define UI_LED_ID_PC_D   10
@@ -83,9 +78,11 @@ typedef struct {
 #define UI_LED_ID_PC_BB  0
 #define UI_LED_ID_PC_B   5
 
-// Enharmonic aliases (so you can write CS/FS if you prefer)
+// Enharmonic aliases
 #define UI_LED_ID_PC_CS  UI_LED_ID_PC_DB
 #define UI_LED_ID_PC_FS  UI_LED_ID_PC_GB
+#define UI_LED_ID_PC_GS  UI_LED_ID_PC_AB
+#define UI_LED_ID_PC_AS  UI_LED_ID_PC_BB
 
 // ----- Mode button LEDs (harmony_mode_t order) -----
 // TODO: Replace placeholder indices.
@@ -179,8 +176,11 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta);
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed);
 
 // Chord overlay API (called from chord_engine)
-void ui_set_chord_overlay(uint8_t active);
-void ui_set_chord_spelling(const char *text);
+//void ui_set_chord_overlay(uint8_t active);
+//void ui_set_chord_spelling(const char *text);
+
+void ui_chord_screen_on(char *chord_spelling);
+void ui_chord_screen_off(void);
 
 // State mutation API (called by chord engine / menu engine / etc.)
 void ui_set_tonic(uint8_t tonic_pc);
@@ -194,7 +194,6 @@ void ui_set_extensions(uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
 // -----------------------------------------------------------------------------
 
 void ui_state_init(ui_state_t *s);
-void ui_state_set_tonic(ui_state_t *s, uint8_t tonic_pc);
 void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode);
 void ui_state_set_mode_locked(ui_state_t *s, harmony_mode_t mode);
 void ui_state_set_mode_held(ui_state_t *s, harmony_mode_t mode, uint8_t held);

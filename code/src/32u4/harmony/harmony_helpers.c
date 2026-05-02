@@ -9,6 +9,7 @@ extern uint8_t s_mode_hold_active;
 extern uint8_t s_velocity;
 extern int8_t s_keyboard_transpose;
 extern int8_t s_octave_offset;
+extern char *s_chord_spelling;
 
 uint8_t midi_note_clamp_u7(int16_t note)
 {
@@ -61,6 +62,11 @@ void chord_engine_set_voicing(chord_voicing_t voicing)
         return;
     }
     s_settings_ctx.chord_voicing = voicing;
+}
+
+void chord_engine_set_instrument(uint8_t instrument) {
+    s_settings_ctx.instrument = instrument;
+    // ==================TODO: Send MIDI program change when implemented.
 }
 
 void chord_engine_set_bpm(uint16_t bpm)
@@ -130,6 +136,14 @@ void chord_engine_set_tonic(uint8_t tonic_pc)
     }
     s_keyboard_transpose = t;
 }
+
+uint8_t chord_engine_get_bpm(void) { return s_settings_ctx.bpm; }
+uint8_t chord_engine_get_tonic(void) { return s_harmony_ctx.tonic_pc; }
+uint8_t chord_engine_get_voicing(void) { return s_settings_ctx.chord_voicing; }
+uint8_t chord_engine_get_instrument(void) { return s_settings_ctx.instrument; }
+uint8_t chord_engine_get_chord_mode(void) { return s_settings_ctx.chord_mode_enabled; }
+uint8_t chord_engine_get_pattern(void) { return s_settings_ctx.playing_pattern; }
+char *chord_engine_get_chord_spelling(void) { return s_chord_spelling; }
 
 int8_t mode_from_button(uint8_t button_id, harmony_mode_t *out)
 {

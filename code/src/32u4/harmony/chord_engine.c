@@ -14,6 +14,7 @@ settings_context_t s_settings_ctx;
 
 uint8_t s_velocity = 96;
 int8_t s_octave_offset = 0;
+char s_chord_spelling[20];
 
 // Keyboard mapping transpose in semitones (signed).
 // This is applied to the generated MIDI notes, and also to the pitch class used
@@ -108,11 +109,6 @@ static const play_pattern_def_t s_patterns[PLAY_PATTERN_COUNT] = {
     },
 };
 
-uint8_t chord_engine_get_bpm(void) { return s_settings_ctx.bpm; }
-uint8_t chord_engine_get_tonic(void) { return s_harmony_ctx.tonic_pc; }
-uint8_t chord_engine_get_voicing(void) { return s_settings_ctx.chord_voicing; }
-uint8_t chord_engine_get_chord_mode(void) { return s_settings_ctx.chord_mode_enabled; }
-
 static uint8_t any_chord_active(void)
 {
     for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
@@ -138,8 +134,8 @@ static inline char* append(char *p, const char *s) {
     return p;
 }
 
-void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
-    char *p = out;
+void spell_chord(uint8_t key_id, const harmony_intervals_t *h) {
+    char *p = s_chord_spelling;
 
     // ---- Root ----
     p = append(p, note_names[key_id % 12]);
@@ -221,10 +217,7 @@ void spell_chord(char *out,uint8_t key_id, const harmony_intervals_t *h) {
     if (nat13) p = append(p, has7 ? "13" : "(add13)");
     if (b13)   p = append(p, has7 ? "@13" : "(add@13)");
 
-    midi_debug(out);
-
-    // UI overlay spelling (best-effort, async)
-    ui_set_chord_spelling(out);
+    ui_chord_screen_on(s_chord_spelling);
 }
 
 
@@ -279,9 +272,8 @@ static void chord_stop(held_chord_t *slot)
     slot->arp_index = 0;
     slot->arp_accum_ms = 0;
 
-    // If this was the last active chord, drop the overlay.
     if (!any_chord_active()) {
-        ui_set_chord_overlay(0);
+        ui_chord_screen_off();
     }
 }
 
@@ -338,15 +330,16 @@ static void chord_start(uint8_t key_id)
     }
 
     // Ensure overlay is visible while any chord is active.
-    ui_set_chord_overlay(1);
+    //ui_set_chord_overlay(1);
 
-    char resolved_str[32];
     if (s_settings_ctx.playing_pattern == PLAY_PATTERN_BLOCK) {
         chord_play_block(slot);
     } else {
         chord_play_arp_seed(slot);
     }
-    spell_chord(resolved_str, (uint8_t)trans_pc, &resolved);
+
+    spell_chord((uint8_t)trans_pc, &resolved);
+
 }
 
 static void select_triad(triad_type_t triad, uint8_t pressed) {

@@ -36,6 +36,13 @@ static const char *pattern_name(uint8_t pattern)
     }
 }
 
+static char *s_chord_spelling;
+
+void set_chord_spelling(char *text)
+{   
+    s_chord_spelling = text;
+}
+
 static uint8_t screen_put_3lines(const char *l0, const char *l1, const char *l2)
 {
     uint8_t payload[MCU_LINK_MAX_PAYLOAD];
@@ -54,7 +61,7 @@ static uint8_t screen_put_3lines(const char *l0, const char *l1, const char *l2)
     return mcu_link_queue_display_frame(payload, idx);
 }
 
-uint8_t screen_render_main(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_clear(const ui_state_t *ui, const ui_scene_state_t *scene)
 {
     /*char l0[32];
     char l1[32];
@@ -130,8 +137,8 @@ uint8_t screen_render_instrument(const ui_state_t *ui, const ui_scene_state_t *s
     char l1[32];
     char l2[32];
     (void)snprintf(l0, sizeof(l0), "INSTR");
-    (void)snprintf(l1, sizeof(l1), "BANK %u", (unsigned)scene->instrument_bank);
-    (void)snprintf(l2, sizeof(l2), "PRG %u", (unsigned)scene->pending_instrument_program);
+    (void)snprintf(l1, sizeof(l1), "PRG %u", (unsigned)scene->pending_instrument_program);
+    l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
 }
 
@@ -159,7 +166,8 @@ uint8_t screen_render_chord(const ui_state_t *ui, const ui_scene_state_t *scene)
 
     // The overlay text is drawn by ui.c through mcu_com helpers, so here we
     // just provide a placeholder in case it's called directly.
-    return screen_put_3lines("CHORD", "", "");
+    //char *spelling = chord_engine_get_chord_spelling();
+    return screen_put_3lines("CHORD", s_chord_spelling, "");
 }
 
 uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_scene_state_t *scene)
@@ -179,8 +187,7 @@ uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_s
             return screen_render_volume(ui, scene);
         case UI_SCENE_CHORD:
             return screen_render_chord(ui, scene);
-        case UI_SCENE_MAIN:
         default:
-            return screen_render_main(ui, scene);
+            return screen_render_clear(ui, scene);
     }
 }

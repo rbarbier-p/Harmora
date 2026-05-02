@@ -20,14 +20,16 @@ void screen_engine_touch(screen_engine_t *se, ui_scene_id_t screen_id, uint16_t 
     }
 
     // If an overlay is active, keep it; just update what we return to.
-    if (se->overlay_active) {
+    /*if (se->overlay_active) {
         se->overlay_return = screen_id;
         se->timeout_ms = timeout_ms;
         return;
-    }
+    }*/
 
-    se->previous = se->current;
-    se->current = screen_id;
+    if (screen_id != se->current) {
+        se->previous = se->current;
+        se->current = screen_id;
+    }
     se->timeout_ms = timeout_ms;
 }
 
@@ -49,6 +51,12 @@ void screen_engine_tick(screen_engine_t *se, uint16_t elapsed_ms)
         return;
     }
 
+    // If no timeout, stay on current screen indefinitely.
+    if (se->timeout_ms == 0) {
+        return;
+    }
+
+    // if timeout not expired, decrement and return.
     if (se->timeout_ms > elapsed_ms) {
         se->timeout_ms = (uint16_t)(se->timeout_ms - elapsed_ms);
         return;
@@ -96,8 +104,8 @@ ui_scene_id_t screen_engine_active_screen(const screen_engine_t *se)
     if (!se) {
         return UI_SCENE_MAIN;
     }
-    if (se->overlay_active) {
+    /*if (se->overlay_active) {
         return se->overlay;
-    }
+    }*/
     return se->current;
 }

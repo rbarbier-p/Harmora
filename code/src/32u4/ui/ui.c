@@ -14,9 +14,6 @@ static ui_leds_t s_leds;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
 
-static uint8_t s_chord_overlay_active = 0;
-static char s_chord_spelling[32] = {0};
-
 // Temporary encoder mapping until a proper scene/screen system exists.
 // 0: tonic (pitch class)
 // 1: mode (Ionian..Locrian)
@@ -62,13 +59,9 @@ void ui_init(void)
 
     s_scene.active = UI_SCENE_MAIN;
     s_scene.timeout_ms = 0;
-    s_scene.instrument_bank = 0;
-    s_scene.instrument_program = 0;
-    s_scene.pattern = 0;
-
     s_scene.pending_tonic_pc = 0;
-    s_scene.pending_pattern = s_scene.pattern;
-    s_scene.pending_instrument_program = s_scene.instrument_program;
+    s_scene.pending_pattern = 0;
+    s_scene.pending_instrument_program = 0;
 }
 
 void ui_set_mode(harmony_mode_t mode)
@@ -89,6 +82,20 @@ void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
 void ui_set_extensions(uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
 {
     ui_state_set_extensions(&s_ui, ext7, ext9, ext11, ext13);
+}
+
+// Called from chord engine when any chord is active
+void ui_chord_screen_on(char *chord_spelling)
+{
+    set_chord_spelling(chord_spelling);
+    screen_engine_touch(&s_screen_engine, UI_SCENE_CHORD, 0);
+    s_ui.dirty_display = 1;
+}
+
+void ui_chord_screen_off(void)
+{
+    screen_engine_touch(&s_screen_engine, s_screen_engine.previous, UI_SCENE_TIMEOUT_MS);
+    s_ui.dirty_display = 1;
 }
 
 void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
@@ -130,7 +137,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
     if (encoder_id == UI_ENC_ID_INSTRUMENT) {
         // "Select" behavior: rotate updates pending program; press commits.
         if (active_screen != UI_SCENE_INSTRUMENT) {
-            s_scene.pending_instrument_program = s_scene.instrument_program;
+            s_scene.pending_instrument_program = chord_engine_get_instrument();
         }
 
         screen_engine_touch(&s_screen_engine, UI_SCENE_INSTRUMENT, UI_SCENE_TIMEOUT_MS);
@@ -147,7 +154,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
     if (encoder_id == UI_ENC_ID_PATTERN) {
         // "Select" behavior: rotate updates pending pattern; press commits.
         if (active_screen != UI_SCENE_PATTERN) {
-            s_scene.pending_pattern = s_scene.pattern;
+            s_scene.pending_pattern = chord_engine_get_pattern();
         }
 
         screen_engine_touch(&s_screen_engine, UI_SCENE_PATTERN, UI_SCENE_TIMEOUT_MS);
@@ -211,9 +218,9 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         if (target == UI_SCENE_KEY) {
             s_scene.pending_tonic_pc = chord_engine_get_tonic();
         } else if (target == UI_SCENE_PATTERN) {
-            s_scene.pending_pattern = s_scene.pattern;
+            s_scene.pending_pattern = chord_engine_get_pattern();
         } else if (target == UI_SCENE_INSTRUMENT) {
-            s_scene.pending_instrument_program = s_scene.instrument_program;
+            s_scene.pending_instrument_program = chord_engine_get_instrument();
         } else if (target == UI_SCENE_VOICING) {
             s_scene.pending_voicing = chord_engine_get_voicing();
         }
@@ -228,52 +235,16 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         chord_engine_set_tonic(s_scene.pending_tonic_pc);
         // chord_engine -> ui_set_tonic will mark dirties.
     } else if (target == UI_SCENE_PATTERN) {
-        s_scene.pattern = s_scene.pending_pattern;
-        chord_engine_set_pattern((play_pattern_t)s_scene.pattern);
+        chord_engine_set_pattern(s_scene.pending_pattern);
         s_ui.dirty_display = 1;
     } else if (target == UI_SCENE_INSTRUMENT) {
-        s_scene.instrument_program = s_scene.pending_instrument_program;
-        // TODO: Send MIDI program change when implemented.
+        chord_engine_set_instrument(s_scene.pending_instrument_program);
         s_ui.dirty_display = 1;
     } else if (target == UI_SCENE_VOICING) {
-        chord_engine_set_voicing((chord_voicing_t)s_scene.pending_voicing);
+        chord_engine_set_voicing(s_scene.pending_voicing);
         s_ui.dirty_display = 1;
     } else {
         // BPM: no select action needed.
-    }
-}
-
-void ui_set_chord_overlay(uint8_t active)
-{
-    active = active ? 1 : 0;
-    if (active == s_chord_overlay_active) {
-        return;
-    }
-    s_chord_overlay_active = active;
-
-    if (active) {
-        screen_engine_overlay_on(&s_screen_engine, UI_SCENE_CHORD);
-    } else {
-        screen_engine_overlay_off(&s_screen_engine);
-    }
-    s_ui.dirty_display = 1;
-}
-
-void ui_set_chord_spelling(const char *text)
-{
-    // Copy into fixed buffer (avoid libc surprises).
-    uint8_t i = 0;
-    if (!text) {
-        s_chord_spelling[0] = '\0';
-    } else {
-        for (; i < (uint8_t)(sizeof(s_chord_spelling) - 1) && text[i]; i++) {
-            s_chord_spelling[i] = text[i];
-        }
-        s_chord_spelling[i] = '\0';
-    }
-
-    if (s_chord_overlay_active) {
-        s_ui.dirty_display = 1;
     }
 }
 
@@ -301,21 +272,7 @@ void ui_tick(uint8_t elapsed_ms)
     }
 
     if (s_ui.dirty_display) {
-        if (s_scene.active == UI_SCENE_CHORD) {
-            // Render chord overlay directly so we can show the latest spelling.
-            uint8_t payload[MCU_LINK_MAX_PAYLOAD];
-            uint8_t idx = 0;
-            append_byte(payload, &idx, CMD_CLEAR);
-            if (!append_string_cmd_font(payload, &idx, 2, 8, MCU_LINK_FONT_SMALL, "CHORD")) {
-                return;
-            }
-            if (!append_string_cmd_font(payload, &idx, 2, 28, MCU_LINK_FONT_BIG, s_chord_spelling)) {
-                return;
-            }
-            if (!mcu_link_queue_display_frame(payload, idx)) {
-                return;
-            }
-        } else if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
+        if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
             return;
         }
         s_ui.dirty_display = 0;

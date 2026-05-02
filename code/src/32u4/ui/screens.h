@@ -10,7 +10,7 @@
 
 uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_scene_state_t *scene);
 
-uint8_t screen_render_main(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_clear(const ui_state_t *ui, const ui_scene_state_t *scene);
 uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene);
 uint8_t screen_render_key(const ui_state_t *ui, const ui_scene_state_t *scene);
 uint8_t screen_render_instrument(const ui_state_t *ui, const ui_scene_state_t *scene);
@@ -18,5 +18,7 @@ uint8_t screen_render_pattern(const ui_state_t *ui, const ui_scene_state_t *scen
 uint8_t screen_render_chord(const ui_state_t *ui, const ui_scene_state_t *scene);
 uint8_t screen_render_voicings(const ui_state_t *ui, const ui_scene_state_t *scene);
 uint8_t screen_render_volume(const ui_state_t *ui, const ui_scene_state_t *scene);
+
+void set_chord_spelling(char *text);
 
 #endif // UI_SCREENS_H
