@@ -35,6 +35,7 @@
 
 #define BUTTON_CHORD_MODE 24
 #define BUTTON_BASS_MODE 22
+#define BUTTON_SWITCH 23 // still no function for it
 
 #define BUTTON_MODE_IONIAN 21
 #define BUTTON_MODE_DORIAN 20
@@ -142,8 +143,6 @@ typedef struct {
 // chord_engine.c
 void chord_engine_init(void);
 void chord_engine_tick(uint8_t elapsed_ms);
-
-
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed);
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed);
 void chord_engine_all_notes_off(void);

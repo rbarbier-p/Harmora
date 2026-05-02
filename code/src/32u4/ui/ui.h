@@ -38,10 +38,6 @@ typedef struct {
     ui_scene_id_t active;
     uint16_t timeout_ms;
 
-    // Parameters owned by UI (for now)
-    //uint8_t instrument_bank;
-    //uint8_t instrument_program;
-
     // Pending selections (for "select"-style screens)
     uint8_t pending_tonic_pc;
     uint8_t pending_pattern;
@@ -204,7 +200,16 @@ void ui_leds_init(ui_leds_t *leds);
 void ui_render_leds(const ui_state_t *s, const ui_led_map_t *map, ui_leds_t *out);
 uint8_t ui_flush_leds(ui_leds_t *leds);
 
-// Display flushing is handled by the screens module.
-// (ui_render.c only handles LEDs)
+// screens.c
+uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_clear(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_key(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_instrument(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_pattern(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_chord(void);
+uint8_t screen_render_voicings(const ui_state_t *ui, const ui_scene_state_t *scene);
+uint8_t screen_render_volume(const ui_state_t *ui, const ui_scene_state_t *scene);
+void set_chord_spelling(char *text);
 
 #endif // UI_H

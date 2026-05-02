@@ -2,7 +2,6 @@
 
 #include "chord_engine.h"
 #include "screen_engine.h"
-#include "screens.h"
 
 #include "mcu_com.h" // append_byte/append_string_cmd + mcu_link_queue_display_frame
 
@@ -195,19 +194,19 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
     ui_scene_id_t target;
 
     if (encoder_id == UI_ENC_ID_BPM) {
-        target = UI_SCENE_BPM; midi_debug("BPM");
+        target = UI_SCENE_BPM;
     } else if (encoder_id == UI_ENC_ID_KEY) {
-        target = UI_SCENE_KEY; midi_debug("KEY");
+        target = UI_SCENE_KEY;
     } else if (encoder_id == UI_ENC_ID_INSTRUMENT) {
-        target = UI_SCENE_INSTRUMENT; midi_debug("INST");
+        target = UI_SCENE_INSTRUMENT;
     } else if (encoder_id == UI_ENC_ID_PATTERN) {
-        target = UI_SCENE_PATTERN; midi_debug("PATTERN");
+        target = UI_SCENE_PATTERN;
     } else if (encoder_id == UI_ENC_ID_VOICING) {
-        target = UI_SCENE_VOICING; midi_debug("VOICINGS");
+        target = UI_SCENE_VOICING;
     } else if (encoder_id == UI_ENC_ID_VOLUME) {
-        target = UI_SCENE_VOLUME; midi_debug("VOLUME");
+        target = UI_SCENE_VOLUME;
     } else {
-        midi_debug("else...");
+        midi_debug("ERR. invalid enc ID");
         return;
     }
 
@@ -234,7 +233,6 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
     if (target == UI_SCENE_KEY) {
         chord_engine_set_tonic(s_scene.pending_tonic_pc);
         screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
-        //s_ui.dirty_display = 1; // not needed?
     } else if (target == UI_SCENE_PATTERN) {
         chord_engine_set_pattern(s_scene.pending_pattern);
         screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);

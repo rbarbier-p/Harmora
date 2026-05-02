@@ -25,10 +25,6 @@ void screen_engine_touch(screen_engine_t *se, ui_scene_id_t screen_id, uint16_t 
 // Advances timers; may change current screen.
 void screen_engine_tick(screen_engine_t *se, uint16_t elapsed_ms);
 
-// Overlay control (used for chord spelling etc.)
-void screen_engine_overlay_on(screen_engine_t *se, ui_scene_id_t screen_id);
-void screen_engine_overlay_off(screen_engine_t *se);
-
 // What to render right now.
 ui_scene_id_t screen_engine_active_screen(const screen_engine_t *se);
 

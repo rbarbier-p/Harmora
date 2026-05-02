@@ -1,4 +1,4 @@
-#include "screens.h"
+#include "ui.h"
 
 #include "mcu_com.h"
 #include "chord_engine.h"
@@ -174,19 +174,8 @@ uint8_t screen_render_pattern(const ui_state_t *ui, const ui_scene_state_t *scen
     return mcu_link_queue_display_frame(payload, idx);
 }
 
-uint8_t screen_render_chord(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_chord(void)
 {
-    (void)ui;
-
-    // The chord spelling string is owned by ui.c, but for now we display the
-    // scene pattern/bpm etc is irrelevant. This is a single-line overlay.
-    // ui.c will render this by calling screens_render(UI_SCENE_CHORD,...)
-    // and providing the spelling via ui_set_chord_spelling().
-    (void)scene;
-
-    // The overlay text is drawn by ui.c through mcu_com helpers, so here we
-    // just provide a placeholder in case it's called directly.
-    //char *spelling = chord_engine_get_chord_spelling();
     return screen_put_3lines("CHORD", s_chord_spelling, "");
 }
 
@@ -206,7 +195,7 @@ uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_s
         case UI_SCENE_VOLUME:
             return screen_render_volume(ui, scene);
         case UI_SCENE_CHORD:
-            return screen_render_chord(ui, scene);
+            return screen_render_chord();
         default:
             return screen_render_clear(ui, scene);
     }

@@ -120,7 +120,6 @@ void ui_state_set_extensions(ui_state_t *s, uint8_t ext7, uint8_t ext9, uint8_t 
     s->dirty_display = 1;
 }
 
-// 
 void ui_state_recompute(ui_state_t *s)
 {
     if (!s) {

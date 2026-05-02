@@ -201,6 +201,7 @@ static void chord_play_arp_seed(held_chord_t *slot)
 void chord_engine_init(void) {
     // probably can just delete all this inits (all 0)
     harmony_context_init(&s_harmony_ctx);
+    s_settings_ctx.bpm = 120;
 
     // Seed UI from initial harmony state.
     ui_set_mode(s_harmony_ctx.mode);

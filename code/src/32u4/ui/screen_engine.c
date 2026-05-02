@@ -16,13 +16,6 @@ void screen_engine_touch(screen_engine_t *se, ui_scene_id_t screen_id, uint16_t 
         return;
     }
 
-    // If an overlay is active, keep it; just update what we return to.
-    /*if (se->overlay_active) {
-        se->overlay_return = screen_id;
-        se->timeout_ms = timeout_ms;
-        return;
-    }*/
-
     if (screen_id != se->current) {
         se->previous = se->current;
         se->current = screen_id;
@@ -66,8 +59,5 @@ ui_scene_id_t screen_engine_active_screen(const screen_engine_t *se)
     if (!se) {
         return UI_SCENE_CLEAR;
     }
-    /*if (se->overlay_active) {
-        return se->overlay;
-    }*/
     return se->current;
 }
