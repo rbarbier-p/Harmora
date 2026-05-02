@@ -34,80 +34,34 @@ harmony_mode_t s_mode_hold = HARMONY_MODE_IONIAN;
 static harmony_mode_t s_last_mode_tap = HARMONY_MODE_COUNT;
 static uint16_t s_last_mode_tap_age_ms = 0;
 
-typedef struct {
-    // Timebase: musical subdivision relative to quarter note.
-    // step_ms = quarter_ms * (numerator/denominator)
-    uint8_t step_num;
-    uint8_t step_den;
-
-    // One tick advances by one note.
-    // The seed note (on chord start) is handled by chord_play_arp_seed().
-    uint8_t (*next_index)(const held_chord_t *slot, uint8_t current_idx);
-} play_pattern_def_t;
-
-static uint16_t tempo_quarter_ms() 
+static uint16_t get_step_ms(play_pattern_t p)
 {
-    // quarter_ms = 60000 / bpm
-    // Rounded to nearest to reduce bias at low BPM.
-    return (uint16_t)((60000UL + (uint32_t)(s_settings_ctx.bpm / 2u)) / (uint32_t)s_settings_ctx.bpm);
+    uint16_t q = 60000 / s_settings_ctx.bpm;
+
+    switch (p) {
+        case PLAY_PATTERN_ARP_UP:
+        case PLAY_PATTERN_ARP_DOWN:
+            return q / 4;
+        default:
+            return 0;
+    }
 }
 
-static uint16_t pattern_step_ms(const play_pattern_def_t *def)
+static uint8_t next_index(play_pattern_t p, held_chord_t *slot)
 {
-    uint32_t q = tempo_quarter_ms();
-    // step_ms = q * num / den (round half up)
-    uint32_t n = (uint32_t)def->step_num;
-    uint32_t d = (uint32_t)def->step_den;
-    uint32_t ms = (q * n + (d / 2u)) / d;
-    if (ms < 5) {
-        // Bound the inner while-loop in chord_engine_tick()
-        ms = 5;
+    switch (p) {
+        case PLAY_PATTERN_ARP_UP:
+            return (slot->arp_index + 1) % slot->note_count;
+
+        case PLAY_PATTERN_ARP_DOWN:
+            return (slot->arp_index == 0)
+                ? (slot->note_count - 1)
+                : (slot->arp_index - 1);
+
+        default:
+            return slot->arp_index;
     }
-    if (ms > 1000) {
-        ms = 1000;
-    }
-    return (uint16_t)ms;
 }
-
-static uint8_t arp_up_next(const held_chord_t *slot, uint8_t current_idx)
-{
-    (void)slot;
-    current_idx++;
-    if (current_idx >= slot->note_count) {
-        current_idx = 0;
-    }
-    return current_idx;
-}
-
-static uint8_t arp_down_next(const held_chord_t *slot, uint8_t current_idx)
-{
-    (void)slot;
-    if (current_idx == 0) {
-        return (uint8_t)(slot->note_count - 1);
-    }
-    return (uint8_t)(current_idx - 1);
-}
-
-static const play_pattern_def_t s_patterns[PLAY_PATTERN_COUNT] = {
-    [PLAY_PATTERN_BLOCK] = {
-        .step_num = 1,
-        .step_den = 1,
-        .next_index = 0,
-    },
-
-    // Legacy ARP_STEP_MS was 80ms. At 120BPM, quarter=500ms.
-    // 1/16T = quarter/6 ~= 83.33ms, close to the old feel.
-    [PLAY_PATTERN_ARP_UP] = {
-        .step_num = 1,
-        .step_den = 6,
-        .next_index = arp_up_next,
-    },
-    [PLAY_PATTERN_ARP_DOWN] = {
-        .step_num = 1,
-        .step_den = 6,
-        .next_index = arp_down_next,
-    },
-};
 
 static uint8_t any_chord_active(void)
 {
@@ -329,9 +283,6 @@ static void chord_start(uint8_t key_id)
         }
     }
 
-    // Ensure overlay is visible while any chord is active.
-    //ui_set_chord_overlay(1);
-
     if (s_settings_ctx.playing_pattern == PLAY_PATTERN_BLOCK) {
         chord_play_block(slot);
     } else {
@@ -342,47 +293,15 @@ static void chord_start(uint8_t key_id)
 
 }
 
-static void select_triad(triad_type_t triad, uint8_t pressed) {
-    if (pressed)
-        s_harmony_ctx.triad = triad;
-    else if (s_harmony_ctx.triad == triad)
-        s_harmony_ctx.triad = TRIAD_NONE;
-}
-
-static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
-    if (pressed)
-        s_harmony_ctx.first_ext = first_ext;
-    else if (s_harmony_ctx.first_ext == first_ext)
-        s_harmony_ctx.first_ext = FIRST_EXT_NONE;
-}
-
-
 void chord_engine_tick(uint8_t elapsed_ms)
 {
-    // Maintain mode double-tap timing.
-    if (s_last_mode_tap != HARMONY_MODE_COUNT) {
-        uint16_t next = (uint16_t)(s_last_mode_tap_age_ms + elapsed_ms);
-        if (next >= MODE_DOUBLE_TAP_WINDOW_MS) {
-            s_last_mode_tap = HARMONY_MODE_COUNT;
-            s_last_mode_tap_age_ms = 0;
-        } else {
-            s_last_mode_tap_age_ms = next;
-        }
-    }
+    play_pattern_t pat = s_settings_ctx.playing_pattern;
 
-    if (s_settings_ctx.playing_pattern >= PLAY_PATTERN_COUNT) {
-        s_settings_ctx.playing_pattern = PLAY_PATTERN_BLOCK;
-    }
-
-    if (s_settings_ctx.playing_pattern == PLAY_PATTERN_BLOCK) {
+    if (pat == PLAY_PATTERN_BLOCK) {
         return;
     }
 
-    const play_pattern_def_t *pat = &s_patterns[s_settings_ctx.playing_pattern];
-    if (!pat->next_index) {
-        return;
-    }
-    const uint16_t step_ms = pattern_step_ms(pat);
+    uint16_t step_ms = get_step_ms(pat);
 
     for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
         held_chord_t *slot = &s_held_chord[i];
@@ -390,16 +309,19 @@ void chord_engine_tick(uint8_t elapsed_ms)
             continue;
         }
 
-        slot->arp_accum_ms = (uint16_t)(slot->arp_accum_ms + elapsed_ms);
+        slot->arp_accum_ms += elapsed_ms;
+
         while (slot->arp_accum_ms >= step_ms) {
-            slot->arp_accum_ms = (uint16_t)(slot->arp_accum_ms - step_ms);
+            slot->arp_accum_ms -= step_ms;
 
-            uint8_t current_idx = slot->arp_index;
-            midi_note_off(MIDI_CHANNEL_DEFAULT, slot->notes[current_idx], 0);
+            uint8_t idx = slot->arp_index;
 
-            current_idx = pat->next_index(slot, current_idx);
-            slot->arp_index = current_idx;
-            midi_note_on(MIDI_CHANNEL_DEFAULT, slot->notes[current_idx], s_velocity);
+            midi_note_off(MIDI_CHANNEL_DEFAULT, slot->notes[idx], 0);
+
+            idx = next_index(pat, slot);
+            slot->arp_index = idx;
+
+            midi_note_on(MIDI_CHANNEL_DEFAULT, slot->notes[idx], s_velocity);
         }
     }
 }
@@ -425,119 +347,129 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
     }
 }
 
+static void select_triad(triad_type_t triad, uint8_t pressed) {
+    if (pressed)
+        s_harmony_ctx.triad = triad;
+    else if (s_harmony_ctx.triad == triad)
+        s_harmony_ctx.triad = TRIAD_NONE;
+}
+
+static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
+    if (pressed)
+        s_harmony_ctx.first_ext = first_ext;
+    else if (s_harmony_ctx.first_ext == first_ext)
+        s_harmony_ctx.first_ext = FIRST_EXT_NONE;
+}
+
+static void handle_mode_selection(harmony_mode_t mode, uint8_t pressed) {
+    if (pressed) {
+        // Always preview while held.
+        mode_set_hold(mode, 1);
+        mode_apply(mode);
+
+        // Double-tap: same mode pressed twice within window.
+        if (s_last_mode_tap == mode) {
+            mode_set_locked(mode);
+            s_last_mode_tap = HARMONY_MODE_COUNT;
+            s_last_mode_tap_age_ms = 0;
+        } else {
+            s_last_mode_tap = mode;
+            s_last_mode_tap_age_ms = 0;
+        }
+    } else {
+        // On release, drop preview and return to locked mode.
+        mode_set_hold(mode, 0);
+        mode_apply(s_mode_locked);
+    }
+}
+
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
 {
-    if (button_id == BUTTON_OCTAVE_UP && pressed) {
-        chord_engine_adjust_octave(1);
-        return;
-    }
-    if (button_id == BUTTON_OCTAVE_DOWN && pressed) {
-        chord_engine_adjust_octave(-1);
-        return;
-    }
-
-    if (button_id == BUTTON_TRIAD_MAJOR) {
-        select_triad(TRIAD_MAJOR, pressed);
-        return;
-    }
-    if (button_id == BUTTON_TRIAD_MINOR) {
-        select_triad(TRIAD_MINOR, pressed);
-        return;
-    }
-    if (button_id == BUTTON_TRIAD_DIM) {
-        select_triad(TRIAD_DIMINISHED, pressed);
-        return;
-    }
-    if (button_id == BUTTON_TRIAD_AUG) {
-        select_triad(TRIAD_AUGMENTED, pressed);
-        return;
-    }
-    if (button_id == BUTTON_TRIAD_SUS4) {
-        select_triad(TRIAD_SUS4, pressed);
-        return;
-    }
-    if (button_id == BUTTON_TRIAD_SUS2) {
-        select_triad(TRIAD_SUS2, pressed);
-        return;
-    }
-
-    if (button_id == BUTTON_FIRST_EXT_6) {
-        select_first_ext(FIRST_EXT_6, pressed);
-        return;
-    }
-    if (button_id == BUTTON_FIRST_EXT_M7) {
-        select_first_ext(FIRST_EXT_M7, pressed);
-        return;
-    }
-    if (button_id == BUTTON_FIRST_EXT_MAJ7) {
-        select_first_ext(FIRST_EXT_MAJ7, pressed);
-        return;
-    }
-
-    if (button_id == BUTTON_EXT_7) {
-        s_harmony_ctx.ext_7 = pressed;
-        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
-        return;
-    }
-    if (button_id == BUTTON_EXT_9) {
-        s_harmony_ctx.ext_9 = pressed;
-        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
-        return;
-    }
-    if (button_id == BUTTON_EXT_11) {
-        s_harmony_ctx.ext_11 = pressed;
-        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
-        return;
-    }
-    if (button_id == BUTTON_EXT_13) {
-        s_harmony_ctx.ext_13 = pressed;
-        ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
-        return;
-    }
-
-    harmony_mode_t mode;
-    if (mode_from_button(button_id, &mode)) {
-        if (pressed) {
-            // Always preview while held.
-            mode_set_hold(mode, 1);
-            mode_apply(mode);
-
-            // Double-tap: same mode pressed twice within window.
-            if (s_last_mode_tap == mode) {
-                mode_set_locked(mode);
-                s_last_mode_tap = HARMONY_MODE_COUNT;
-                s_last_mode_tap_age_ms = 0;
-            } else {
-                s_last_mode_tap = mode;
-                s_last_mode_tap_age_ms = 0;
-            }
-        } else {
-            // On release, drop preview and return to locked mode.
-            mode_set_hold(mode, 0);
-            mode_apply(s_mode_locked);
-        }
-        return;
-    }
-
-    if (pressed && button_id == BUTTON_PATTERN_BLOCK) {
-        chord_engine_set_pattern(PLAY_PATTERN_BLOCK);
-        return;
-    }
-    if (pressed && button_id == BUTTON_PATTERN_ARP_UP) {
-        chord_engine_set_pattern(PLAY_PATTERN_ARP_UP);
-        return;
-    }
-    if (pressed && button_id == BUTTON_PATTERN_ARP_DOWN) {
-        chord_engine_set_pattern(PLAY_PATTERN_ARP_DOWN);
-        return;
-    }
-
-    if (button_id == BUTTON_CHORD_MODE) {
-        s_settings_ctx.chord_mode_enabled = pressed;
-        return;
-    }
-    if (button_id == BUTTON_BASS_MODE) {
-        s_settings_ctx.bass_enabled = pressed;
-        return;
+    switch (button_id) {
+        case BUTTON_OCTAVE_UP:
+            if (pressed) chord_engine_adjust_octave(1);
+            return;
+        case BUTTON_OCTAVE_DOWN:
+            if (pressed) chord_engine_adjust_octave(-1);
+            return;
+        case BUTTON_TRIAD_MAJOR:
+            select_triad(TRIAD_MAJOR, pressed);
+            return;
+        case BUTTON_TRIAD_MINOR:
+            select_triad(TRIAD_MINOR, pressed);
+            return;
+        case BUTTON_TRIAD_DIM:
+            select_triad(TRIAD_DIMINISHED, pressed);
+            return;
+        case BUTTON_TRIAD_AUG:
+            select_triad(TRIAD_AUGMENTED, pressed);
+            return;
+        case BUTTON_TRIAD_SUS4:
+            select_triad(TRIAD_SUS4, pressed);
+            return;
+        case BUTTON_TRIAD_SUS2:
+            select_triad(TRIAD_SUS2, pressed);
+            return;
+        case BUTTON_FIRST_EXT_6:
+            select_first_ext(FIRST_EXT_6, pressed);
+            return;
+        case BUTTON_FIRST_EXT_M7:
+            select_first_ext(FIRST_EXT_M7, pressed);
+            return;
+        case BUTTON_FIRST_EXT_MAJ7:
+            select_first_ext(FIRST_EXT_MAJ7, pressed);
+            return;
+        case BUTTON_PATTERN_BLOCK:
+            if (pressed) chord_engine_set_pattern(PLAY_PATTERN_BLOCK);
+            return;
+        case BUTTON_PATTERN_ARP_UP:
+            if (pressed) chord_engine_set_pattern(PLAY_PATTERN_ARP_UP);
+            return;
+        case BUTTON_PATTERN_ARP_DOWN:
+            if (pressed) chord_engine_set_pattern(PLAY_PATTERN_ARP_DOWN);
+            return;
+        case BUTTON_CHORD_MODE:
+            s_settings_ctx.chord_mode_enabled = pressed;
+            return;
+        case BUTTON_BASS_MODE:
+            s_settings_ctx.bass_enabled = pressed;
+            return;
+        case BUTTON_EXT_7:
+            s_harmony_ctx.ext_7 = pressed;
+            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            return;
+        case BUTTON_EXT_9:
+            s_harmony_ctx.ext_9 = pressed;
+            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            return;
+        case BUTTON_EXT_11:
+            s_harmony_ctx.ext_11 = pressed;
+            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            return;
+        case BUTTON_EXT_13:
+            s_harmony_ctx.ext_13 = pressed;
+            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            return;
+        case BUTTON_MODE_IONIAN:
+            handle_mode_selection(HARMONY_MODE_IONIAN, pressed);
+            return;
+        case BUTTON_MODE_DORIAN:
+            handle_mode_selection(HARMONY_MODE_DORIAN, pressed);
+            return;
+        case BUTTON_MODE_PHRYGIAN:
+            handle_mode_selection(HARMONY_MODE_PHRYGIAN, pressed);
+            return;
+        case BUTTON_MODE_LYDIAN:
+            handle_mode_selection(HARMONY_MODE_LYDIAN, pressed);
+            return;
+        case BUTTON_MODE_MIXOLYDIAN:
+            handle_mode_selection(HARMONY_MODE_MIXOLYDIAN, pressed);
+            return;
+        case BUTTON_MODE_AEOLIAN:
+            handle_mode_selection(HARMONY_MODE_AEOLIAN, pressed);
+            return;
+        case BUTTON_MODE_LOCRIAN:
+            handle_mode_selection(HARMONY_MODE_LOCRIAN, pressed);
+            return;
     }
 }

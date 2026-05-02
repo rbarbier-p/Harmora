@@ -158,7 +158,6 @@ uint8_t midi_note_clamp_u7(int16_t note);
 void mode_apply(harmony_mode_t mode);
 void mode_set_locked(harmony_mode_t mode);
 void mode_set_hold(harmony_mode_t mode, uint8_t held);
-int8_t mode_from_button(uint8_t button_id, harmony_mode_t *out);
 uint8_t mod12_u8(int16_t v);
 
 void chord_engine_set_bpm(uint16_t bpm);

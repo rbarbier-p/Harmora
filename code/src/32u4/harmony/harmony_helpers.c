@@ -144,21 +144,3 @@ uint8_t chord_engine_get_instrument(void) { return s_settings_ctx.instrument; }
 uint8_t chord_engine_get_chord_mode(void) { return s_settings_ctx.chord_mode_enabled; }
 uint8_t chord_engine_get_pattern(void) { return s_settings_ctx.playing_pattern; }
 char *chord_engine_get_chord_spelling(void) { return s_chord_spelling; }
-
-int8_t mode_from_button(uint8_t button_id, harmony_mode_t *out)
-{
-    if (!out) {
-        return 0;
-    }
-
-    switch (button_id) {
-        case BUTTON_MODE_IONIAN:     *out = HARMONY_MODE_IONIAN; return 1;
-        case BUTTON_MODE_DORIAN:     *out = HARMONY_MODE_DORIAN; return 1;
-        case BUTTON_MODE_PHRYGIAN:   *out = HARMONY_MODE_PHRYGIAN; return 1;
-        case BUTTON_MODE_LYDIAN:     *out = HARMONY_MODE_LYDIAN; return 1;
-        case BUTTON_MODE_MIXOLYDIAN: *out = HARMONY_MODE_MIXOLYDIAN; return 1;
-        case BUTTON_MODE_AEOLIAN:    *out = HARMONY_MODE_AEOLIAN; return 1;
-        case BUTTON_MODE_LOCRIAN:    *out = HARMONY_MODE_LOCRIAN; return 1;
-        default: return 0;
-    }
-}
