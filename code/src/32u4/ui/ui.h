@@ -24,7 +24,7 @@
 // -----------------------------------------------------------------------------
 
 typedef enum {
-    UI_SCENE_MAIN = 0,
+    UI_SCENE_CLEAR = 0,
     UI_SCENE_BPM,
     UI_SCENE_KEY,
     UI_SCENE_INSTRUMENT,

@@ -57,7 +57,7 @@ void ui_init(void)
     ui_leds_init(&s_leds);
     screen_engine_init(&s_screen_engine);
 
-    s_scene.active = UI_SCENE_MAIN;
+    s_scene.active = UI_SCENE_CLEAR;
     s_scene.timeout_ms = 0;
     s_scene.pending_tonic_pc = 0;
     s_scene.pending_pattern = 0;

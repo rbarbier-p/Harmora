@@ -14,12 +14,6 @@ typedef struct {
 
     // When current != MAIN, this counts down to auto-return.
     uint16_t timeout_ms;
-
-    // Overlay temporarily takes over display (ex: chord spelling).
-    // When cleared, we return to whatever was active before overlay.
-    uint8_t overlay_active;
-    ui_scene_id_t overlay;
-    ui_scene_id_t overlay_return;
 } screen_engine_t;
 
 void screen_engine_init(screen_engine_t *se);
