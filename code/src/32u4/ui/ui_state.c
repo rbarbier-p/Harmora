@@ -63,7 +63,7 @@ void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode)
     ui_state_recompute(s);
 }
 
-void ui_state_set_mode_locked(ui_state_t *s, harmony_mode_t mode)
+void ui_state_set_locked_mode(ui_state_t *s, harmony_mode_t mode)
 {
     if (!s) {
         return;
@@ -97,27 +97,19 @@ void ui_state_set_mode_held(ui_state_t *s, harmony_mode_t mode, uint8_t held)
     s->dirty_leds = 1;
 }
 
-void ui_state_set_extensions(ui_state_t *s, uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
+void ui_state_set_extensions(ui_state_t *s, uint8_t ext_bitmask, led_preset_t color)
 {
     if (!s) {
         return;
     }
 
-    ext7 = ext7 ? 1 : 0;
-    ext9 = ext9 ? 1 : 0;
-    ext11 = ext11 ? 1 : 0;
-    ext13 = ext13 ? 1 : 0;
+    if (ext_bitmask & (1 << EXT_7)) s->ext_7 = color;
+    if (ext_bitmask & (1 << EXT_9)) s->ext_9 = color;
+    if (ext_bitmask & (1 << EXT_11)) s->ext_11 = color;
+    if (ext_bitmask & (1 << EXT_13)) s->ext_13 = color;
 
-    if (s->ext_7 == ext7 && s->ext_9 == ext9 && s->ext_11 == ext11 && s->ext_13 == ext13) {
-        return;
-    }
-
-    s->ext_7 = ext7;
-    s->ext_9 = ext9;
-    s->ext_11 = ext11;
-    s->ext_13 = ext13;
     s->dirty_leds = 1;
-    s->dirty_display = 1;
+    s->dirty_display = 1; // why? 
 }
 
 void ui_state_recompute(ui_state_t *s)

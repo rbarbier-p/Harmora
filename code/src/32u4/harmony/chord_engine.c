@@ -7,8 +7,9 @@
 #include "midi.h"
 #include "mcu_com.h"
 #include "ui/ui.h"
+#include <stdio.h>
 
-held_chord_t s_held_chord[CHORD_ENGINE_MAX_HELD_KEYS];
+held_chord_t s_held_chord;
 harmony_context_t s_harmony_ctx;
 settings_context_t s_settings_ctx;
 
@@ -27,12 +28,12 @@ int8_t s_keyboard_transpose = 0; // maybe not need
 // Timing is approximate: main loop ticks at ~5ms.
 #define MODE_DOUBLE_TAP_WINDOW_MS 250
 
-harmony_mode_t s_mode_locked = HARMONY_MODE_IONIAN;
-uint8_t s_mode_hold_active = 0;
-harmony_mode_t s_mode_hold = HARMONY_MODE_IONIAN;
-
-static harmony_mode_t s_last_mode_tap = HARMONY_MODE_COUNT;
 static uint16_t s_last_mode_tap_age_ms = 0;
+static uint16_t s_last_ext_tap_age_ms = 0;
+
+static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
+    60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71
+};
 
 static uint16_t get_step_ms(play_pattern_t p)
 {
@@ -47,133 +48,21 @@ static uint16_t get_step_ms(play_pattern_t p)
     }
 }
 
-static uint8_t next_index(play_pattern_t p, held_chord_t *slot)
+static uint8_t next_index(play_pattern_t p)
 {
     switch (p) {
         case PLAY_PATTERN_ARP_UP:
-            return (slot->arp_index + 1) % slot->note_count;
+            return (s_held_chord.arp_index + 1) % s_held_chord.note_count;
 
         case PLAY_PATTERN_ARP_DOWN:
-            return (slot->arp_index == 0)
-                ? (slot->note_count - 1)
-                : (slot->arp_index - 1);
+            return (s_held_chord.arp_index == 0)
+                ? (s_held_chord.note_count - 1)
+                : (s_held_chord.arp_index - 1);
 
         default:
-            return slot->arp_index;
+            return s_held_chord.arp_index;
     }
 }
-
-static uint8_t any_chord_active(void)
-{
-    for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        if (s_held_chord[i].active) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
-    60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71
-};
-
-static const char *note_names[12] = {
-    "C","C#","D","E@","E","F","F#","G","A@","A","B@","B"
-};
-
-// Fast append (no strlen / strcat)
-static inline char* append(char *p, const char *s) {
-    while (*s) *p++ = *s++;
-    *p = '\0';
-    return p;
-}
-
-void spell_chord(uint8_t key_id, const harmony_intervals_t *h) {
-    char *p = s_chord_spelling;
-
-    // ---- Root ----
-    p = append(p, note_names[key_id % 12]);
-
-    // ---- Single pass: build flags ----
-    uint32_t mask = 0;
-
-    for (uint8_t i = 0; i < h->count; i++) {
-        uint8_t iv = h->intervals[i];
-        if (iv < 32) {
-            mask |= (1UL << iv);
-        }
-    }
-
-    // ---- Extract flags (O(1)) ----
-    bool m3  = mask & (1UL << 3);
-    bool M3  = mask & (1UL << 4);
-    bool P5  = mask & (1UL << 7);
-    bool d5  = mask & (1UL << 6);
-    bool A5  = mask & (1UL << 8);
-    bool sus2= mask & (1UL << 2);
-    bool sus4= mask & (1UL << 5);
-
-    bool has6 = mask & (1UL << 9);
-    bool m7   = mask & (1UL << 10);
-    bool M7   = mask & (1UL << 11);
-
-    bool b9   = mask & (1UL << 13);
-    bool nat9 = mask & (1UL << 14);
-    bool s9   = mask & (1UL << 15);
-
-    bool p11  = mask & (1UL << 17);
-    bool s11  = mask & (1UL << 18);
-
-    bool b13  = mask & (1UL << 20);
-    bool nat13= mask & (1UL << 21);
-
-    // ---- TRIAD ----
-    if (sus2) {
-        p = append(p, "sus2");
-    } else if (sus4) {
-        p = append(p, "sus4");
-    } else if (m3 && P5) {
-        p = append(p, "m");
-    } else if (m3 && d5) {
-        p = append(p, "dim");
-    } else if (M3 && A5) {
-        p = append(p, "aug");
-    }
-    // major = no suffix
-
-    // ---- 7 / 6 ----
-    bool has7 = false;
-
-    if (M7) {
-        p = append(p, "maj");
-        if (!nat9)
-            p = append(p, "7");
-        has7 = true;
-    } else if (m7 && !nat9) {
-        p = append(p, "7");
-        has7 = true;
-    } else if (has6) {
-        p = append(p, "6");
-    }
-
-    // ---- EXTENSIONS ----
-
-    // 9
-    if (nat9) p = append(p, has7 ? "9" : "(add9)");
-    if (b9)   p = append(p, has7 ? "@9" : "(add@9)");
-    if (s9)   p = append(p, has7 ? "#9" : "(add#9)");
-
-    // 11
-    if (p11)  p = append(p, has7 ? "11" : "(add11)");
-    if (s11)  p = append(p, has7 ? "#11" : "(add#11)");
-
-    // 13
-    if (nat13) p = append(p, has7 ? "13" : "(add13)");
-    if (b13)   p = append(p, has7 ? "@13" : "(add@13)");
-
-    ui_chord_screen_on(s_chord_spelling);
-}
-
 
 static void chord_play_block(const held_chord_t *slot)
 {
@@ -205,31 +94,29 @@ void chord_engine_init(void) {
 
     // Seed UI from initial harmony state.
     ui_set_mode(s_harmony_ctx.mode);
-    ui_set_mode_locked(s_mode_locked);
+    ui_set_locked_mode(BUTTON_MODE_IONIAN);
     ui_set_mode_held(s_harmony_ctx.mode, 0);
-    ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+    ui_set_extensions(s_harmony_ctx.ext_bitmask, LED_OFF);
 }
 
-static void chord_stop(held_chord_t *slot)
+static void chord_stop()
 {
-    if (!slot->active) {
+    if (!s_held_chord.active) {
         return;
     }
-    midi_stop_chord(MIDI_CHANNEL_DEFAULT, slot->notes, slot->note_count);
+    midi_stop_chord(MIDI_CHANNEL_DEFAULT, s_held_chord.notes, s_held_chord.note_count);
 
-    if (slot->bass_active) {
-        midi_note_off(MIDI_CHANNEL_DEFAULT, slot->bass_note, 0);
-        slot->bass_active = 0;
+    if (s_held_chord.bass_active) {
+        midi_note_off(MIDI_CHANNEL_DEFAULT, s_held_chord.bass_note, 0);
+        s_held_chord.bass_active = 0;
     }
 
-    slot->active = 0;
-    slot->note_count = 0;
-    slot->arp_index = 0;
-    slot->arp_accum_ms = 0;
+    s_held_chord.active = 0;
+    s_held_chord.note_count = 0;
+    s_held_chord.arp_index = 0;
+    s_held_chord.arp_accum_ms = 0;
 
-    if (!any_chord_active()) {
-        ui_chord_screen_off();
-    }
+    ui_chord_screen_off();
 }
 
 static void chord_start(uint8_t key_id)
@@ -238,7 +125,7 @@ static void chord_start(uint8_t key_id)
         return;
     }
 
-    held_chord_t *slot = &s_held_chord[key_id];
+    held_chord_t *slot = &s_held_chord;
     if (slot->active) {
         chord_stop(slot);
     }
@@ -290,61 +177,84 @@ static void chord_start(uint8_t key_id)
         chord_play_arp_seed(slot);
     }
 
-    spell_chord((uint8_t)trans_pc, &resolved);
-
+    spell_chord(s_chord_spelling, trans_pc, &resolved);
+    ui_chord_screen_on(s_chord_spelling);
 }
 
 void chord_engine_tick(uint8_t elapsed_ms)
 {
+    s_last_mode_tap_age_ms += elapsed_ms;
+    s_last_ext_tap_age_ms += elapsed_ms;
+
     play_pattern_t pat = s_settings_ctx.playing_pattern;
 
     if (pat == PLAY_PATTERN_BLOCK) {
         return;
     }
 
+    if (!s_held_chord.active || s_held_chord.note_count == 0) {
+        return;
+    }
+
     uint16_t step_ms = get_step_ms(pat);
 
-    for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        held_chord_t *slot = &s_held_chord[i];
-        if (!slot->active || slot->note_count == 0) {
-            continue;
-        }
+    s_held_chord.arp_accum_ms += elapsed_ms;
 
-        slot->arp_accum_ms += elapsed_ms;
+    while (s_held_chord.arp_accum_ms >= step_ms) {
+        s_held_chord.arp_accum_ms -= step_ms;
 
-        while (slot->arp_accum_ms >= step_ms) {
-            slot->arp_accum_ms -= step_ms;
+        uint8_t idx = s_held_chord.arp_index;
 
-            uint8_t idx = slot->arp_index;
+        midi_note_off(MIDI_CHANNEL_DEFAULT, s_held_chord.notes[idx], 0);
 
-            midi_note_off(MIDI_CHANNEL_DEFAULT, slot->notes[idx], 0);
+        idx = next_index(pat);
+        s_held_chord.arp_index = idx;
 
-            idx = next_index(pat, slot);
-            slot->arp_index = idx;
-
-            midi_note_on(MIDI_CHANNEL_DEFAULT, slot->notes[idx], s_velocity);
-        }
+        midi_note_on(MIDI_CHANNEL_DEFAULT, s_held_chord.notes[idx], s_velocity);
     }
 }
 
 void chord_engine_all_notes_off(void)
 {
-    for (uint8_t i = 0; i < CHORD_ENGINE_MAX_HELD_KEYS; i++) {
-        chord_stop(&s_held_chord[i]);
-    }
+    chord_stop(&s_held_chord);
     midi_all_notes_off(MIDI_CHANNEL_DEFAULT);
+}
+
+bool will_it_be_chord()
+{
+    if (s_settings_ctx.chord_mode_enabled || s_harmony_ctx.triad != TRIAD_NONE || s_harmony_ctx.first_ext != FIRST_EXT_NONE) {
+        return true;
+    }
+    return false;
 }
 
 void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
 {
+    static uint16_t chord_keys = 0x00;
+    static uint16_t melody_keys = 0x00;
+
     if (key_id >= CHORD_ENGINE_MAX_HELD_KEYS) {
         return;
     }
 
-    if (pressed) {
+    if (!pressed) {
+        if (chord_keys & (1 << key_id)) {
+            chord_keys &= ~(1 << key_id);
+            if (key_id == (s_held_chord.root_note - s_keyboard_transpose) % 12)
+                chord_stop();
+        } else {
+            melody_keys &= ~(1 << key_id);
+            midi_note_off(MIDI_CHANNEL_DEFAULT, s_root_note_lut[key_id] + (s_octave_offset * 12) + s_keyboard_transpose, 0);
+        }
+        return;
+    } 
+
+    if (will_it_be_chord()) {
+        chord_keys |= (1 << key_id);
         chord_start(key_id);
     } else {
-        chord_stop(&s_held_chord[key_id]);
+        melody_keys &= ~(1 << key_id);
+        midi_note_on(MIDI_CHANNEL_DEFAULT, s_root_note_lut[key_id] + (s_octave_offset * 12) + s_keyboard_transpose, s_velocity);
     }
 }
 
@@ -363,25 +273,69 @@ static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
 }
 
 static void handle_mode_selection(harmony_mode_t mode, uint8_t pressed) {
+    static harmony_mode_t last_mode_tap = HARMONY_MODE_COUNT;
+    static harmony_mode_t locked_mode = HARMONY_MODE_IONIAN;
+
     if (pressed) {
-        // Always preview while held.
-        mode_set_hold(mode, 1);
-        mode_apply(mode);
+        if (mode == locked_mode)
+            return;
+
+        ui_set_mode_held(mode, 1);
+        s_harmony_ctx.mode = mode;
+        ui_set_mode(mode);
 
         // Double-tap: same mode pressed twice within window.
-        if (s_last_mode_tap == mode) {
-            mode_set_locked(mode);
-            s_last_mode_tap = HARMONY_MODE_COUNT;
+        if (last_mode_tap == mode && s_last_mode_tap_age_ms <= MODE_DOUBLE_TAP_WINDOW_MS) {   
+            locked_mode = mode;
+            ui_set_locked_mode(mode);
+            last_mode_tap = HARMONY_MODE_COUNT;
             s_last_mode_tap_age_ms = 0;
         } else {
-            s_last_mode_tap = mode;
+            last_mode_tap = mode;
             s_last_mode_tap_age_ms = 0;
         }
     } else {
         // On release, drop preview and return to locked mode.
-        mode_set_hold(mode, 0);
-        mode_apply(s_mode_locked);
+        ui_set_mode_held(mode, 0);
+        s_harmony_ctx.mode = locked_mode;
+        ui_set_mode(locked_mode);
     }
+}
+
+static void handle_extensions(extension_t ext, uint8_t pressed) {
+    static extension_t last_ext_tap = EXT_COUNT;
+    static extension_t lock_ext_bitmask = 0x00;
+
+    if (pressed) {
+        if (last_ext_tap == ext && s_last_ext_tap_age_ms <= MODE_DOUBLE_TAP_WINDOW_MS) {
+            last_ext_tap = EXT_COUNT;
+            s_last_ext_tap_age_ms = 0;
+
+            if (!(lock_ext_bitmask & (1 << ext))) { // if not locked, lock it
+                s_harmony_ctx.ext_bitmask |= (1 << ext);
+                lock_ext_bitmask |= (1 << ext);
+                ui_set_extensions((1 << ext), LED_ACCENT);
+            } else {                                // if locked, unlock it 
+                lock_ext_bitmask &= ~(1 << ext);
+                //s_harmony_ctx.ext_bitmask &= ~(1 << ext);
+                //ui_set_extensions((1 << ext), LED_OFF);
+            }
+        } else {
+            last_ext_tap = ext;
+            s_last_ext_tap_age_ms = 0;
+            if (!(lock_ext_bitmask & (1 << ext))) {// if not locked, preview it
+                ui_set_extensions((1 << ext), LED_WARNING);
+                s_harmony_ctx.ext_bitmask |= (1 << ext);
+            }
+        }
+    } 
+    else if (!(lock_ext_bitmask & (1 << ext))) { // on release (if not locked)
+        s_harmony_ctx.ext_bitmask &= ~(1 << ext);
+        ui_set_extensions((1 << ext), LED_OFF);
+    }
+    char buf[10];
+    snprintf(buf, sizeof(buf), "K=%d", s_harmony_ctx.ext_bitmask);
+    midi_debug(buf);
 }
 
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
@@ -436,20 +390,16 @@ void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)
             s_settings_ctx.bass_enabled = pressed;
             return;
         case BUTTON_EXT_7:
-            s_harmony_ctx.ext_7 = pressed;
-            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            handle_extensions(EXT_7, pressed);
             return;
         case BUTTON_EXT_9:
-            s_harmony_ctx.ext_9 = pressed;
-            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            handle_extensions(EXT_9, pressed);
             return;
         case BUTTON_EXT_11:
-            s_harmony_ctx.ext_11 = pressed;
-            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            handle_extensions(EXT_11, pressed);
             return;
         case BUTTON_EXT_13:
-            s_harmony_ctx.ext_13 = pressed;
-            ui_set_extensions(s_harmony_ctx.ext_7, s_harmony_ctx.ext_9, s_harmony_ctx.ext_11, s_harmony_ctx.ext_13);
+            handle_extensions(EXT_13, pressed);
             return;
         case BUTTON_MODE_IONIAN:
             handle_mode_selection(HARMONY_MODE_IONIAN, pressed);

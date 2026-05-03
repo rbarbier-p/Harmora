@@ -19,7 +19,6 @@ typedef enum {
     LED_WARNING     = 5,  // Warning indicator
     LED_ERROR       = 6,  // Error indicator
     LED_ACCENT      = 7,  // Accent color
-
     LED_PRESET_COUNT
 } led_preset_t;
 

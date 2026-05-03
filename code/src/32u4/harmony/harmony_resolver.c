@@ -1,6 +1,10 @@
 #include "chord_engine.h"
 #include <stdlib.h>
 
+#include "midi.h" // debug
+#include <stdio.h>
+
+
 extern harmony_context_t s_harmony_ctx;
 extern settings_context_t s_settings_ctx;
 
@@ -78,10 +82,7 @@ void harmony_context_init(harmony_context_t *ctx)
     ctx->tonic_pc = 0;
     ctx->triad = TRIAD_NONE;
     ctx->first_ext = FIRST_EXT_NONE;
-    ctx->ext_7 = 0;
-    ctx->ext_9 = 0;
-    ctx->ext_11 = 0;
-    ctx->ext_13 = 0;
+    ctx->ext_bitmask = 0x00;
 }
 
 void voicifie_chord(uint8_t *notes, uint8_t count) {
@@ -161,17 +162,21 @@ uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, 
         append_interval(out, 10);
     } else if (ctx->first_ext == FIRST_EXT_MAJ7) {
         append_interval(out, 11);
-    } else if (ctx->ext_7) {
+    } else if (ctx->ext_bitmask & (1 << EXT_7)) {
         append_interval(out, diatonic_interval(scale, degree, 6));
     }
 
-    if (ctx->ext_9) {
+    if (ctx->ext_bitmask & (1 << EXT_9)) {
         append_interval(out, diatonic_interval(scale, degree, 8));
+        midi_debug("COMON");
     }
-    if (ctx->ext_11) {
+    char buf[10];
+    snprintf(buf, sizeof(buf), "mask=%d", ctx->ext_bitmask);
+    midi_debug(buf);
+    if (ctx->ext_bitmask & (1 << EXT_11)) {
         append_interval(out, diatonic_interval(scale, degree, 10));
     }
-    if (ctx->ext_13) {
+    if (ctx->ext_bitmask & (1 << EXT_13)) {
         append_interval(out, diatonic_interval(scale, degree, 12));
     }
 

@@ -94,6 +94,15 @@ enum {
     FIRST_EXT_MAJ7,
 };
 
+typedef uint8_t extension_t;
+enum {
+    EXT_7,
+    EXT_9,
+    EXT_11,
+    EXT_13,
+    EXT_COUNT,
+};
+
 // ================ Structs ================
 
 // Settings context, representing the current user-configurable settings.
@@ -128,11 +137,9 @@ typedef struct {
     triad_type_t triad;
     first_ext_t first_ext;
 
-    uint8_t ext_7;
-    uint8_t ext_9;
-    uint8_t ext_11;
-    uint8_t ext_13;
+    uint8_t ext_bitmask; // bitmask of extensions (7,9,11,13) to be applied to the next chord resolution
 } harmony_context_t;
+
 
 // Represents a set of intervals (in semitones) to be played for a given chord.
 typedef struct {
@@ -153,10 +160,8 @@ void harmony_context_init(harmony_context_t *ctx);
 uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, harmony_intervals_t *out);
 
 // harmony_helpers.c
+char *spell_chord(char *spelling, uint8_t key_id, const harmony_intervals_t *h);
 uint8_t midi_note_clamp_u7(int16_t note);
-void mode_apply(harmony_mode_t mode);
-void mode_set_locked(harmony_mode_t mode);
-void mode_set_hold(harmony_mode_t mode, uint8_t held);
 uint8_t mod12_u8(int16_t v);
 
 void chord_engine_set_bpm(uint16_t bpm);

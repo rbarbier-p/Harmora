@@ -11,6 +11,103 @@ extern int8_t s_keyboard_transpose;
 extern int8_t s_octave_offset;
 extern char *s_chord_spelling;
 
+static const char *note_names[12] = {
+    "C","C#","D","E@","E","F","F#","G","A@","A","B@","B"
+};
+
+// Fast append (no strlen / strcat)
+static inline char* append(char *p, const char *s) {
+    while (*s) *p++ = *s++;
+    *p = '\0';
+    return p;
+}
+
+char *spell_chord(char *spelling, uint8_t key_id, const harmony_intervals_t *h) {
+    char *p = spelling;
+
+    // ---- Root ----
+    p = append(p, note_names[key_id % 12]);
+
+    // ---- Single pass: build flags ----
+    uint32_t mask = 0;
+
+    for (uint8_t i = 0; i < h->count; i++) {
+        uint8_t iv = h->intervals[i];
+        if (iv < 32) {
+            mask |= (1UL << iv);
+        }
+    }
+
+    // ---- Extract flags (O(1)) ----
+    uint8_t m3  = mask & (1UL << 3);
+    uint8_t M3  = mask & (1UL << 4);
+    uint8_t P5  = mask & (1UL << 7);
+    uint8_t d5  = mask & (1UL << 6);
+    uint8_t A5  = mask & (1UL << 8);
+    uint8_t sus2= mask & (1UL << 2);
+    uint8_t sus4= mask & (1UL << 5);
+
+    uint8_t has6 = mask & (1UL << 9);
+    uint8_t m7   = mask & (1UL << 10);
+    uint8_t M7   = mask & (1UL << 11);
+
+    uint8_t b9   = mask & (1UL << 13);
+    uint8_t nat9 = mask & (1UL << 14);
+    uint8_t s9   = mask & (1UL << 15);
+
+    uint8_t p11  = mask & (1UL << 17);
+    uint8_t s11  = mask & (1UL << 18);
+
+    uint8_t b13  = mask & (1UL << 20);
+    uint8_t nat13= mask & (1UL << 21);
+
+    // ---- TRIAD ----
+    if (sus2) {
+        p = append(p, "sus2");
+    } else if (sus4) {
+        p = append(p, "sus4");
+    } else if (m3 && P5) {
+        p = append(p, "m");
+    } else if (m3 && d5) {
+        p = append(p, "dim");
+    } else if (M3 && A5) {
+        p = append(p, "aug");
+    }
+    // major = no suffix
+
+    // ---- 7 / 6 ----
+    uint8_t has7 = 0;
+
+    if (M7) {
+        p = append(p, "maj");
+        if (!nat9)
+            p = append(p, "7");
+        has7 = 1;
+    } else if (m7 && !nat9) {
+        p = append(p, "7");
+        has7 = 1;
+    } else if (has6) {
+        p = append(p, "6");
+    }
+
+    // ---- EXTENSIONS ----
+
+    // 9
+    if (nat9) p = append(p, has7 ? "9" : "(add9)");
+    if (b9)   p = append(p, has7 ? "@9" : "(add@9)");
+    if (s9)   p = append(p, has7 ? "#9" : "(add#9)");
+
+    // 11
+    if (p11)  p = append(p, has7 ? "11" : "(add11)");
+    if (s11)  p = append(p, has7 ? "#11" : "(add#11)");
+
+    // 13
+    if (nat13) p = append(p, has7 ? "13" : "(add13)");
+    if (b13)   p = append(p, has7 ? "@13" : "(add@13)");
+
+    return spelling;
+}
+
 uint8_t midi_note_clamp_u7(int16_t note)
 {
     if (note < 0) {
@@ -31,29 +128,6 @@ uint8_t mod12_u8(int16_t v)
         v -= 12;
     }
     return (uint8_t)v;
-}
-
-void mode_apply(harmony_mode_t mode)
-{
-    // chord_engine_set_mode updates harmony + UI scale/tonic LEDs.
-    chord_engine_set_mode(mode);
-}
-
-void mode_set_locked(harmony_mode_t mode)
-{
-    if (mode >= HARMONY_MODE_COUNT) {
-        return;
-    }
-    s_mode_locked = mode;
-    ui_set_mode_locked(mode);
-}
-
-void mode_set_hold(harmony_mode_t mode, uint8_t held)
-{
-    held = held ? 1 : 0;
-    s_mode_hold_active = held;
-    s_mode_hold = mode;
-    ui_set_mode_held(mode, held);
 }
 
 void chord_engine_set_voicing(chord_voicing_t voicing)

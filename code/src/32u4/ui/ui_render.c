@@ -54,16 +54,16 @@ void ui_render_leds(const ui_state_t *s, const ui_led_map_t *map, ui_leds_t *out
 
     // 3) Selected extensions
     if (s->ext_7) {
-        set_led_safe(out->desired, map->ext7_led_id, LED_HIGHLIGHT);
+        set_led_safe(out->desired, map->ext7_led_id, s->ext_7);
     }
     if (s->ext_9) {
-        set_led_safe(out->desired, map->ext9_led_id, LED_HIGHLIGHT);
+        set_led_safe(out->desired, map->ext9_led_id, s->ext_9);
     }
     if (s->ext_11) {
-        set_led_safe(out->desired, map->ext11_led_id, LED_HIGHLIGHT);
+        set_led_safe(out->desired, map->ext11_led_id, s->ext_11);
     }
     if (s->ext_13) {
-        set_led_safe(out->desired, map->ext13_led_id, LED_HIGHLIGHT);
+        set_led_safe(out->desired, map->ext13_led_id, s->ext_13);
     }
 }
 

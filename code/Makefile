@@ -150,7 +150,7 @@ SIZE_TXT = $(BUILD_DIR)/size.txt
 MAKEFLAGS += --no-print-directory
 
 # Default target
-all: flash 
+all: 32u4
 
 #Note: using printf instead because it works the same on linux and windows
 # Ensure build directory exists

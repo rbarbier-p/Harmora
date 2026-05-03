@@ -68,9 +68,9 @@ void ui_set_mode(harmony_mode_t mode)
     ui_state_set_mode(&s_ui, mode);
 }
 
-void ui_set_mode_locked(harmony_mode_t mode)
+void ui_set_locked_mode(harmony_mode_t mode)
 {
-    ui_state_set_mode_locked(&s_ui, mode);
+    ui_state_set_locked_mode(&s_ui, mode);
 }
 
 void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
@@ -78,9 +78,9 @@ void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
     ui_state_set_mode_held(&s_ui, mode, held);
 }
 
-void ui_set_extensions(uint8_t ext7, uint8_t ext9, uint8_t ext11, uint8_t ext13)
+void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color)
 {
-    ui_state_set_extensions(&s_ui, ext7, ext9, ext11, ext13);
+    ui_state_set_extensions(&s_ui, ext_bitmask, color);
 }
 
 // Called from chord engine when any chord is active
