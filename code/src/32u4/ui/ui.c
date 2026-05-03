@@ -8,18 +8,11 @@
 // Hard-coded mapping for now.
 // TODO: replace with pinout-driven mapping once LED order is finalized.
 
+ui_leds_t s_leds;
 static ui_state_t s_ui;
-static ui_leds_t s_leds;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
 
-// Temporary encoder mapping until a proper scene/screen system exists.
-// 0: tonic (pitch class)
-// 1: mode (Ionian..Locrian)
-// 2: extensions (turn right toggles 7/9/11/13 on, left toggles off)
-// 3-5: reserved
-
-// Mapping table built from the macros in ui.h.
 const ui_led_map_t g_ui_led_map = {
     .pc_led_id = {
         UI_LED_ID_PC_C,
@@ -50,6 +43,14 @@ const ui_led_map_t g_ui_led_map = {
     .ext13_led_id = UI_LED_ID_EXT_13,
 };
 
+// Temporary encoder mapping until a proper scene/screen system exists.
+// 0: tonic (pitch class)
+// 1: mode (Ionian..Locrian)
+// 2: extensions (turn right toggles 7/9/11/13 on, left toggles off)
+// 3-5: reserved
+
+// Mapping table built from the macros in ui.h.
+
 void ui_init(void)
 {
     ui_state_init(&s_ui);
@@ -70,17 +71,17 @@ void ui_set_mode(harmony_mode_t mode)
 
 void ui_set_locked_mode(harmony_mode_t mode)
 {
-    ui_state_set_locked_mode(&s_ui, mode);
+    ui_state_set_locked_mode(mode);
 }
 
 void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
 {
-    ui_state_set_mode_held(&s_ui, mode, held);
+    ui_state_set_mode_held(mode, held);
 }
 
 void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color)
 {
-    ui_state_set_extensions(&s_ui, ext_bitmask, color);
+    ui_state_set_extensions(ext_bitmask, color);
 }
 
 // Called from chord engine when any chord is active
@@ -259,18 +260,21 @@ void ui_tick(uint8_t elapsed_ms)
     }
 
     // Render from state. If the link is busy, keep dirty set so we retry.
-    if (!s_leds.has_last) {
-        s_ui.dirty_leds = 1;
-        s_ui.dirty_display = 1;
+    //if (!s_leds.has_last) {
+    //    s_ui.dirty_leds = 1;
+    //    s_ui.dirty_display = 1;
+    //} 
+    
+    if (s_leds.dirty_mask) {
+        ui_flush_leds(&s_leds);
     }
-
-    if (s_ui.dirty_leds) {
+    /*if (s_ui.dirty_leds) {
         ui_render_leds(&s_ui, &g_ui_led_map, &s_leds);
         if (!ui_flush_leds(&s_leds)) {
             return;
         }
         s_ui.dirty_leds = 0;
-    }
+    }*/
 
     if (s_ui.dirty_display) {
         if (!screens_render(s_scene.active, &s_ui, &s_scene)) {

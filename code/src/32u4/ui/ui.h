@@ -108,30 +108,38 @@ typedef struct {
     // Mode button UI behavior
     // - locked_mode: the mode that is latched/locked (LED_HIGHLIGHT)
     // - hold_mode: a temporarily-held mode while its button is pressed (LED_WARNING)
-    harmony_mode_t locked_mode;
-    harmony_mode_t hold_mode;
-    uint8_t hold_mode_active;
+    //harmony_mode_t locked_mode;
+    //harmony_mode_t hold_mode;
+    //uint8_t hold_mode_active;
 
     // Extensions
-    led_preset_t ext_7;
-    led_preset_t ext_9;
-    led_preset_t ext_11;
-    led_preset_t ext_13;
+    //led_preset_t ext_7;
+    //led_preset_t ext_9;
+    //led_preset_t ext_11;
+    //led_preset_t ext_13;
 
     // Derived: absolute pitch classes that belong to the current scale.
     // Bit i corresponds to pitch class i (0=C ... 11=B).
-    uint16_t scale_mask_12;
+    //uint16_t scale_mask_12;
 
     // Dirty flags: set when state changes and renderer should refresh outputs.
-    uint8_t dirty_leds;
+    //uint8_t dirty_leds;
     uint8_t dirty_display;
 } ui_state_t;
 
 // Rendering target for LEDs.
 typedef struct {
-    uint8_t desired[LED_COUNT];
-    uint8_t last_sent[LED_COUNT];
-    uint8_t has_last;
+    //uint8_t desired[LED_COUNT];
+    //uint8_t last_sent[LED_COUNT];
+
+    led_preset_t fullbuffer[LED_COUNT];
+    uint32_t dirty_mask;
+
+    harmony_mode_t hold_mode;
+    harmony_mode_t locked_mode;
+    uint8_t hold_mode_active;
+
+   // uint8_t has_last;
 } ui_leds_t;
 
 // 32U4-side LED mapping to physical chain indices.
@@ -191,9 +199,9 @@ void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color);
 
 void ui_state_init(ui_state_t *s);
 void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode);
-void ui_state_set_locked_mode(ui_state_t *s, harmony_mode_t mode);
-void ui_state_set_mode_held(ui_state_t *s, harmony_mode_t mode, uint8_t held);
-void ui_state_set_extensions(ui_state_t *s, uint8_t ext_bitmask, led_preset_t color);
+void ui_state_set_locked_mode(harmony_mode_t mode);
+void ui_state_set_mode_held(harmony_mode_t mode, uint8_t held);
+void ui_state_set_extensions(uint8_t ext_bitmask, led_preset_t color);
 void ui_state_recompute(ui_state_t *s);
 
 void ui_leds_init(ui_leds_t *leds);
