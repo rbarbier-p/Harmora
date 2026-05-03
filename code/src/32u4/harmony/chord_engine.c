@@ -1,13 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include <string.h>
-#include <stdio.h>
 
 #include "chord_engine.h"
 #include "midi.h"
 #include "mcu_com.h"
 #include "ui/ui.h"
-#include <stdio.h>
 
 held_chord_t s_held_chord;
 harmony_context_t s_harmony_ctx;
@@ -17,17 +14,9 @@ uint8_t s_velocity = 96;
 int8_t s_octave_offset = 0;
 char s_chord_spelling[20];
 
-// Keyboard mapping transpose in semitones (signed).
-// This is applied to the generated MIDI notes, and also to the pitch class used
-// for harmony resolution/spelling.
-int8_t s_keyboard_transpose = 0; // maybe not need
+int8_t s_keyboard_transpose = 0;
 
-// Mode button UX:
-// - Hold button: temporarily preview that mode while pressed (LED_WARNING)
-// - Double tap: lock the mode (LED_HIGHLIGHT)
-// Timing is approximate: main loop ticks at ~5ms.
 #define MODE_DOUBLE_TAP_WINDOW_MS 250
-
 static uint16_t s_last_mode_tap_age_ms = 0;
 static uint16_t s_last_ext_tap_age_ms = 0;
 
@@ -222,7 +211,10 @@ void chord_engine_all_notes_off(void)
 
 bool will_it_be_chord()
 {
-    if (s_settings_ctx.chord_mode_enabled || s_harmony_ctx.triad != TRIAD_NONE || s_harmony_ctx.first_ext != FIRST_EXT_NONE) {
+    if (s_settings_ctx.chord_mode_enabled || 
+        s_harmony_ctx.triad != TRIAD_NONE || 
+        s_harmony_ctx.first_ext != FIRST_EXT_NONE || 
+        s_harmony_ctx.ext_bitmask != 0x00) {
         return true;
     }
     return false;
@@ -272,6 +264,37 @@ static void select_first_ext(first_ext_t first_ext, uint8_t pressed) {
         s_harmony_ctx.first_ext = FIRST_EXT_NONE;
 }
 
+static void handle_extensions(extension_t ext, uint8_t pressed) {
+    static extension_t last_ext_tap = EXT_COUNT;
+    static extension_t lock_ext_bitmask = 0x00;
+
+    if (pressed) {
+        if (last_ext_tap == ext && s_last_ext_tap_age_ms <= MODE_DOUBLE_TAP_WINDOW_MS) {
+            last_ext_tap = EXT_COUNT;
+            s_last_ext_tap_age_ms = 0;
+
+            if (!(lock_ext_bitmask & (1 << ext))) { // if not locked, lock it
+                s_harmony_ctx.ext_bitmask |= (1 << ext);
+                lock_ext_bitmask |= (1 << ext);
+                ui_set_extensions((1 << ext), LED_ACCENT);
+            } else {                                // if locked, unlock it 
+                lock_ext_bitmask &= ~(1 << ext);
+            }
+        } else {
+            last_ext_tap = ext;
+            s_last_ext_tap_age_ms = 0;
+            if (!(lock_ext_bitmask & (1 << ext))) {// if not locked, preview it
+                ui_set_extensions((1 << ext), LED_WARNING);
+                s_harmony_ctx.ext_bitmask |= (1 << ext);
+            }
+        }
+    } 
+    else if (!(lock_ext_bitmask & (1 << ext))) { // on release (if not locked)
+        s_harmony_ctx.ext_bitmask &= ~(1 << ext);
+        ui_set_extensions((1 << ext), LED_OFF);
+    }
+}
+
 static void handle_mode_selection(harmony_mode_t mode, uint8_t pressed) {
     static harmony_mode_t last_mode_tap = HARMONY_MODE_COUNT;
     static harmony_mode_t locked_mode = HARMONY_MODE_IONIAN;
@@ -300,42 +323,6 @@ static void handle_mode_selection(harmony_mode_t mode, uint8_t pressed) {
         s_harmony_ctx.mode = locked_mode;
         ui_set_mode(locked_mode);
     }
-}
-
-static void handle_extensions(extension_t ext, uint8_t pressed) {
-    static extension_t last_ext_tap = EXT_COUNT;
-    static extension_t lock_ext_bitmask = 0x00;
-
-    if (pressed) {
-        if (last_ext_tap == ext && s_last_ext_tap_age_ms <= MODE_DOUBLE_TAP_WINDOW_MS) {
-            last_ext_tap = EXT_COUNT;
-            s_last_ext_tap_age_ms = 0;
-
-            if (!(lock_ext_bitmask & (1 << ext))) { // if not locked, lock it
-                s_harmony_ctx.ext_bitmask |= (1 << ext);
-                lock_ext_bitmask |= (1 << ext);
-                ui_set_extensions((1 << ext), LED_ACCENT);
-            } else {                                // if locked, unlock it 
-                lock_ext_bitmask &= ~(1 << ext);
-                //s_harmony_ctx.ext_bitmask &= ~(1 << ext);
-                //ui_set_extensions((1 << ext), LED_OFF);
-            }
-        } else {
-            last_ext_tap = ext;
-            s_last_ext_tap_age_ms = 0;
-            if (!(lock_ext_bitmask & (1 << ext))) {// if not locked, preview it
-                ui_set_extensions((1 << ext), LED_WARNING);
-                s_harmony_ctx.ext_bitmask |= (1 << ext);
-            }
-        }
-    } 
-    else if (!(lock_ext_bitmask & (1 << ext))) { // on release (if not locked)
-        s_harmony_ctx.ext_bitmask &= ~(1 << ext);
-        ui_set_extensions((1 << ext), LED_OFF);
-    }
-    char buf[10];
-    snprintf(buf, sizeof(buf), "K=%d", s_harmony_ctx.ext_bitmask);
-    midi_debug(buf);
 }
 
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed)

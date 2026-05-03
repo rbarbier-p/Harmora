@@ -49,7 +49,6 @@ void screen_engine_tick(screen_engine_t *se, uint16_t elapsed_ms)
 
     // Timeout expired: return to CLEAR.
     se->timeout_ms = 0;
-    //se->previous = se->current;
     se->previous = UI_SCENE_CLEAR;
     se->current = UI_SCENE_CLEAR;
 }

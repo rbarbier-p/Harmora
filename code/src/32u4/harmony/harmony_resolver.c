@@ -1,10 +1,6 @@
 #include "chord_engine.h"
 #include <stdlib.h>
 
-#include "midi.h" // debug
-#include <stdio.h>
-
-
 extern harmony_context_t s_harmony_ctx;
 extern settings_context_t s_settings_ctx;
 
@@ -168,11 +164,7 @@ uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, 
 
     if (ctx->ext_bitmask & (1 << EXT_9)) {
         append_interval(out, diatonic_interval(scale, degree, 8));
-        midi_debug("COMON");
     }
-    char buf[10];
-    snprintf(buf, sizeof(buf), "mask=%d", ctx->ext_bitmask);
-    midi_debug(buf);
     if (ctx->ext_bitmask & (1 << EXT_11)) {
         append_interval(out, diatonic_interval(scale, degree, 10));
     }
