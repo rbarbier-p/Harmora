@@ -38,7 +38,7 @@ bool input_key_is_already_pressed(uint8_t key_id)
 }
         
 
-void input_state_update_key(uint8_t key_id, uint8_t is_pressed) {
+void input_state_update_key(uint8_t key_id, uint8_t is_pressed, bool velocity_off) {
   if (key_id >= KEY_COUNT)
     return;
 
@@ -58,8 +58,9 @@ void input_state_update_key(uint8_t key_id, uint8_t is_pressed) {
       keys->pressed &= ~mask;
     }
 
-    keys->changed |= mask;
-  }
+   if (velocity_off == true)
+        keys->changed |= mask;
+    }       
 }
 
 
@@ -69,11 +70,15 @@ void input_state_update_key_velocity(uint8_t key, uint8_t key_id, uint8_t veloci
         return;
 
   key_state_t *keys = &g_input_state.keys;
+  uint16_t mask = (1U << key_id);
 
   if (keys->velocity[key] == 0 && velocity <= 3) // small threshold
       return;
   if (keys->velocity[key] == velocity) return;
   keys->velocity[key] = velocity;
+  
+    keys->changed |= mask;
+
 }
 
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta) {

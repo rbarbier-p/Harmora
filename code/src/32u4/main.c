@@ -19,6 +19,7 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
     //static bool recording = false;
     const uint8_t mcu_pots[4] = {MCU_CC_VPOT_1, MCU_CC_VPOT_2, MCU_CC_VPOT_3, MCU_CC_VPOT_4};
     uint8_t i = 0;
+    static uint8_t program = 0;
 
     while (i < len) {
         uint8_t evt = payload[i++];
@@ -40,6 +41,11 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t encoder_id = payload[i];
             uint8_t delta = payload[i + 1];
             ui_handle_encoder_turn(encoder_id, delta);
+            if (delta == 1)
+                program++;
+            else
+                program--;
+            midi_program_change(MCU_CHANNEL, program);
         } else if (evt == EVT_ENCODER_PRESS) {
             uint8_t encoder_id = payload[i];
             uint8_t pressed = payload[i + 1];

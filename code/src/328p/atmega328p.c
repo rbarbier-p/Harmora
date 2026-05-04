@@ -15,6 +15,7 @@
 
 #include <util/delay.h>
 
+
 int main(void) {
   i2c_init();
   adc_init();

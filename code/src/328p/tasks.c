@@ -55,7 +55,13 @@ void task_hall_scan(void) {
     82, 89, 86, 87,
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
-  */
+
+    static const uint8_t bottom_threshold[12] = {
+        78, 56, 68, 51,
+        68, 63, 69, 54,
+        63, 80, 54, 52
+    };
+    */
    // Malo's board (10 lower than unpressed key)
       static const uint8_t press_threshold[12] = {
           111, 114, 120, 109,
@@ -103,15 +109,17 @@ void task_hall_scan(void) {
         uint8_t is_pressed = (value < press_threshold[key]);
         bool was_pressed = input_key_is_already_pressed(key_to_note[key]);
 
-        input_state_update_key(key_to_note[key], is_pressed);
-        if (velocity_off)
-            continue;
+        input_state_update_key(key_to_note[key], is_pressed, velocity_off);
         if (!is_pressed)
         {
+            if (was_pressed)
+                input_state_update_key_velocity(key, key_to_note[key], 0);
             pressed_time[key] = 0;
             was_bottomed[key] = false;
             continue;
         }
+        if (velocity_off)
+            continue;
 
 
         if (!was_pressed)
@@ -123,6 +131,7 @@ void task_hall_scan(void) {
         uint8_t is_bottomed = (value < bottom_threshold[key]);
         if (!is_bottomed)
         {
+            was_bottomed[key] = false;
             continue;
         }
         if (!was_bottomed[key])
@@ -139,30 +148,6 @@ void task_hall_scan(void) {
             input_state_update_key_velocity(key, key_to_note[key], scaled_velocity);
         }
     }
-    /*
-  // Scan all 12 keys
-  adc_select_channel(7);
-  for (uint8_t key = 0; key < 12; key++) {
-    mux_select(key_to_channel[key]);
-    _delay_us(10);  // Mux settling time
-    adc_read();
-    uint8_t value = adc_read();
-    
-    // Determine if key is currently pressed (hall sensor goes LOW when pressed)
-    uint8_t is_pressed = (value < press_threshold[key]);
-
-    if (prev_value[key] != 0  
-            && !input_key_is_already_pressed(key_to_note[key]))
-    {
-        uint16_t distance = abs((int16_t)prev_value[key] - (int16_t)value); 
-        input_state_update_key_velocity(key, key_to_note[key], (uint8_t)distance);
-    }
-    prev_value[key] = value;
-    // Update key state (handles change detection internally)
-    input_state_update_key(key_to_note[key], is_pressed);
-
-  }
-    */
 }
 
 void task_encoder_scan(void) {
