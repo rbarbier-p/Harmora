@@ -1,5 +1,8 @@
 #include "chord_engine.h"
 #include "ui/ui.h"
+#include <stdbool.h>
+
+#include "midi.h" // debug
 
 extern harmony_context_t s_harmony_ctx;
 extern settings_context_t s_settings_ctx;
@@ -39,27 +42,27 @@ char *spell_chord(char *spelling, uint8_t key_id, const harmony_intervals_t *h) 
     }
 
     // ---- Extract flags (O(1)) ----
-    uint8_t m3  = mask & (1UL << 3);
-    uint8_t M3  = mask & (1UL << 4);
-    uint8_t P5  = mask & (1UL << 7);
-    uint8_t d5  = mask & (1UL << 6);
-    uint8_t A5  = mask & (1UL << 8);
-    uint8_t sus2= mask & (1UL << 2);
-    uint8_t sus4= mask & (1UL << 5);
+    bool m3  = mask & (1UL << 3);
+    bool M3  = mask & (1UL << 4);
+    bool P5  = mask & (1UL << 7);
+    bool d5  = mask & (1UL << 6);
+    bool A5  = mask & (1UL << 8);
+    bool sus2 = mask & (1UL << 2);
+    bool sus4 = mask & (1UL << 5);
 
-    uint8_t has6 = mask & (1UL << 9);
-    uint8_t m7   = mask & (1UL << 10);
-    uint8_t M7   = mask & (1UL << 11);
+    bool has6 = mask & (1UL << 9);
+    bool m7   = mask & (1UL << 10);
+    bool M7   = mask & (1UL << 11);
 
-    uint8_t b9   = mask & (1UL << 13);
-    uint8_t nat9 = mask & (1UL << 14);
-    uint8_t s9   = mask & (1UL << 15);
+    bool b9   = mask & (1UL << 13);
+    bool nat9 = mask & (1UL << 14);
+    bool s9   = mask & (1UL << 15);
 
-    uint8_t p11  = mask & (1UL << 17);
-    uint8_t s11  = mask & (1UL << 18);
+    bool p11  = mask & (1UL << 17);
+    bool s11  = mask & (1UL << 18);
 
-    uint8_t b13  = mask & (1UL << 20);
-    uint8_t nat13= mask & (1UL << 21);
+    bool b13  = mask & (1UL << 20);
+    bool nat13 = mask & (1UL << 21);
 
     // ---- TRIAD ----
     if (sus2) {
@@ -76,16 +79,16 @@ char *spell_chord(char *spelling, uint8_t key_id, const harmony_intervals_t *h) 
     // major = no suffix
 
     // ---- 7 / 6 ----
-    uint8_t has7 = 0;
+    bool has7 = false;
 
     if (M7) {
         p = append(p, "maj");
         if (!nat9)
             p = append(p, "7");
-        has7 = 1;
+        has7 = true;
     } else if (m7 && !nat9) {
         p = append(p, "7");
-        has7 = 1;
+        has7 = true;
     } else if (has6) {
         p = append(p, "6");
     }

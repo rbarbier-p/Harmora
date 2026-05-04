@@ -199,8 +199,8 @@ void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color);
 
 void ui_state_init(ui_state_t *s);
 void ui_state_set_mode(ui_state_t *s, harmony_mode_t mode);
-void ui_state_set_locked_mode(harmony_mode_t mode);
-void ui_state_set_mode_held(harmony_mode_t mode, uint8_t held);
+void ui_state_set_locked_mode(ui_state_t *s, harmony_mode_t mode);
+void ui_state_set_mode_held(ui_state_t *s, harmony_mode_t mode, uint8_t held);
 void ui_state_set_extensions(uint8_t ext_bitmask, led_preset_t color);
 void ui_state_recompute(ui_state_t *s);
 

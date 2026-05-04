@@ -81,11 +81,7 @@ void chord_engine_init(void) {
     harmony_context_init(&s_harmony_ctx);
     s_settings_ctx.bpm = 120;
 
-    // Seed UI from initial harmony state.
-    ui_set_mode(s_harmony_ctx.mode);
-    ui_set_locked_mode(BUTTON_MODE_IONIAN);
-    ui_set_mode_held(s_harmony_ctx.mode, 0);
-    ui_set_extensions(s_harmony_ctx.ext_bitmask, LED_OFF);
+    ui_set_locked_mode(s_harmony_ctx.mode);
 }
 
 static void chord_stop()
@@ -305,7 +301,7 @@ static void handle_mode_selection(harmony_mode_t mode, uint8_t pressed) {
 
         ui_set_mode_held(mode, 1);
         s_harmony_ctx.mode = mode;
-        ui_set_mode(mode);
+        //ui_set_mode(mode);
 
         // Double-tap: same mode pressed twice within window.
         if (last_mode_tap == mode && s_last_mode_tap_age_ms <= MODE_DOUBLE_TAP_WINDOW_MS) {   
@@ -317,11 +313,11 @@ static void handle_mode_selection(harmony_mode_t mode, uint8_t pressed) {
             last_mode_tap = mode;
             s_last_mode_tap_age_ms = 0;
         }
-    } else {
+    } else if (mode != locked_mode) {
         // On release, drop preview and return to locked mode.
         ui_set_mode_held(mode, 0);
         s_harmony_ctx.mode = locked_mode;
-        ui_set_mode(locked_mode);
+        //ui_set_mode(locked_mode);
     }
 }
 

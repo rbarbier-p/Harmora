@@ -9,7 +9,7 @@
 // TODO: replace with pinout-driven mapping once LED order is finalized.
 
 ui_leds_t s_leds;
-static ui_state_t s_ui;
+ui_state_t s_ui;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
 
@@ -53,9 +53,15 @@ const ui_led_map_t g_ui_led_map = {
 
 void ui_init(void)
 {
-    ui_state_init(&s_ui);
+    s_ui.dirty_display = 1;
+    s_ui.mode = HARMONY_MODE_COUNT;
+    s_leds.hold_mode = HARMONY_MODE_COUNT;
+    s_leds.hold_mode_active = 0;
+    s_leds.locked_mode = HARMONY_MODE_COUNT;
     ui_leds_init(&s_leds);
+    //ui_state_recompute(&s_ui);
     screen_engine_init(&s_screen_engine);
+
 
     s_scene.active = UI_SCENE_CLEAR;
     s_scene.timeout_ms = 0;
@@ -71,12 +77,12 @@ void ui_set_mode(harmony_mode_t mode)
 
 void ui_set_locked_mode(harmony_mode_t mode)
 {
-    ui_state_set_locked_mode(mode);
+    ui_state_set_locked_mode(&s_ui, mode);
 }
 
 void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
 {
-    ui_state_set_mode_held(mode, held);
+    ui_state_set_mode_held(&s_ui, mode, held);
 }
 
 void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color)
@@ -258,23 +264,10 @@ void ui_tick(uint8_t elapsed_ms)
         s_scene.active = active_screen;
         s_ui.dirty_display = 1;
     }
-
-    // Render from state. If the link is busy, keep dirty set so we retry.
-    //if (!s_leds.has_last) {
-    //    s_ui.dirty_leds = 1;
-    //    s_ui.dirty_display = 1;
-    //} 
     
     if (s_leds.dirty_mask) {
         ui_flush_leds(&s_leds);
     }
-    /*if (s_ui.dirty_leds) {
-        ui_render_leds(&s_ui, &g_ui_led_map, &s_leds);
-        if (!ui_flush_leds(&s_leds)) {
-            return;
-        }
-        s_ui.dirty_leds = 0;
-    }*/
 
     if (s_ui.dirty_display) {
         if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
