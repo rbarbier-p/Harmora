@@ -24,11 +24,14 @@ static inline uint16_t stopwatch_read(void) {
 
 // Calculate elapsed time handling overflow
 static inline uint32_t stopwatch_elapsed(uint16_t start, uint16_t end) {
+    return ((uint32_t)(uint16_t)(end - start));
+    /*
     if (end >= start) {
         return end - start;
     } else {
         return ((0xFFFF - start) + end) * 4;
     }
+    */
 }
 
 #endif

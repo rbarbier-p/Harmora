@@ -11,22 +11,69 @@
 #include "SPI/SoftSPI.h"
 #include "stopwatch.h"
 #include "pins.h"
-#include <stdio.h>
+#include <stdlib.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include "utils.h"
 
 // ===== APA102 LED Configuration =====
 static SoftSPI_t led_spi;
 static uint8_t led_initialized = 0;
+static bool some_key_pressed = false;
+
+static uint8_t velocities[12] = {
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0
+};
+
+void task_display_velocity(uint8_t key, uint8_t x, uint8_t y)
+{
+
+    char buffer[15];
+    number_to_string(buffer, 14, velocities[key]);
+    display_draw_string(x, y, buffer);
+}
+
+static uint32_t clamp_u32(uint32_t value, uint32_t min, uint32_t max)
+{
+    if (value <= min)
+        return (min);
+    else if (value >= max)
+        return (max);
+    else
+        return (value);
+}
+
+static uint8_t convert_velocity(uint32_t velocity, uint32_t min, uint32_t max)
+{
+    // map [min, max] -> [1, 127]
+   return ((uint8_t)(1 + ((velocity - min) * 126U) / (max - min)));
+}
 
 void task_hall_scan(void) {
+     /*
+  // Rene's board
   static uint8_t press_threshold[12] = {
     122, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
     82, 89, 86, 87,
     83, 89, 95, 80
   }; // Pre-calibrated thresholds for each key
-  
+  */
+   // Malo's board (10 lower than unpressed key)
+      static const uint8_t press_threshold[12] = {
+          111, 114, 120, 109,
+          103, 107, 107, 123,
+          100, 109, 113, 119 
+      }; // Pre-calibrated thresholds for each key
+
+    static const uint8_t bottom_threshold[12] = {
+        80, 88, 80, 74,
+        74, 77, 90, 91,
+        76, 67, 78, 83
+    };
+     
   // Channel mapping array (12 bytes in FLASH)
   static const uint8_t key_to_channel[12] = {
     0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15
@@ -36,6 +83,90 @@ void task_hall_scan(void) {
     1, 11, 9, 7, 5, 4, 2, 0, 3, 6, 8, 10
   };
 
+    static uint16_t pressed_time[12] = {
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+    };
+
+
+    // number when using fixed distance 
+    const uint32_t MIN_VELOCITY = 1000;
+    const uint32_t MAX_VELOCITY = 9500;// 11000-15000 | 10000
+    const uint16_t FIXED_DISTANCE = 40; // 45 | 40
+    static bool was_bottomed[12] = {false};
+    some_key_pressed = false;
+
+    adc_select_channel(7);
+    for (uint8_t key = 0; key < 12; key++)
+    {
+        mux_select(key_to_channel[key]);
+        _delay_us(10);
+        adc_read();
+        uint8_t value = adc_read();
+        uint16_t time = stopwatch_read();
+
+        uint8_t is_pressed = (value < press_threshold[key]);
+        if (is_pressed)
+            some_key_pressed = true;
+        bool was_pressed = input_key_is_already_pressed(key_to_note[key]);
+
+        input_state_update_key(key_to_note[key], is_pressed);
+        if (!is_pressed)
+        {
+            pressed_time[key] = 0;
+            was_bottomed[key] = false;
+            continue;
+        }
+
+        /*
+        if (some_key_pressed)
+        {
+            scheduler_set_divider(TASK_MCU_COMM, 10);
+            scheduler_set_divider(TASK_BUTTON_SCAN, 10);
+            scheduler_set_divider(TASK_DISPLAY_UPDATE, 10);
+            scheduler_set_divider(TASK_LED_UPDATE, 10);
+            scheduler_set_divider(TASK_POT_SCAN, 10);
+            scheduler_set_divider(TASK_ENCODER_SCAN, 10);
+        }
+        else
+        {
+            scheduler_set_divider(TASK_MCU_COMM, 0);
+            scheduler_set_divider(TASK_BUTTON_SCAN, 0);
+            scheduler_set_divider(TASK_DISPLAY_UPDATE, 0);
+            scheduler_set_divider(TASK_LED_UPDATE, 0);
+            scheduler_set_divider(TASK_POT_SCAN, 0);
+            scheduler_set_divider(TASK_ENCODER_SCAN, 0);
+        }
+        */
+
+        if (!was_pressed)
+        {
+            pressed_time[key] = time;
+            continue;
+        }
+
+        uint8_t is_bottomed = (value < bottom_threshold[key]);
+        if (!is_bottomed)
+        {
+            continue;
+        }
+        if (!was_bottomed[key])
+        {
+            was_bottomed[key] = true;
+            uint32_t delta_time = stopwatch_elapsed(pressed_time[key], time);
+            if (delta_time == 0) continue; // divide by zero guard
+            uint32_t velocity = (FIXED_DISTANCE * 1000000UL) / (delta_time);
+            velocity = clamp_u32(velocity, MIN_VELOCITY, MAX_VELOCITY);
+            uint8_t scaled_velocity = convert_velocity(velocity, MIN_VELOCITY, MAX_VELOCITY);
+            if (scaled_velocity > 60 && scaled_velocity <= 85)
+                scaled_velocity += 10;
+            scaled_velocity = (scaled_velocity <= 60) ? scaled_velocity + 40 : scaled_velocity;
+            velocities[key] = scaled_velocity;
+            input_state_update_key_velocity(key, key_to_note[key], scaled_velocity);
+        }
+    }
+    /*
   // Scan all 12 keys
   adc_select_channel(7);
   for (uint8_t key = 0; key < 12; key++) {
@@ -46,10 +177,19 @@ void task_hall_scan(void) {
     
     // Determine if key is currently pressed (hall sensor goes LOW when pressed)
     uint8_t is_pressed = (value < press_threshold[key]);
-    
+
+    if (prev_value[key] != 0  
+            && !input_key_is_already_pressed(key_to_note[key]))
+    {
+        uint16_t distance = abs((int16_t)prev_value[key] - (int16_t)value); 
+        input_state_update_key_velocity(key, key_to_note[key], (uint8_t)distance);
+    }
+    prev_value[key] = value;
     // Update key state (handles change detection internally)
     input_state_update_key(key_to_note[key], is_pressed);
+
   }
+    */
 }
 
 void task_encoder_scan(void) {
@@ -325,7 +465,7 @@ void task_pot_scan(void) {
     _delay_us(30);
     adc_read();
     uint8_t value = adc_read_channel(7);
-    input_state_update_pot(i, value);
+    input_state_update_pot(i, 255 - value);
   }
 }
 

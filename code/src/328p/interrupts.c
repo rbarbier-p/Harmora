@@ -35,7 +35,7 @@ void interrupts_init(void) {
     // If the 32U4 is already holding MCU_INT low (e.g. it queued a frame before
     // we enabled INT0), we won't get a falling edge. Handle one frame now.
     if (!GPIO_READ(PIN_MCU_INT)) {
-        mcu_comm_handle_display();
+        //mcu_comm_handle_display();
     }
 }
 

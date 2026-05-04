@@ -35,6 +35,6 @@ int main(void) {
 
   while (1)
   {
-    scheduler_run(loop_count++);
+      scheduler_run(loop_count++);
   }
 }

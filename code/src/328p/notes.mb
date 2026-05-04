@@ -1,0 +1,11 @@
+Velocity reading:
+
+range of reading is too big
+
+
+
+if any key goes below it's threshold
+    -> TASK_ENCODER_SCAN, TASK_BUTTON_SCAN, TASK_POT_SCAN, TASK_LED_UPDATE, (TASK_MCU_COMM), (TASK_DISPLAY_UPDATE): divider 10 or 20
+   to read the keys as fast as possible 
+
+   ->   w
