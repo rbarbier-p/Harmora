@@ -16,6 +16,10 @@ char s_chord_spelling[20];
 
 int8_t s_keyboard_transpose = 0;
 
+// Octave split boundary in pitch classes [1..12].
+// If key_id >= boundary, chord root is shifted down 12 semitones.
+static uint8_t s_split_boundary = 12;
+
 #define MODE_DOUBLE_TAP_WINDOW_MS 250
 static uint16_t s_last_mode_tap_age_ms = 0;
 static uint16_t s_last_ext_tap_age_ms = 0;
@@ -81,7 +85,25 @@ void chord_engine_init(void) {
     harmony_context_init(&s_harmony_ctx);
     s_settings_ctx.bpm = 120;
 
+    s_split_boundary = 12;
+
     ui_set_locked_mode(s_harmony_ctx.mode);
+}
+
+void chord_engine_set_split_boundary(uint8_t boundary)
+{
+    if (boundary < 1) {
+        boundary = 1;
+    }
+    if (boundary > 12) {
+        boundary = 12;
+    }
+    s_split_boundary = boundary;
+}
+
+uint8_t chord_engine_get_split_boundary(void)
+{
+    return s_split_boundary;
 }
 
 static void chord_stop()
@@ -129,6 +151,11 @@ static void chord_start(uint8_t key_id)
     // Calculate MIDI notes from root + intervals, applying octave offset and transpose.
     int16_t root_base = (int16_t)s_root_note_lut[key_id] + ((int16_t)s_octave_offset * 12);
     int16_t root = (int16_t)(root_base + (int16_t)s_keyboard_transpose);
+
+    // Apply split to chords only (never to melody-only notes).
+    if (key_id >= s_split_boundary) {
+        root -= 12;
+    }
     slot->root_note = midi_note_clamp_u7(root);
     slot->note_count = resolved.count;
 

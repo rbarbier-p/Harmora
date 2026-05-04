@@ -60,6 +60,21 @@ static void ui_state_recompute_scale_leds(void)
     }
 }
 
+static void ui_state_render_split_leds(uint8_t boundary)
+{
+    // boundary in [1..12]. pc < boundary: low region; pc >= boundary: shifted region.
+    if (boundary < 1) {
+        boundary = 1;
+    }
+    if (boundary > 12) {
+        boundary = 12;
+    }
+
+    for (uint8_t pc = 0; pc < 12; pc++) {
+        smart_led_set(s_pc_led_id[pc], (pc < boundary) ? (uint8_t)LED_IDLE : (uint8_t)LED_ERROR);
+    }
+}
+
 // ----------------------------------------------------------------------------
 // Public UI API implementations (LED-only)
 // ----------------------------------------------------------------------------
@@ -136,4 +151,21 @@ void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color)
     if (ext_bitmask & (1U << EXT_13)) {
         smart_led_set(UI_LED_ID_EXT_13, preset);
     }
+}
+
+void ui_render_split_preview(uint8_t active)
+{
+    if (!active) {
+        ui_state_recompute_scale_leds();
+        return;
+    }
+
+    uint8_t boundary = chord_engine_get_split_boundary();
+    ui_state_render_split_leds(boundary);
+}
+
+void ui_split_boundary_changed(void)
+{
+    // If split mode is active, ui.c will call ui_render_split_preview(1) after updating.
+    // If not active, we do nothing because the normal scale LEDs should remain.
 }

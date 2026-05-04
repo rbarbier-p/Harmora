@@ -1,5 +1,4 @@
 #include "ui.h"
-
 #include "chord_engine.h"
 #include "screen_engine.h"
 
@@ -10,6 +9,9 @@ static harmony_mode_t s_ui_mode;
 static uint8_t s_dirty_display;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
+
+// Split edit mode (volume encoder)
+static uint8_t s_split_active;
 
 // Temporary encoder mapping until a proper scene/screen system exists.
 // 0: tonic (pitch class)
@@ -31,6 +33,8 @@ void ui_init(void)
 
     // Default mode at boot.
     ui_set_locked_mode(HARMONY_MODE_IONIAN);
+
+    s_split_active = 0;
 
 
     s_scene.active = UI_SCENE_CLEAR;
@@ -140,10 +144,37 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         s_dirty_display = 1;
         return;
     }
+
+    if (encoder_id == UI_ENC_ID_VOLUME) {
+        // Split boundary edit (chords only). Live update while active.
+        if (!s_split_active) {
+            return;
+        }
+
+        screen_engine_touch(&s_screen_engine, UI_SCENE_VOLUME, UI_SCENE_TIMEOUT_MS);
+
+        int16_t b = (int16_t)chord_engine_get_split_boundary();
+        b += (delta > 0) ? 1 : -1;
+        if (b < 1) b = 1;
+        if (b > 12) b = 12;
+        chord_engine_set_split_boundary((uint8_t)b);
+
+        ui_render_split_preview(1);
+        return;
+    }
 }
 
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
 {
+    if (encoder_id == UI_ENC_ID_VOLUME) {
+        // Toggle split edit mode.
+        if (pressed) {
+            s_split_active = s_split_active ? 0 : 1;
+            ui_render_split_preview(s_split_active);
+        }
+        return;
+    }
+
     if (!pressed) {
         return;
     }

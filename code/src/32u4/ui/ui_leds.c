@@ -28,7 +28,6 @@ uint8_t ui_flush_leds(ui_leds_t *leds)
 
     for (uint8_t i = 0; i < LED_COUNT; i++) {
         if (leds->dirty_mask & ((uint32_t)1U << i)) {
-            // opcode + led_id + preset
             if ((uint8_t)(idx + 3) > MCU_LINK_MAX_PAYLOAD) {
                 break;
             }

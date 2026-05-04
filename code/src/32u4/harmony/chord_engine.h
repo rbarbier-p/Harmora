@@ -174,6 +174,10 @@ void chord_engine_set_mode(harmony_mode_t mode);
 void chord_engine_set_tonic(uint8_t tonic_pc);
 void chord_engine_set_instrument(uint8_t instrument);
 
+// Octave split (applies to chords only)
+void chord_engine_set_split_boundary(uint8_t boundary);
+uint8_t chord_engine_get_split_boundary(void);
+
 uint8_t chord_engine_get_bpm(void);
 uint8_t chord_engine_get_tonic(void);
 uint8_t chord_engine_get_voicing(void);

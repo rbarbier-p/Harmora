@@ -109,6 +109,10 @@ void ui_set_locked_mode(harmony_mode_t mode);
 void ui_set_mode_held(harmony_mode_t mode, uint8_t held);
 void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color);
 
+// Split-preview helpers (LED-only).
+void ui_render_split_preview(uint8_t active);
+void ui_split_boundary_changed(void);
+
 // Internal: used by LED engine.
 harmony_mode_t ui_get_mode(void);
 void ui_set_mode_internal(harmony_mode_t mode);
