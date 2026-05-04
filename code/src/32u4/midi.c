@@ -62,12 +62,12 @@ void midi_send_2byte(uint8_t cin_cable, uint8_t b1, uint8_t b2) {
 
 // Note On
 void midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity) {
-    midi_send_3byte(0x19, MIDI_NOTE_ON | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
+    midi_send_3byte(0x09, MIDI_NOTE_ON | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
 }
 
 // Note Off
 void midi_note_off(uint8_t channel, uint8_t note, uint8_t velocity) {
-    midi_send_3byte(0x18, MIDI_NOTE_OFF | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
+    midi_send_3byte(0x08, MIDI_NOTE_OFF | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
 }
 
 // Control Change
@@ -216,7 +216,7 @@ void mcu_lcd_write(uint8_t position, const char *text, uint8_t length) {
 
 // Send button press/release
 void mcu_button(uint8_t button, uint8_t pressed) {
-    midi_send_3byte(0x09, MIDI_NOTE_ON | MCU_CHANNEL, button, pressed ? 0x7F : 0x00);
+    midi_send_3byte(0x19, MIDI_NOTE_ON | MCU_CHANNEL, button, pressed ? 0x7F : 0x00);
 }
 
 // Set fader position

@@ -36,7 +36,7 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t pressed = payload[i + 1];
             uint8_t velocity = payload[i + 2];
             input_tracker_update_key(key_id, pressed);
-            chord_engine_handle_key_event(key_id, pressed, velocity * 2);
+            chord_engine_handle_key_event(key_id, pressed, velocity);
         } else if (evt == EVT_ENCODER) {
             uint8_t encoder_id = payload[i];
             int8_t delta = (int8_t)payload[i + 1];

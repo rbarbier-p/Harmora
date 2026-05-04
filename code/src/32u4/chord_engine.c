@@ -61,7 +61,7 @@ typedef struct {
 static held_chord_t s_held[CHORD_ENGINE_MAX_HELD_KEYS];
 static harmony_context_t s_live_ctx;
 static chord_pattern_t s_pattern = CHORD_PATTERN_BLOCK;
-static uint8_t s_velocity = 96;
+static volatile uint8_t s_velocity = 96;
 static int8_t s_octave_offset = 0;
 
 static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
@@ -334,6 +334,7 @@ void chord_engine_set_velocity(uint8_t velocity)
     if (velocity > 127) {
         velocity = 127;
     }
+    
     s_velocity = velocity;
 }
 
@@ -370,11 +371,9 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velo
         return;
     }
 
-
-    uint8_t scaled_velocity = 96;
-    scaled_velocity = (scaled_velocity > 127) ? 127 : scaled_velocity;
+    // should never be above 127
+    uint8_t scaled_velocity = (velocity > 127) ? 127 : velocity;
     chord_engine_set_velocity(scaled_velocity);
-    // HERE: trying to using velocity to play midi notes
 
     if (pressed) {
         chord_start(key_id);
