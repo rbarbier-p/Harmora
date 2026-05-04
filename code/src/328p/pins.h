@@ -4,23 +4,8 @@
 #include <avr/io.h>
 #include <stdint.h>
 
-/**
- * ATmega328P Pin Definitions and GPIO Macros
- * 
- * This file centralizes all pin assignments and provides port-agnostic GPIO operations.
- * 
- * Usage:
- *   1. Define pins using PIN_NAME(PORT_LETTER, BIT_NUMBER) format
- *   2. Use GPIO macros for operations: GPIO_SET_OUTPUT(PIN_NAME)
- * 
- * Example:
- *   GPIO_SET_OUTPUT(PIN_MUX_S0);
- *   GPIO_SET_HIGH(PIN_MUX_S0);
- *   if (GPIO_READ(PIN_DMUX_OUT)) { ... }
- */
-
 // =============================================================================
-// INTERNAL HELPERS (Token Pasting Macros)
+// INTERNAL HELPERS
 // =============================================================================
 
 // Helper macros for token pasting - need two levels for proper expansion

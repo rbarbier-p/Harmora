@@ -3,13 +3,6 @@
 
 #include <stdint.h>
 
-/*
- * Interrupt System
- * Handles:
- * - GPIO expander interrupts (PCINT1) → sets flags for task processing
- * - 32U4 communication interrupt (INT0) → calls handler directly
- */
-
 // Bit flags indicate which port(s) triggered:
 extern volatile uint8_t g_exp_interrupt;
 extern volatile uint8_t g_mcu_int_fired;

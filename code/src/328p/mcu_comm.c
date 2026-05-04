@@ -115,15 +115,6 @@ done:
     return len;
 }
 
-/**
- * Handle incoming display commands from 32U4
- * Called from ISR when 32U4 asserts MCU_INT (falling edge on PD2)
- *
- * Framed protocol:
- * - One SS-low transaction == exactly one frame
- * - Header: MAGIC, TYPE, SEQ, LEN
- * - Payload: opcode stream (command implies parameter length)
- */
 void mcu_comm_handle_display(void) {
     // Prevent re-entrancy
     if (g_processing_display) {

@@ -1,12 +1,5 @@
 #include "utils.h"
 
-/*
-static const uint32_t pow10_table[10] = {
-    1000000000UL, 100000000UL, 10000000UL, 1000000UL, 100000UL,
-    10000UL, 1000UL, 100UL, 10UL, 1UL
-};
-*/
-
 uint32_t string_length(char *string)
 {
     uint32_t i = 0;

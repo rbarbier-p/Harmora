@@ -3,22 +3,6 @@
 
 #include <stdint.h>
 
-// Framed, length-delimited SPI link between ATmega328P (master) and ATmega32U4 (slave)
-//
-// Transaction framing rule:
-// - One SS-low transaction equals exactly one frame.
-// - SS rising edge aborts/resets parsing state.
-//
-// Frame format (no CRC):
-//   [0] MAGIC
-//   [1] TYPE
-//   [2] SEQ
-//   [3] LEN
-//   [4..] PAYLOAD (LEN bytes)
-//
-// Payload is an opcode stream where each opcode implies a fixed parameter count
-// (or a small variable-length form like CMD_STRING).
-
 #define MCU_LINK_MAGIC 0xA5
 
 typedef enum {
@@ -28,13 +12,9 @@ typedef enum {
   MCU_LINK_PONG          = 0x7F, // 32U4 -> 328P (sync check response)
 } mcu_link_frame_type_t;
 
-// Keep payload sizes small to avoid long ISR transactions.
-// (Can be increased later if needed.)
 #define MCU_LINK_MAX_PAYLOAD 128
 
-// -----------------------------------------------------------------------------
-// DRAW COMMANDS (32U4 -> 328P)
-// -----------------------------------------------------------------------------
+// 32U4 -> 328P
 
 typedef enum {
   CMD_NOP        = 0x00,
@@ -80,9 +60,7 @@ static inline uint8_t mcu_link_cmd_param_len(uint8_t cmd)
   }
 }
 
-// -----------------------------------------------------------------------------
-// INPUT EVENTS (328P -> 32U4)
-// -----------------------------------------------------------------------------
+// 328P -> 32U4
 
 typedef enum {
   EVT_KEY     = 0x11,

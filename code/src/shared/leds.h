@@ -3,13 +3,8 @@
 
 #include <stdint.h>
 
-// Shared LED definitions for 32U4 (producer) and 328P (executor).
-// Keep this in shared so both MCUs agree on indexes and preset values.
-
-// Number of LEDs in the APA102 chain.
 #define LED_COUNT 26
 
-// LED Presets (sent from 32U4, interpreted by 328P).
 typedef uint8_t led_preset_t;
 enum {
     LED_OFF         = 0,  // LED off

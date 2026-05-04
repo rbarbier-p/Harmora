@@ -4,18 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/**
- * Shared input state between tasks and MCU communication
- * 
- * Architecture:
- * - Each task scans inputs and updates its section
- * - task_mcu_comm() reads state and sends changes to 32U4
- * - Uses dirty flags to track what changed since last send
- */
-
-
-// Piano Keys (Hall Sensors)
-
 #define KEY_COUNT 12
 
 typedef struct {

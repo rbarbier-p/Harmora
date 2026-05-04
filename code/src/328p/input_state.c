@@ -187,29 +187,24 @@ void input_state_clear_dirty(void) {
 }
 
 uint8_t input_state_has_changes(void) {
-  // Check key changes
   if (g_input_state.keys.changed != 0) {
     return 1;
   }
 
-  // Check encoder deltas (any non-zero)
   for (uint8_t i = 0; i < ENCODER_COUNT; i++) {
     if (g_input_state.encoders.delta[i] != 0) {
       return 1;
     }
   }
 
-  // Check encoder press changes
   if (g_input_state.encoder_press.changed != 0) {
     return 1;
   }
 
-  // Check button changes
   if (g_input_state.buttons.changed != 0) {
     return 1;
   }
 
-  // Check pot changes
   if (g_input_state.pots.changed != 0) {
     return 1;
   }

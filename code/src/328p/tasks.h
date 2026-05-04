@@ -1,15 +1,6 @@
 #ifndef TASKS_H
 #define TASKS_H
 
-/**
- * Task functions for the ATmega328P scheduler
- * 
- * Each task handles one peripheral subsystem.
- * Tasks are called by the scheduler based on their configured divider.
- */
-
-// Scan 12 hall effect sensors for piano keys via analog mux
-// Detects key press/release and measures velocity
 #include <stdint.h>
 #include <stdbool.h>
 

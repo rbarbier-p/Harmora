@@ -17,11 +17,6 @@ static void i2c_cmd(uint8_t byte)
 
 static void i2c_data(const uint8_t *buf, uint16_t len)
 {
-  // SH1106 data mode: 0x40 before data
-  // UART_print_str("i2c_data len: ");
-  // UART_print_num(len);
-  // UART_print_str("\r\n");
-
   i2c_start(SH1106_ADDR << 1);   // write address
   i2c_write(DATA_MODE);          // Co=0, D/C#=1 -> data mode
 

@@ -5,16 +5,6 @@
 
 #include "../shared/leds.h"
 
-/**
- * LED State Management
- * 
- * The 32U4 sends LED preset commands to the 328P.
- * The 328P stores the current preset for each LED and
- * task_led_update() converts presets to APA102 colors.
- */
-
-// LED_COUNT and led_preset_t are defined in shared/leds.h
-
 // APA102 color structure (matches APA102 frame format)
 typedef struct {
     uint8_t brightness;  // 0xE0 | (0-31)
