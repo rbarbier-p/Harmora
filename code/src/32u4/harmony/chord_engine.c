@@ -134,7 +134,7 @@ static void chord_start(uint8_t key_id)
 
     held_chord_t *slot = &s_held_chord;
     if (slot->active) {
-        chord_stop(slot);
+        chord_stop();
     }
 
     // Apply keyboard transpose to pitch class for harmony resolution and spelling.
@@ -228,7 +228,7 @@ void chord_engine_tick(uint8_t elapsed_ms)
 
 void chord_engine_all_notes_off(void)
 {
-    chord_stop(&s_held_chord);
+    chord_stop();
     midi_all_notes_off(MIDI_CHANNEL_DEFAULT);
 }
 
@@ -243,7 +243,7 @@ bool will_it_be_chord()
     return false;
 }
 
-void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
+void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velocity)
 {
     static uint16_t chord_keys = 0x00;
     static uint16_t melody_keys = 0x00;
@@ -251,6 +251,8 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed)
     if (key_id >= CHORD_ENGINE_MAX_HELD_KEYS) {
         return;
     }
+
+    chord_engine_set_velocity(velocity);
 
     if (!pressed) {
         if (chord_keys & (1 << key_id)) {

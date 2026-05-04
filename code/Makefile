@@ -137,6 +137,7 @@ ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(32U4_LINK_SRC)
 ATMEGA32U4_SRC += $(UI_SRC)
 ATMEGA32U4_SRC += $(HARMONY_SRC)
+ATMEGA32U4_SRC += src/shared/utils.c
 
 
 # Output files in build folder
@@ -152,7 +153,7 @@ SIZE_TXT = $(BUILD_DIR)/size.txt
 MAKEFLAGS += --no-print-directory
 
 # Default target
-all: 32u4
+all: flash 
 
 # Ensure build directory exists
 $(BUILD_DIR):

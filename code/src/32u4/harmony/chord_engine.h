@@ -150,7 +150,7 @@ typedef struct {
 // chord_engine.c
 void chord_engine_init(void);
 void chord_engine_tick(uint8_t elapsed_ms);
-void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed);
+void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velocity);
 void chord_engine_handle_button_event(uint8_t button_id, uint8_t pressed);
 void chord_engine_all_notes_off(void);
 
