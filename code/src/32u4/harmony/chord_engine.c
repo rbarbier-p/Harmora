@@ -23,6 +23,7 @@ static uint8_t s_split_boundary = 12;
 #define MODE_DOUBLE_TAP_WINDOW_MS 250
 static uint16_t s_last_mode_tap_age_ms = 0;
 static uint16_t s_last_ext_tap_age_ms = 0;
+static bool velocity_off = false;
 
 static const uint8_t s_root_note_lut[CHORD_ENGINE_MAX_HELD_KEYS] = {
     60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71
@@ -57,6 +58,7 @@ static uint8_t next_index(play_pattern_t p)
     }
 }
 
+
 static void chord_play_block(const held_chord_t *slot)
 {
     midi_play_chord(MIDI_CHANNEL_DEFAULT, slot->notes, slot->note_count, s_velocity);
@@ -88,6 +90,14 @@ void chord_engine_init(void) {
     s_split_boundary = 12;
 
     ui_set_locked_mode(s_harmony_ctx.mode);
+}
+
+void chord_engine_enable_velocity(bool enabled)
+{
+    if (enabled)
+        velocity_off = false;
+    else
+        velocity_off = true;
 }
 
 void chord_engine_set_split_boundary(uint8_t boundary)
@@ -252,7 +262,10 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velo
         return;
     }
 
-    chord_engine_set_velocity(velocity);
+    if (velocity_off)
+        chord_engine_set_velocity(96);
+    else
+        chord_engine_set_velocity(velocity);
 
     if (!pressed) {
         if (chord_keys & (1 << key_id)) {

@@ -178,6 +178,7 @@ void chord_engine_set_instrument(uint8_t instrument);
 void chord_engine_set_split_boundary(uint8_t boundary);
 uint8_t chord_engine_get_split_boundary(void);
 
+void chord_engine_enable_velocity(bool enabled);
 uint8_t chord_engine_get_bpm(void);
 uint8_t chord_engine_get_tonic(void);
 uint8_t chord_engine_get_voicing(void);

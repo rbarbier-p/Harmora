@@ -20,21 +20,16 @@
 // ===== APA102 LED Configuration =====
 static SoftSPI_t led_spi;
 static uint8_t led_initialized = 0;
-static bool some_key_pressed = false;
+static bool velocity_off = false;
 
-static uint8_t velocities[12] = {
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-  0, 0, 0, 0
-};
-
-void task_display_velocity(uint8_t key, uint8_t x, uint8_t y)
+void task_enable_velocity_reading(bool enabled)
 {
-
-    char buffer[15];
-    number_to_string(buffer, 14, velocities[key]);
-    display_draw_string(x, y, buffer);
+    if (enabled)
+        velocity_off = false;
+    else
+        velocity_off = true;
 }
+
 
 static uint32_t clamp_u32(uint32_t value, uint32_t min, uint32_t max)
 {
@@ -95,7 +90,6 @@ void task_hall_scan(void) {
     const uint32_t MAX_VELOCITY = 9500;// 11000-15000 | 10000
     const uint16_t FIXED_DISTANCE = 40; // 45 | 40
     static bool was_bottomed[12] = {false};
-    some_key_pressed = false;
 
     adc_select_channel(7);
     for (uint8_t key = 0; key < 12; key++)
@@ -107,11 +101,11 @@ void task_hall_scan(void) {
         uint16_t time = stopwatch_read();
 
         uint8_t is_pressed = (value < press_threshold[key]);
-        if (is_pressed)
-            some_key_pressed = true;
         bool was_pressed = input_key_is_already_pressed(key_to_note[key]);
 
         input_state_update_key(key_to_note[key], is_pressed);
+        if (velocity_off)
+            continue;
         if (!is_pressed)
         {
             pressed_time[key] = 0;
@@ -119,26 +113,6 @@ void task_hall_scan(void) {
             continue;
         }
 
-        /*
-        if (some_key_pressed)
-        {
-            scheduler_set_divider(TASK_MCU_COMM, 10);
-            scheduler_set_divider(TASK_BUTTON_SCAN, 10);
-            scheduler_set_divider(TASK_DISPLAY_UPDATE, 10);
-            scheduler_set_divider(TASK_LED_UPDATE, 10);
-            scheduler_set_divider(TASK_POT_SCAN, 10);
-            scheduler_set_divider(TASK_ENCODER_SCAN, 10);
-        }
-        else
-        {
-            scheduler_set_divider(TASK_MCU_COMM, 0);
-            scheduler_set_divider(TASK_BUTTON_SCAN, 0);
-            scheduler_set_divider(TASK_DISPLAY_UPDATE, 0);
-            scheduler_set_divider(TASK_LED_UPDATE, 0);
-            scheduler_set_divider(TASK_POT_SCAN, 0);
-            scheduler_set_divider(TASK_ENCODER_SCAN, 0);
-        }
-        */
 
         if (!was_pressed)
         {
@@ -162,7 +136,6 @@ void task_hall_scan(void) {
             if (scaled_velocity > 60 && scaled_velocity <= 85)
                 scaled_velocity += 10;
             scaled_velocity = (scaled_velocity <= 60) ? scaled_velocity + 40 : scaled_velocity;
-            velocities[key] = scaled_velocity;
             input_state_update_key_velocity(key, key_to_note[key], scaled_velocity);
         }
     }

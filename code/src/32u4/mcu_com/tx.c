@@ -98,3 +98,11 @@ void mcu_input_request(void) {
     append_byte(payload, &idx, CMD_INPUT_REQ);
     mcu_link_queue_display_frame(payload, idx);
 }
+
+void mcu_send_velocity_control(uint8_t toggled) {
+    uint8_t payload[10];
+    uint8_t idx = 0;
+    append_byte(payload, &idx, CMD_VELOCITY_CONTROL);
+    append_byte(payload, &idx, toggled);
+    mcu_link_queue_display_frame(payload, idx);
+}

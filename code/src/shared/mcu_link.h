@@ -53,6 +53,7 @@ typedef enum {
   CMD_STRING_FONT = 0x0B,
   CMD_END        = 0x0F,
   CMD_INPUT_REQ  = 0x10, // Request master to send input state (for initial state)
+  CMD_VELOCITY_CONTROL = 0x11
 } mcu_link_draw_cmd_t;
 
 // Font ids used by CMD_STRING_FONT.

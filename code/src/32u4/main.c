@@ -4,6 +4,7 @@
 #include "mcu_com.h"
 #include "chord_engine.h"
 #include "ui/ui.h"
+#include "utils.h"
 
 #include <stdio.h>
 
@@ -43,11 +44,6 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t encoder_id = payload[i];
             uint8_t pressed = payload[i + 1];
             ui_handle_encoder_press(encoder_id, pressed);
-        } else if (evt == EVT_BUTTON) {
-            uint8_t button_id = payload[i];
-            uint8_t pressed = payload[i + 1];
-            chord_engine_handle_button_event(button_id, pressed);
-
         } else if (evt == EVT_POT) {
             uint8_t pot_id = payload[i];
             uint8_t value = payload[i + 1];
@@ -58,6 +54,10 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             // Encoder presses are currently wired as button ids.
             if (button_id == 25)
                 mcu_button(MCU_BTN_RECORD, pressed);
+            else if (button_id == 23 && pressed)
+                chord_engine_enable_velocity(1); 
+            else if (button_id == 23 && !pressed)
+                chord_engine_enable_velocity(0); 
             else if (button_id == 26)
                 mcu_button(MCU_BTN_PLAY, pressed);
             else if (button_id == 27)

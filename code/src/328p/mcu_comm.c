@@ -5,6 +5,7 @@
 #include "expander.h"
 #include "SPI/SPI.h"
 #include "pins.h"
+#include "tasks.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -287,7 +288,15 @@ void mcu_comm_handle_display(void) {
                 led_state_set(led_id, preset);
                 break;
             }
-
+            case CMD_VELOCITY_CONTROL: {
+                if (remaining < 2) { abort = 1; break; }
+                uint8_t toggled = mcu_comm_read_byte(); remaining--;
+                if (toggled)
+                    task_enable_velocity_reading(1);
+                else
+                    task_enable_velocity_reading(0);
+                break;
+           }
             default:
                 // Unknown command. Try to skip fixed-length commands if known.
                 // If unknown/variable, we can't safely skip; ignore.
