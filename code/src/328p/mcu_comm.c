@@ -165,6 +165,9 @@ void mcu_comm_handle_display(void) {
                 input_state_update_button(24, !(0x01 & expander_read_raw(1, 1))); // S1
                 input_state_update_button(22, !(0x40 & expander_read_raw(1, 0))); // S2
                 input_state_update_button(23, !(0x80 & expander_read_raw(1, 0))); // S3
+                input_state_force_button_changed(24);
+                input_state_force_button_changed(22);
+                input_state_force_button_changed(23);
                 break;
             case CMD_CLEAR:
                 display_clear();

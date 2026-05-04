@@ -93,7 +93,7 @@ void ui_tick(uint8_t elapsed_ms);
 void ui_init(void);
 
 // UI input hooks (called from main loop input processing)
-void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta);
+void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta, uint8_t program);
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed);
 
 // Chord overlay API (called from chord_engine)

@@ -86,6 +86,7 @@ void input_state_update_encoder_press(uint8_t encoder_id, uint8_t is_pressed);
 
 // Update button state (called by task_button_scan)
 void input_state_update_button(uint8_t button_id, uint8_t is_pressed);
+void input_state_force_button_changed(uint8_t button_id);
 
 // Update pot value (called by task_pot_scan)
 // Only marks as changed if value differs by more than threshold

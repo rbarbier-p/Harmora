@@ -58,7 +58,7 @@ void ui_chord_screen_off(void)
     s_dirty_display = 1;
 }
 
-void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
+void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta, uint8_t program)
 {
     if (delta == 0) {
         return;
@@ -102,10 +102,12 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
 
         screen_engine_touch(&s_screen_engine, UI_SCENE_INSTRUMENT, UI_SCENE_TIMEOUT_MS);
 
+        /*
         int16_t prg = (int16_t)s_scene.pending_instrument_program + (delta > 0 ? -1 : 1);
         if (prg < 0) prg = 0;
         if (prg > 127) prg = 127;
-        s_scene.pending_instrument_program = (uint8_t)prg;
+        */
+        s_scene.pending_instrument_program = program;
 
         s_dirty_display = 1;
         return;

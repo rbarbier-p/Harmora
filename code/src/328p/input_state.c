@@ -138,6 +138,19 @@ void input_state_update_button(uint8_t button_id, uint8_t is_pressed) {
   }
 }
 
+void input_state_force_button_changed(uint8_t button_id)
+{
+  if (button_id >= BUTTON_COUNT)
+    return;
+
+  button_state_t *buttons = &g_input_state.buttons;
+  uint32_t mask = (1UL << button_id);
+
+  // Mark as changed
+  buttons->changed |= mask;
+
+}
+
 void input_state_update_pot(uint8_t pot_id, uint8_t value) {
   if (pot_id >= POT_COUNT)
     return;

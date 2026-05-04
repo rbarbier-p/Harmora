@@ -39,13 +39,22 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             chord_engine_handle_key_event(key_id, pressed, velocity);
         } else if (evt == EVT_ENCODER_ROTATION) {
             uint8_t encoder_id = payload[i];
-            uint8_t delta = payload[i + 1];
-            ui_handle_encoder_turn(encoder_id, delta);
-            if (delta == 1)
+            int8_t delta = payload[i + 1];
+            delta *= -1;
+            if (delta >= 0)
+            {
                 program++;
+                if (program >= MIDI_MAX_INSTRUMENTS)
+                    program = 0;
+            }
             else
+            {
                 program--;
+                if (program >= MIDI_MAX_INSTRUMENTS)
+                    program = MIDI_MAX_INSTRUMENTS - 1;
+            }
             midi_program_change(MCU_CHANNEL, program);
+            ui_handle_encoder_turn(encoder_id, delta, program);
         } else if (evt == EVT_ENCODER_PRESS) {
             uint8_t encoder_id = payload[i];
             uint8_t pressed = payload[i + 1];
@@ -57,6 +66,12 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
         } else if (evt == EVT_BUTTON) {
             uint8_t button_id = payload[i];
             uint8_t pressed = payload[i + 1];
+            char text[15];
+            number_to_string(text, 15, button_id);
+            midi_debug("button: ");
+            midi_debug(text);
+            number_to_string(text, 15, pressed);
+            midi_debug(text);
             // Encoder presses are currently wired as button ids.
             if (button_id == 25)
                 mcu_button(MCU_BTN_RECORD, pressed);

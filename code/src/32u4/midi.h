@@ -99,6 +99,7 @@
 #define MCU_BTN_ZOOM           0x64
 #define MCU_BTN_SCRUB          0x65
 
+#define MIDI_MAX_INSTRUMENTS 11
 
 // UNUSED
 // Controller state 
