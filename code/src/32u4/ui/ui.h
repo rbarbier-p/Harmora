@@ -96,10 +96,6 @@ void ui_init(void);
 void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta, uint8_t program);
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed);
 
-// Chord overlay API (called from chord_engine)
-//void ui_set_chord_overlay(uint8_t active);
-//void ui_set_chord_spelling(const char *text);
-
 void ui_chord_screen_on(char *chord_spelling);
 void ui_chord_screen_off(void);
 

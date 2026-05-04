@@ -14,7 +14,6 @@ static uint8_t s_rx_last_first_evt = EVT_END;
 
 static void process_input_payload(const uint8_t *payload, uint8_t len)
 {
-    //static bool recording = false;
     const uint8_t mcu_pots[4] = {MCU_CC_VPOT_1, MCU_CC_VPOT_2, MCU_CC_VPOT_3, MCU_CC_VPOT_4};
     uint8_t i = 0;
     static uint8_t program = 0;
@@ -70,7 +69,6 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             midi_debug(text);
             number_to_string(text, 15, pressed);
             midi_debug(text);
-            // Encoder presses are currently wired as button ids.
             if (button_id == 25)
                 mcu_button(MCU_BTN_RECORD, pressed);
             else if (button_id == 23 && pressed)
@@ -98,12 +96,10 @@ static void process_link_rx_frame(void)
 {
     uint8_t frame[4 + MCU_LINK_MAX_PAYLOAD];
 
-    // Check if a new frame is ready. If not, return immediately to avoid blocking the main loop.
     if (!mcu_link_rx_frame_ready()) {
         return;
     }
 
-    // Read the frame bytes into a local buffer. This also marks the frame as consumed so the next one can be received.
     uint8_t n = mcu_link_read_rx_bytes(frame, sizeof(frame));
     if (n < 4) {
         return;

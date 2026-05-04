@@ -3,16 +3,6 @@
 #include "SPI/SPI.h"
 #include <stdlib.h>
 
-// SPI slave framed link implementation.
-//
-// The 32U4 acts as an SPI slave. The 328P clocks data.
-//
-// Two modes:
-// - RX mode: master is sending us an input frame (we capture bytes into a small
-//   buffer and parse in the main loop).
-// - TX mode: master is reading a display frame (we stream a prepared buffer).
-
-
  // initialize all 0
 rx_internal_t rx = {
   .state = RX_WAIT_MAGIC,

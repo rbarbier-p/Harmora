@@ -3,10 +3,8 @@
 
 #include <stdint.h>
 
-#include "ui.h" // ui_scene_id_t
+#include "ui.h" 
 
-// Screen engine owns "what screen is currently shown" and the navigation rules.
-// UI input handlers call into this engine; UI tick queries it to render.
 
 typedef struct {
     ui_scene_id_t current;
