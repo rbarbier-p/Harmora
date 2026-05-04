@@ -16,11 +16,6 @@ void input_state_init(void) {
 void input_display_key_velocity(uint8_t key, uint8_t x, uint8_t y)
 {
 
-    /*
-      static const uint8_t key_to_channel[12] = {
-        0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15
-      };
-      */
     char buffer[8] = "  :    ";
     buffer[0] = key / 10 % 10 + '0';
     buffer[1] = key % 10 + '0';

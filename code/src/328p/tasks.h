@@ -11,7 +11,7 @@
 // Scan 12 hall effect sensors for piano keys via analog mux
 // Detects key press/release and measures velocity
 #include "stdint.h"
-void task_display_raw_velocity(uint8_t key, uint8_t x, uint8_t y);
+void task_display_velocity(uint8_t key, uint8_t x, uint8_t y);
 void task_hall_scan(void);
 
 // Scan 6 rotary encoders via digital mux
