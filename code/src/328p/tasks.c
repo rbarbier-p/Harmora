@@ -21,35 +21,6 @@
 static SoftSPI_t led_spi;
 static uint8_t led_initialized = 0;
 
-static uint32_t clamp_u32(uint32_t value, uint32_t min, uint32_t max)
-{
-    if (value <= min)
-        return (min);
-    else if (value >= max)
-        return (max);
-    else
-        return (value);
-}
-
-static uint8_t convert_velocity(uint32_t velocity, uint32_t min, uint32_t max)
-{
-    // map [min, max] -> [1, 127]
-   return ((uint8_t)(1 + ((velocity - min) * 126U) / (max - min)));
-}
-
-static uint32_t velocities[12] = {
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-  0, 0, 0, 0
-};
-
-void task_display_raw_velocity(uint8_t key, uint8_t x, uint8_t y)
-{
-
-    char buffer[15];
-    snprintf(buffer, 14, "%lu", velocities[key]);
-    display_draw_string(x, y, buffer);
-}
 
 void task_hall_scan(void) {
      /*
@@ -66,12 +37,6 @@ void task_hall_scan(void) {
       101, 105, 104, 123,
       97, 109, 113, 119 
   }; // Pre-calibrated thresholds for each key
-  
-  static const uint8_t bottom_threshold[12] = {
-      82, 90, 80, 74,
-      76, 77, 93, 91,
-      79, 67, 78, 83
-  };
      
   // Channel mapping array (12 bytes in FLASH)
   static const uint8_t key_to_channel[12] = {
@@ -82,19 +47,12 @@ void task_hall_scan(void) {
     1, 11, 9, 7, 5, 4, 2, 0, 3, 6, 8, 10
   };
 
-  
-  static uint16_t pressed_time[12] = {
-      0, 0, 0, 0,
-      0, 0, 0, 0,
-      0, 0, 0, 0
-  };
+    static uint8_t prev_value[12] = {
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+    };
 
-
-  static bool was_bottomed[12] = {false};
-
-  const uint32_t MIN_VELOCITY = 40000;
-  const uint32_t MAX_VELOCITY = 500000;
- 
   // Scan all 12 keys
   adc_select_channel(7);
   for (uint8_t key = 0; key < 12; key++) {
@@ -102,62 +60,19 @@ void task_hall_scan(void) {
     _delay_us(10);  // Mux settling time
     adc_read();
     uint8_t value = adc_read();
-    uint16_t time = stopwatch_read();
     
     // Determine if key is currently pressed (hall sensor goes LOW when pressed)
     uint8_t is_pressed = (value < press_threshold[key]);
-    bool was_pressed = input_key_is_already_pressed(key_to_note[key]);
 
-    input_state_update_key(key_to_note[key], is_pressed);
-    if (!is_pressed)
-    {
-        pressed_time[key] = 0; 
-        was_bottomed[key] = false;
-        if (was_pressed)
-            input_state_key_changed(key_to_note[key]);
-        continue;
-    }
-
-    if (!was_pressed)
-    {
-        pressed_time[key] = time;
-        continue;
-    }
-
-    uint8_t is_bottomed = (value <= bottom_threshold[key]);
-    if (!is_bottomed)
-    {
-        continue;
-    }
-    if (!was_bottomed[key])
-    {
-        was_bottomed[key] = true;
-        uint16_t distance = abs((int16_t)press_threshold[key] - (int16_t)bottom_threshold); 
-        uint32_t delta_time = stopwatch_elapsed(pressed_time[key], time);
-        if (delta_time == 0) continue; // divide by zero guard
-        uint32_t velocity = (distance * 1000000UL) / delta_time;
-        velocities[key] = velocity;
-        velocity = clamp_u32(velocity, MIN_VELOCITY, MAX_VELOCITY);
-        input_state_update_key_velocity(key, key_to_note[key], convert_velocity(velocity, MIN_VELOCITY, MAX_VELOCITY));
-        input_state_key_changed(key_to_note[key]);
-    }
-
-
-    /*
-    if (prev_value[key] != 0  && last_time[key] != 0
+    if (prev_value[key] != 0  
             && !input_key_is_already_pressed(key_to_note[key]))
     {
-        uint16_t distance = abs((int16_t)value - (int16_t)prev_value[key]); 
-        uint32_t elapsed_time = stopwatch_elapsed(last_time[key], time);
-        uint32_t velocity = (distance * 1000000UL) / (elapsed_time);
-        task_display_update();
-        input_state_update_key_velocity(key, key_to_note[key], (uint8_t)velocity);
+        uint16_t distance = abs((int16_t)prev_value[key] - (int16_t)value); 
+        input_state_update_key_velocity(key, key_to_note[key], (uint8_t)distance);
     }
-    last_time[key] = time;
     prev_value[key] = value;
     // Update key state (handles change detection internally)
     input_state_update_key(key_to_note[key], is_pressed);
-    */
 
   }
 }
@@ -360,7 +275,7 @@ void task_pot_scan(void) {
     _delay_us(30);
     adc_read();
     uint8_t value = adc_read_channel(7);
-    input_state_update_pot(i, value);
+    input_state_update_pot(i, 255 - value);
   }
 }
 

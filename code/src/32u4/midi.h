@@ -36,13 +36,28 @@
 
 // MCU Commands
 #define MCU_CMD_DEVICE_QUERY       0x00
-#define MCU_CMD_HOST_CONNECTION    0x01
+#define MCU_CMD_HOST_CONNECTION_QUERY    0x01
+#define MCU_CMD_HOST_CONNECTION_REPLY   0x02
+#define MCU_CMD_HOST_CONNECTION_CONFIRM 0x03
+#define MCU_CMD_LCD_MESSAGE               0x12
 #define MCU_CMD_VERSION_REQUEST    0x13
 #define MCU_CMD_VERSION_REPLY      0x14
-#define MCU_CMD_LCD_MESSAGE        0x12
+#define MCU_CMD_CHANNEL_METER_MODE      0x20
 
-// MCU Control Change numbers
+// MCUU Master Fader (channel 9, 0-indexed as 8)
+#define MCU_MASTER_FADER_CHANNEL 8
+
+// Fader range
+#define MCU_FADER_MIN   0
+#define MCU_FADER_MAX   16383
+#define MCU_FADER_UNITY 12648  // 0dB unity gain position in MCU
+
+// MCU V-Pot rotation CC (controller → DAW, relative encoder movement)
 #define MCU_CC_VPOT_1       0x10
+#define MCU_CC_VPOT_2       0x11
+#define MCU_CC_VPOT_3       0x12
+#define MCU_CC_VPOT_4       0x13
+
 
 // MCU Button Note numbers
 #define MCU_BTN_REC_RDY_1   0x00
@@ -125,15 +140,21 @@ void midi_debug(const char *msg);
 
 void process_incoming_midi(void);
 
+void mcu_send_host_connection_query(void);
+void mcu_send_host_connection_confirm(void);
 void mcu_send_device_query_response(void);
 void mcu_send_version_reply(void);
 void mcu_lcd_write(uint8_t position, const char *text, uint8_t length);
 void mcu_button(uint8_t button, uint8_t pressed);
 void mcu_set_fader(uint8_t channel, uint16_t position);
-void mcu_set_vpot(uint8_t channel, uint8_t value);
+void mcu_set_vpot(uint8_t channel, uint8_t pot, uint8_t value);
 void mcu_set_vpot_led(uint8_t channel, uint8_t mode, uint8_t position);
 void mcu_set_meter(uint8_t channel, uint8_t level);
 void mcu_send_timecode(const char *timecode);
 
+void mcu_set_master_fader(uint16_t position);
+void mcu_encoder_move_master_volume(int8_t delta);
+
+void display_string(const char *str, uint8_t size);
 
 #endif // MIDI_H

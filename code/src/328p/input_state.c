@@ -62,20 +62,10 @@ void input_state_update_key(uint8_t key_id, uint8_t is_pressed) {
       keys->pressed &= ~mask;
     }
 
-//    keys->changed |= mask;
+    keys->changed |= mask;
   }
 }
 
-void input_state_key_changed(uint8_t key_id)
-{
-    if (key_id >= KEY_COUNT)
-        return;
-
-    key_state_t *keys = &g_input_state.keys;
-    uint16_t mask = (1U << key_id);
-    
-    keys->changed |= mask;
-}
 
 void input_state_update_key_velocity(uint8_t key, uint8_t key_id, uint8_t velocity)
 {

@@ -371,8 +371,7 @@ void chord_engine_handle_key_event(uint8_t key_id, uint8_t pressed, uint8_t velo
     }
 
 
-    //uint8_t scaled_velocity = velocity * 2;
-    uint8_t scaled_velocity = velocity;
+    uint8_t scaled_velocity = 96;
     scaled_velocity = (scaled_velocity > 127) ? 127 : scaled_velocity;
     chord_engine_set_velocity(scaled_velocity);
     // HERE: trying to using velocity to play midi notes

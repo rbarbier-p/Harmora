@@ -120,6 +120,7 @@ ATMEGA328P_SRC += $(ADC_SRC)
 ATMEGA328P_SRC += $(MUX_SRC)
 ATMEGA328P_SRC += $(EXPANDER_SRC)
 ATMEGA328P_SRC += $(328P_SPI_SRC)
+ATMEGA328P_SRC += src/shared/utils.c
 
 
 ATMEGA32U4_SRC = src/32u4/main.c
@@ -130,6 +131,7 @@ ATMEGA32U4_SRC += src/32u4/harmony_resolver.c
 ATMEGA32U4_SRC += src/32u4/input_tracker.c
 ATMEGA32U4_SRC += $(32U4_SPI_SRC)
 ATMEGA32U4_SRC += $(32U4_LINK_SRC)
+ATMEGA32U4_SRC += src/shared/utils.c
 
 
 # Output files in build folder

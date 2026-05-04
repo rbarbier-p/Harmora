@@ -13,8 +13,11 @@ extern volatile uint8_t usbConfigured;
 static uint8_t s_rx_last_payload_len = 0;
 static uint8_t s_rx_last_first_evt = EVT_END;
 
+
 static void process_input_payload(const uint8_t *payload, uint8_t len)
 {
+    //static bool recording = false;
+    const uint8_t mcu_pots[4] = {MCU_CC_VPOT_1, MCU_CC_VPOT_2, MCU_CC_VPOT_3, MCU_CC_VPOT_4};
     uint8_t i = 0;
 
     while (i < len) {
@@ -33,12 +36,13 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             uint8_t pressed = payload[i + 1];
             uint8_t velocity = payload[i + 2];
             input_tracker_update_key(key_id, pressed);
-            chord_engine_handle_key_event(key_id, pressed, velocity);
+            chord_engine_handle_key_event(key_id, pressed, velocity * 2);
         } else if (evt == EVT_ENCODER) {
             uint8_t encoder_id = payload[i];
             int8_t delta = (int8_t)payload[i + 1];
             input_tracker_update_encoder(encoder_id, delta);
             ui_handle_encoder_turn(encoder_id, delta);
+            mcu_encoder_move_master_volume(delta);
         } else if (evt == EVT_BUTTON) {
             uint8_t button_id = payload[i];
             uint8_t pressed = payload[i + 1];
@@ -46,17 +50,23 @@ static void process_input_payload(const uint8_t *payload, uint8_t len)
             // Encoder presses are currently wired as button ids.
             if (button_id >= UI_ENCODER_PRESS_BUTTON_BASE &&
                 button_id < (uint8_t)(UI_ENCODER_PRESS_BUTTON_BASE + INPUT_TRACKER_ENCODER_COUNT)) {
-                ui_handle_encoder_press((uint8_t)(button_id - UI_ENCODER_PRESS_BUTTON_BASE), pressed);
+                  ui_handle_encoder_press((uint8_t)(button_id - UI_ENCODER_PRESS_BUTTON_BASE), pressed);
             } else {
-              chord_engine_handle_button_event(button_id, pressed);
+                if (button_id == 25)
+                    mcu_button(MCU_BTN_RECORD, pressed);
+                else if (button_id == 26)
+                    mcu_button(MCU_BTN_PLAY, pressed);
+                else if (button_id == 27)
+                    mcu_button(MCU_BTN_REWIND, pressed);
+                else
+                  chord_engine_handle_button_event(button_id, pressed);
             }
 
         } else if (evt == EVT_POT) {
-            midi_debug("pot event!");
             uint8_t pot_id = payload[i];
             uint8_t value = payload[i + 1];
             input_tracker_update_pot(pot_id, value);
-            mcu_set_vpot(CC_REVERB, value);
+            mcu_set_vpot(MCU_CHANNEL, mcu_pots[pot_id], value / 2);
         }
 
         i = (uint8_t)(i + param_len);
@@ -106,11 +116,6 @@ int main(void)
     ui_init();
     chord_engine_init();
     input_tracker_init();
-
-    /*while (!usbConfigured)
-    {
-        _delay_ms(50);
-    }*/
 
     while (1)
     {

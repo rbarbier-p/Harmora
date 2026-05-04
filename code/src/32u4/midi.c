@@ -1,8 +1,21 @@
 #include "midi.h"
 #include <stdio.h>
+#include "ui/ui.h"
+#include "mcu_com/mcu_com.h"
 
 extern uint8_t usbConfigured;
+// Tracked master fader position (persists between encoder ticks)
+static uint16_t master_fader_pos = MCU_FADER_UNITY;
 //mcu_state_t mcuState;
+
+void display_string(const char *str, uint8_t size)
+{
+    uint8_t payload[size + 10];
+    uint8_t idx = 0;
+    append_byte(payload, &idx, CMD_CLEAR);
+    append_string_cmd(payload, &idx, 2, 8, str);
+    mcu_link_queue_display_frame(payload, idx);
+}
 
 /*
 static controller_state_t ctrl_state = {
@@ -13,6 +26,7 @@ static controller_state_t ctrl_state = {
     .velocity = 100
 };
 */
+
 
 // Send raw MIDI message (3 bytes)
 void midi_send_3byte(uint8_t cin_cable, uint8_t b1, uint8_t b2, uint8_t b3) {
@@ -48,12 +62,12 @@ void midi_send_2byte(uint8_t cin_cable, uint8_t b1, uint8_t b2) {
 
 // Note On
 void midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity) {
-    midi_send_3byte(0x09, MIDI_NOTE_ON | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
+    midi_send_3byte(0x19, MIDI_NOTE_ON | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
 }
 
 // Note Off
 void midi_note_off(uint8_t channel, uint8_t note, uint8_t velocity) {
-    midi_send_3byte(0x08, MIDI_NOTE_OFF | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
+    midi_send_3byte(0x18, MIDI_NOTE_OFF | (channel & 0x0F), note & 0x7F, velocity & 0x7F);
 }
 
 // Control Change
@@ -71,10 +85,6 @@ void midi_play_chord(uint8_t channel, const uint8_t *notes, uint8_t count, uint8
     uint8_t limit = (count > 8) ? 8 : count;
     for (uint8_t i = 0; i < limit; i++) {
         midi_note_on(channel, notes[i], velocity);
-
-        //char msg[18];
-        //snprintf(msg, sizeof(msg), "playing note: %i", notes[i]);
-        //midi_debug(msg);
     }
 }
 
@@ -156,7 +166,7 @@ void mcu_send_device_query_response(void) {
         MIDI_SYSEX_START,
         MCU_SYSEX_ID_1, MCU_SYSEX_ID_2, MCU_SYSEX_ID_3,
         MCU_DEVICE_ID,
-        MCU_CMD_HOST_CONNECTION,
+        MCU_CMD_HOST_CONNECTION_QUERY,
         '1', '2', '3', '4', '5', '6', '7',
         MIDI_SYSEX_END
     };
@@ -219,9 +229,9 @@ void mcu_set_fader(uint8_t channel, uint16_t position) {
 }
 
 // Set V-Pot position
-void mcu_set_vpot(uint8_t channel, uint8_t value) {
+void mcu_set_vpot(uint8_t channel, uint8_t pot, uint8_t value) {
     if (channel >= 8) return;
-    midi_send_3byte(0x0B, MIDI_CC | MCU_CHANNEL, MCU_CC_VPOT_1 + channel, value & 0x7F);
+    midi_send_3byte(0x0B, MIDI_CC | MCU_CHANNEL, pot + channel, value & 0x7F);
     //mcuState.vpot_position[channel] = value;
 }
 
@@ -295,112 +305,199 @@ static uint8_t sysex_buffer[32];
 static uint8_t sysex_pos = 0;
 static uint8_t in_sysex = 0;
 
-// Process incoming MIDI/SysEx from DAW
 void process_incoming_midi(void) {
     if (!usbConfigured) return;
-    
+
     UENUM = MIDI_RX_ENDPOINT;
-    
-    // Check if data available
-    if (!(UEINTX & (1 << RXOUTI))) return;
-    
-    // Read USB MIDI packet (4 bytes)
-    uint8_t header = read_byte();
-    uint8_t byte1 = read_byte();
-    uint8_t byte2 = read_byte();
-    uint8_t byte3 = read_byte();
-    
-    // Clear OUT
-    UEINTX &= ~(1 << RXOUTI);
-    UEINTX &= ~(1 << FIFOCON);
-    
-    // Parse header to determine message type
-    uint8_t cin = header & 0x0F;
-    
-    // Handle SysEx
-    if (cin >= 0x04 && cin <= 0x07) {
-        // SysEx message
-        if (byte1 == MIDI_SYSEX_START) {
-            in_sysex = 1;
-            sysex_pos = 0;
-            sysex_buffer[sysex_pos++] = byte1;
-            if (sysex_pos < sizeof(sysex_buffer)) sysex_buffer[sysex_pos++] = byte2;
-            if (sysex_pos < sizeof(sysex_buffer) && byte3 != 0) sysex_buffer[sysex_pos++] = byte3;
-        } else if (in_sysex) {
-            if (sysex_pos < sizeof(sysex_buffer)) sysex_buffer[sysex_pos++] = byte1;
-            if (sysex_pos < sizeof(sysex_buffer) && byte2 != 0) sysex_buffer[sysex_pos++] = byte2;
-            if (sysex_pos < sizeof(sysex_buffer) && byte3 != 0) sysex_buffer[sysex_pos++] = byte3;
-        }
-        
-        // Check for end of SysEx
-        if (byte1 == MIDI_SYSEX_END || byte2 == MIDI_SYSEX_END || byte3 == MIDI_SYSEX_END) {
-            in_sysex = 0;
-            
-            // Process complete SysEx message
-            if (sysex_pos >= 6) {
-                // Check if it's a Mackie SysEx
-                if (sysex_buffer[1] == MCU_SYSEX_ID_1 &&
-                    sysex_buffer[2] == MCU_SYSEX_ID_2 &&
-                    sysex_buffer[3] == MCU_SYSEX_ID_3 &&
-                    sysex_buffer[4] == MCU_DEVICE_ID) {
-                    
-                    uint8_t cmd = sysex_buffer[5];
-                    
-                    switch (cmd) {
-                        case MCU_CMD_DEVICE_QUERY:
-                            // Host is asking "are you there?"
-                            mcu_send_device_query_response();
-                            midi_debug("are you there ?");
-                            break;
-                            
-                        case MCU_CMD_VERSION_REQUEST:
-                            // Host wants version info
-                            mcu_send_version_reply();
-                            break;
-                            
-                        default:
-                            // Unknown command
-                            break;
+
+    while (UEINTX & (1 << RXOUTI)) {
+
+        // Read how many bytes are waiting in this bank
+        // UEBCLX = low byte of byte count register
+        uint16_t byte_count = UEBCLX;
+
+        // Read all complete 4-byte packets from this bank
+        while (byte_count >= 4) {
+            uint8_t header = UEDATX;
+            uint8_t byte1  = UEDATX;
+            uint8_t byte2  = UEDATX;
+            uint8_t byte3  = UEDATX;
+            byte_count -= 4;
+
+            uint8_t cin = header & 0x0F;
+
+            // --- SysEx ---
+            if (cin >= 0x04 && cin <= 0x07) {
+                if (byte1 == MIDI_SYSEX_START) {
+                    in_sysex  = 1;
+                    sysex_pos = 0;
+                }
+
+                if (in_sysex) {
+                    uint8_t valid_bytes;
+                    switch (cin) {
+                        case 0x04: valid_bytes = 3; break;
+                        case 0x05: valid_bytes = 1; break;
+                        case 0x06: valid_bytes = 2; break;
+                        case 0x07: valid_bytes = 3; break;
+                        default:   valid_bytes = 0; break;
+                    }
+                    uint8_t bytes[3] = { byte1, byte2, byte3 };
+                    for (uint8_t i = 0; i < valid_bytes; i++) {
+                        if (sysex_pos < sizeof(sysex_buffer))
+                            sysex_buffer[sysex_pos++] = bytes[i];
                     }
                 }
+
+                if (cin >= 0x05 && cin <= 0x07) {
+                    in_sysex = 0;
+                    if (sysex_pos >= 6
+                        && sysex_buffer[0] == MIDI_SYSEX_START
+                        && sysex_buffer[1] == MCU_SYSEX_ID_1
+                        && sysex_buffer[2] == MCU_SYSEX_ID_2
+                        && sysex_buffer[3] == MCU_SYSEX_ID_3
+                        && sysex_buffer[4] == MCU_DEVICE_ID)
+                    {
+                        uint8_t cmd = sysex_buffer[5];
+                        switch (cmd) {
+                            case 0x00:  // Device Query — respond if host asks directly
+                                midi_debug("DEVICE QUERY");
+                                mcu_send_host_connection_query();
+                                break;
+
+                            case 0x02:  // Host Connection Reply — confirm back
+                                midi_debug("HOST CONN REPLY");
+                                mcu_send_host_connection_confirm();
+                                break;
+
+                            case MCU_CMD_VERSION_REQUEST:  // 0x13
+                                midi_debug("VERSION REQUEST");
+                                mcu_send_version_reply();
+                                break;
+
+                            case MCU_CMD_LCD_MESSAGE:      // 0x12
+                                // sysex_buffer[6] = position, rest = text
+                                // handle or ignore for now
+                                break;
+
+                            case 0x20:  // Channel Meter Mode — safe to ignore
+                                break;
+
+                            default: {
+                                char dbg[32];
+                                snprintf(dbg, sizeof(dbg), "CMD: %02X len=%d", cmd, sysex_pos);
+                                midi_debug(dbg);
+                                break;
+                                }
+                            }
+                        } 
+                        sysex_pos = 0;
+                    }
             }
-            sysex_pos = 0;
+            // --- Note On / Off ---
+            else if (cin == 0x08 || cin == 0x09) {
+                uint8_t note    = byte2;
+                uint8_t pressed = (cin == 0x09 && byte3 > 0);
+                (void)note;
+                (void)pressed;
+            }
+
+            // --- Control Change ---
+            else if (cin == 0x0B) {
+                /*
+                uint8_t cc    = byte2;
+                uint8_t value = byte3;
+                if (cc >= MCU_CC_VPOT_LED_1 && cc <= MCU_CC_VPOT_LED_8) {
+                    uint8_t idx = cc - MCU_CC_VPOT_LED_1;
+                    mcu_state.vpot_led_mode[idx] = (value >> 4) & 0x07;
+                    mcu_state.vpot_position[idx] = value & 0x0F;
+                }
+                */
+            }
+
+            // --- Pitch Bend ---
+            else if (cin == 0x0E) {
+                uint8_t  channel  = byte1 & 0x0F;
+                uint16_t position = ((uint16_t)byte3 << 7) | (byte2 & 0x7F);
+                if (channel < 8) {
+                  //  mcu_state.fader_position[channel] = byte3;
+                } else if (channel == MCU_MASTER_FADER_CHANNEL) {
+                    master_fader_pos = position;
+                }
+            }
+
+            // --- Channel Pressure (meters) ---
+            else if (cin == 0x0D) {
+                /*
+                uint8_t track = (byte2 >> 4) & 0x07;
+                uint8_t level = byte2 & 0x0F;
+                mcu_state.meter_level[track] = level;
+                */
+
+            }
         }
+
+        // Only clear AFTER the whole bank is drained
+        UEINTX &= ~(1 << RXOUTI);
+        UEINTX &= ~(1 << FIFOCON);
     }
-    // Handle Note On/Off (fader touch, buttons from host)
-    else if (cin == 0x09 || cin == 0x08) {
-        // DAW is sending button/fader touch state
-        // byte1 = status (0x90 = note on, 0x80 = note off)
-        // byte2 = note number (button)
-        // byte3 = velocity (0 or 127)
-        
-        // Echo it back to confirm (optional)
-        // You could add LED updates here based on button presses from DAW
-    }
-    // Handle Control Change (V-Pot, etc from host)
-    else if (cin == 0x0B) {
-        // byte1 = 0xB0 | channel
-        // byte2 = CC number
-        // byte3 = value
-        
-        // DAW is updating V-Pot or other CC
-    }
-    // Handle Pitch Bend (fader from host)
-    else if (cin == 0x0E) {
-        // byte1 = 0xE0 | channel
-        // byte2 = LSB
-        // byte3 = MSB
-        
-        // DAW is moving a fader
-        //uint8_t channel = byte1 & 0x0F;
-        //HERE
-        //uint16_t value = byte2 | (byte3 << 7);
-        
-        // Update local state
-        /*
-        if (channel < 8) {
-            mcuState.fader_position[channel] = byte3;
-        }
-        */
-    }
+}
+
+void mcu_send_host_connection_query(void) {
+    // Serial number: 7 bytes, can be anything unique
+    // Challenge: 4 bytes, used for handshake validation
+    uint8_t msg[] = {
+        MIDI_SYSEX_START,
+        MCU_SYSEX_ID_1,       // 0x00
+        MCU_SYSEX_ID_2,       // 0x00
+        MCU_SYSEX_ID_3,       // 0x66
+        MCU_DEVICE_ID,        // 0x14
+        0x01,                 // Host Connection Query
+        // Serial number (7 bytes)
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+        // Challenge code (4 bytes, arbitrary)
+        0x7F, 0x7F, 0x7F, 0x7F,
+        MIDI_SYSEX_END
+    };
+    midi_send_sysex(msg, sizeof(msg));
+}
+
+void mcu_send_host_connection_confirm(void) {
+    uint8_t msg[] = {
+        MIDI_SYSEX_START,
+        MCU_SYSEX_ID_1,
+        MCU_SYSEX_ID_2,
+        MCU_SYSEX_ID_3,
+        MCU_DEVICE_ID,
+        0x03,               // Host Connection Confirmation
+        MIDI_SYSEX_END
+    };
+    midi_send_sysex(msg, sizeof(msg));
+}
+
+void mcu_set_master_fader(uint16_t position) {
+    if (position > MCU_FADER_MAX) position = MCU_FADER_MAX;
+
+    uint8_t lsb = position & 0x7F;
+    uint8_t msb = (position >> 7) & 0x7F;
+
+    // Pitch Bend on channel 9 (0xE8)
+    midi_send_3byte(
+        0x0E,                            // CIN: pitch bend
+        MIDI_PITCH_BEND | MCU_MASTER_FADER_CHANNEL,  // 0xE8
+        lsb,
+        msb
+    );
+}
+
+void mcu_encoder_move_master_volume(int8_t delta) {
+    // Scale: how many fader units per encoder tick
+    // 128 = fine, 512 = coarse — tune to taste
+    int32_t next = (int32_t)master_fader_pos + ((int32_t)delta * 128);
+
+    if (next < MCU_FADER_MIN) next = MCU_FADER_MIN;
+    if (next > MCU_FADER_MAX) next = MCU_FADER_MAX;
+
+    master_fader_pos = (uint16_t)next;
+    mcu_set_master_fader(master_fader_pos);
 }

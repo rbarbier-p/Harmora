@@ -69,7 +69,6 @@ void input_state_init(void);
 bool input_key_is_already_pressed(uint8_t key_id);
 void input_state_update_key(uint8_t key_id, uint8_t is_pressed);
 void input_state_update_key_velocity(uint8_t key, uint8_t key_id, uint8_t velocity);
-void input_state_key_changed(uint8_t key_id);
 
 // Update encoder delta (called by task_encoder_scan)
 void input_state_update_encoder(uint8_t encoder_id, int8_t delta);
