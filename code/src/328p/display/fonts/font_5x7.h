@@ -40,18 +40,18 @@ static const uint8_t font_5x7_data[] PROGMEM = {
     0x14,
     0x7F,
     0x14,
-    // ASCII 36 ($)
-    0x24,
-    0x2A,
+    // ASCII 36 ($) (actually arrow donw)
+    0x10,
+    0x30,
     0x7F,
-    0x2A,
-    0x12,
-    // ASCII 37 (%)
-    0x23,
-    0x13,
-    0x08,
-    0x64,
-    0x62,
+    0x30,
+    0x10,
+    // ASCII 37 (%) (actually arrow up)
+    0x04,
+    0x06,
+    0x7F,
+    0x06,
+    0x04,
     // ASCII 38 (&)
     0x36,
     0x49,

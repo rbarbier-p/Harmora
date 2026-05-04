@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <stdbool.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+
 #include "tasks.h"
 #include "ADC/adc.h"
 #include "multiplexer/multiplexer.h"
@@ -11,10 +17,6 @@
 #include "SPI/SoftSPI.h"
 #include "stopwatch.h"
 #include "pins.h"
-#include <stdlib.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #include "utils.h"
 
 // ===== APA102 LED Configuration =====

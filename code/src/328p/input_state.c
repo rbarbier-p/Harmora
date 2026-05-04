@@ -1,6 +1,7 @@
 #include "input_state.h"
 #include "led_state.h"
 #include <string.h>
+#include <stdbool.h>
 
 // Global input state
 input_state_t g_input_state;

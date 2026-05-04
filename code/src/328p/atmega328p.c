@@ -1,20 +1,20 @@
-#include <avr/io.h>
-
-#include "adc.h"
-#include "I2C.h"
-#include "SPI.h"
-#include "multiplexer.h"
+#include "ADC/adc.h"
+#include "./I2C/I2C.h"
+#include "multiplexer/multiplexer.h"
 #include "display.h"
-#include "expander.h"
+#include "expander/expander.h"
 #include "input_state.h"
 #include "interrupts.h"
 #include "mcu_comm.h"
 #include "scheduler.h"
 #include "stopwatch.h"
 #include "tasks.h"
-
+#include <stdlib.h>
+#include <avr/io.h>
 #include <util/delay.h>
 
+
+// 328P main loop: scan inputs, forward deltas to 32U4, execute draw commands in INT0.
 
 int main(void) {
   i2c_init();
@@ -29,13 +29,9 @@ int main(void) {
   interrupts_init();
   scheduler_init();
 
-  display_draw_string_font(3, 20, DISPLAY_FONT_BIG, "HARMORA");
-  display_draw_string_font(28, 45, DISPLAY_FONT_SMALL, "booting up...");
-
   uint8_t loop_count = 0;
-
   while (1)
   {
-      scheduler_run(loop_count++);
+    scheduler_run(loop_count++);
   }
 }

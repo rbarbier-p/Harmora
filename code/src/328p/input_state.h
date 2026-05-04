@@ -2,6 +2,7 @@
 #define INPUT_STATE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * Shared input state between tasks and MCU communication

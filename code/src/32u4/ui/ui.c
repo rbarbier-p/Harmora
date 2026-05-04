@@ -10,7 +10,7 @@ static uint8_t s_dirty_display;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
 
-// Split edit mode (volume encoder)
+// Split edit mode (OCTAVE_SPLIT encoder)
 static uint8_t s_split_active;
 
 // Temporary encoder mapping until a proper scene/screen system exists.
@@ -147,13 +147,13 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta, uint8_t program)
         return;
     }
 
-    if (encoder_id == UI_ENC_ID_VOLUME) {
+    if (encoder_id == UI_ENC_ID_OCTAVE_SPLIT) {
         // Split boundary edit (chords only). Live update while active.
         if (!s_split_active) {
             return;
         }
 
-        screen_engine_touch(&s_screen_engine, UI_SCENE_VOLUME, UI_SCENE_TIMEOUT_MS);
+        screen_engine_touch(&s_screen_engine, UI_SCENE_OCTAVE_SPLIT, UI_SCENE_TIMEOUT_MS);
 
         int16_t b = (int16_t)chord_engine_get_split_boundary();
         b += (delta > 0) ? 1 : -1;
@@ -168,11 +168,12 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta, uint8_t program)
 
 void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
 {
-    if (encoder_id == UI_ENC_ID_VOLUME) {
+    if (encoder_id == UI_ENC_ID_OCTAVE_SPLIT) {
         // Toggle split edit mode.
         if (pressed) {
             s_split_active = s_split_active ? 0 : 1;
             ui_render_split_preview(s_split_active);
+            screen_engine_touch(&s_screen_engine, s_split_active ? UI_SCENE_OCTAVE_SPLIT : UI_SCENE_CLEAR, s_split_active ? 0 : UI_SCENE_TIMEOUT_MS);
         }
         return;
     }
@@ -193,8 +194,8 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         target = UI_SCENE_PATTERN;
     } else if (encoder_id == UI_ENC_ID_VOICING) {
         target = UI_SCENE_VOICING;
-    } else if (encoder_id == UI_ENC_ID_VOLUME) {
-        target = UI_SCENE_VOLUME;
+    } else if (encoder_id == UI_ENC_ID_OCTAVE_SPLIT) {
+        target = UI_SCENE_OCTAVE_SPLIT;
     } else {
         midi_debug("ERR. invalid enc ID");
         return;
@@ -234,7 +235,7 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
     } else if (target == UI_SCENE_BPM) {
         screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
-    } else if (target == UI_SCENE_VOLUME) {
+    } else if (target == UI_SCENE_OCTAVE_SPLIT) {
         screen_engine_touch(&s_screen_engine, UI_SCENE_CLEAR, 0);
     }
 }

@@ -1,3 +1,8 @@
+#include <avr/io.h>
+#include <stdbool.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
 #include "mcu_comm.h"
 #include "input_state.h"
 #include "led_state.h"
@@ -6,9 +11,6 @@
 #include "SPI/SPI.h"
 #include "pins.h"
 #include "tasks.h"
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <util/delay.h>
 
 // INTERNAL STATE
 

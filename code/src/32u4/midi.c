@@ -1,5 +1,4 @@
 #include "midi.h"
-#include <stdio.h>
 #include "ui/ui.h"
 #include "mcu_com/mcu_com.h"
 
@@ -384,9 +383,6 @@ void process_incoming_midi(void) {
                                 break;
 
                             default: {
-                                char dbg[32];
-                                snprintf(dbg, sizeof(dbg), "CMD: %02X len=%d", cmd, sysex_pos);
-                                midi_debug(dbg);
                                 break;
                                 }
                             }

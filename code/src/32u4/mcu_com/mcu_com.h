@@ -2,7 +2,6 @@
 #define MCU_COM_H
 
 #include <stdint.h>
-#include <stdio.h>
 #include "midi.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>

@@ -55,7 +55,6 @@ uint16_t number_to_string(char *buffer, uint16_t length, uint32_t number)
     return (i);
 }
 
-
 // Concatenates src onto the end of dst.
 uint16_t string_concat(char *dst, const char *src, uint16_t dst_size)
 {
