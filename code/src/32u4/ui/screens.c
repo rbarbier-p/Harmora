@@ -61,8 +61,9 @@ static uint8_t screen_put_3lines(const char *l0, const char *l1, const char *l2)
     return mcu_link_queue_display_frame(payload, idx);
 }
 
-uint8_t screen_render_clear(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_clear(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
+    (void)mode;
     /*char l0[32];
     char l1[32];
     char l2[32];
@@ -80,9 +81,9 @@ uint8_t screen_render_clear(const ui_state_t *ui, const ui_scene_state_t *scene)
     return mcu_link_queue_display_frame(payload, idx);
 }
 
-uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_bpm(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
-    (void)ui;
+    (void)mode;
     char l0[32];
     char l1[32];
     char l2[32];
@@ -92,9 +93,9 @@ uint8_t screen_render_bpm(const ui_state_t *ui, const ui_scene_state_t *scene)
     return screen_put_3lines(l0, l1, l2);
 }
 
-uint8_t screen_render_voicings(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_voicings(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
-    (void)ui;
+    (void)mode;
     char l0[32];
     char l1[32];
     char l2[32];
@@ -104,9 +105,9 @@ uint8_t screen_render_voicings(const ui_state_t *ui, const ui_scene_state_t *sce
     return screen_put_3lines(l0, l1, l2);
 }
 
-uint8_t screen_render_volume(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_volume(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
-    (void)ui;
+    (void)mode;
     char l0[32];
     char l1[32];
     char l2[32];
@@ -116,7 +117,7 @@ uint8_t screen_render_volume(const ui_state_t *ui, const ui_scene_state_t *scene
     return screen_put_3lines(l0, l1, l2);
 }
 
-uint8_t screen_render_key(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_key(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
     (void)scene;
     char l0[32];
@@ -125,14 +126,14 @@ uint8_t screen_render_key(const ui_state_t *ui, const ui_scene_state_t *scene)
     (void)snprintf(l0, sizeof(l0), "KEY");
     (void)snprintf(l1, sizeof(l1), "%s %s",
                    s_note_names[scene->pending_tonic_pc % 12],
-                   s_mode_names[(uint8_t)ui->mode % HARMONY_MODE_COUNT]);
+                   s_mode_names[(uint8_t)mode % HARMONY_MODE_COUNT]);
     l2[0] = '\0';
     return screen_put_3lines(l0, l1, l2);
 }
 
-uint8_t screen_render_instrument(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_instrument(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
-    (void)ui;
+    (void)mode;
     char l0[32];
     char l1[32];
     char l2[32];
@@ -142,9 +143,9 @@ uint8_t screen_render_instrument(const ui_state_t *ui, const ui_scene_state_t *s
     return screen_put_3lines(l0, l1, l2);
 }
 
-uint8_t screen_render_pattern(const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screen_render_pattern(harmony_mode_t mode, const ui_scene_state_t *scene)
 {
-    (void)ui;
+    (void)mode;
     char l0[32];
     char l1[32];
     char l2[32];
@@ -179,24 +180,24 @@ uint8_t screen_render_chord(void)
     return screen_put_3lines("CHORD", s_chord_spelling, "");
 }
 
-uint8_t screens_render(ui_scene_id_t screen_id, const ui_state_t *ui, const ui_scene_state_t *scene)
+uint8_t screens_render(ui_scene_id_t screen_id, harmony_mode_t mode, const ui_scene_state_t *scene)
 {
     switch (screen_id) {
         case UI_SCENE_BPM:
-            return screen_render_bpm(ui, scene);
+            return screen_render_bpm(mode, scene);
         case UI_SCENE_KEY:
-            return screen_render_key(ui, scene);
+            return screen_render_key(mode, scene);
         case UI_SCENE_INSTRUMENT:
-            return screen_render_instrument(ui, scene);
+            return screen_render_instrument(mode, scene);
         case UI_SCENE_PATTERN:
-            return screen_render_pattern(ui, scene);
+            return screen_render_pattern(mode, scene);
         case UI_SCENE_VOICING:
-            return screen_render_voicings(ui, scene);
+            return screen_render_voicings(mode, scene);
         case UI_SCENE_VOLUME:
-            return screen_render_volume(ui, scene);
+            return screen_render_volume(mode, scene);
         case UI_SCENE_CHORD:
             return screen_render_chord();
         default:
-            return screen_render_clear(ui, scene);
+            return screen_render_clear(mode, scene);
     }
 }

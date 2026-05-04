@@ -5,43 +5,11 @@
 
 #include "mcu_com.h" // append_byte/append_string_cmd + mcu_link_queue_display_frame
 
-// Hard-coded mapping for now.
-// TODO: replace with pinout-driven mapping once LED order is finalized.
-
 ui_leds_t s_leds;
-ui_state_t s_ui;
+static harmony_mode_t s_ui_mode;
+static uint8_t s_dirty_display;
 static ui_scene_state_t s_scene;
 static screen_engine_t s_screen_engine;
-
-const ui_led_map_t g_ui_led_map = {
-    .pc_led_id = {
-        UI_LED_ID_PC_C,
-        UI_LED_ID_PC_DB,
-        UI_LED_ID_PC_D,
-        UI_LED_ID_PC_EB,
-        UI_LED_ID_PC_E,
-        UI_LED_ID_PC_F,
-        UI_LED_ID_PC_GB,
-        UI_LED_ID_PC_G,
-        UI_LED_ID_PC_AB,
-        UI_LED_ID_PC_A,
-        UI_LED_ID_PC_BB,
-        UI_LED_ID_PC_B,
-    },
-    .mode_led_id = {
-        UI_LED_ID_MODE_IONIAN,
-        UI_LED_ID_MODE_DORIAN,
-        UI_LED_ID_MODE_PHRYGIAN,
-        UI_LED_ID_MODE_LYDIAN,
-        UI_LED_ID_MODE_MIXOLYDIAN,
-        UI_LED_ID_MODE_AEOLIAN,
-        UI_LED_ID_MODE_LOCRIAN,
-    },
-    .ext7_led_id  = UI_LED_ID_EXT_7,
-    .ext9_led_id  = UI_LED_ID_EXT_9,
-    .ext11_led_id = UI_LED_ID_EXT_11,
-    .ext13_led_id = UI_LED_ID_EXT_13,
-};
 
 // Temporary encoder mapping until a proper scene/screen system exists.
 // 0: tonic (pitch class)
@@ -53,14 +21,16 @@ const ui_led_map_t g_ui_led_map = {
 
 void ui_init(void)
 {
-    s_ui.dirty_display = 1;
-    s_ui.mode = HARMONY_MODE_COUNT;
-    s_leds.hold_mode = HARMONY_MODE_COUNT;
+    s_dirty_display = 1;
+    s_ui_mode = HARMONY_MODE_COUNT;
+    s_leds.hold_mode = (uint8_t)HARMONY_MODE_COUNT;
     s_leds.hold_mode_active = 0;
-    s_leds.locked_mode = HARMONY_MODE_COUNT;
+    s_leds.locked_mode = (uint8_t)HARMONY_MODE_COUNT;
     ui_leds_init(&s_leds);
-    //ui_state_recompute(&s_ui);
     screen_engine_init(&s_screen_engine);
+
+    // Default mode at boot.
+    ui_set_locked_mode(HARMONY_MODE_IONIAN);
 
 
     s_scene.active = UI_SCENE_CLEAR;
@@ -70,38 +40,18 @@ void ui_init(void)
     s_scene.pending_instrument_program = 0;
 }
 
-void ui_set_mode(harmony_mode_t mode)
-{
-    ui_state_set_mode(&s_ui, mode);
-}
-
-void ui_set_locked_mode(harmony_mode_t mode)
-{
-    ui_state_set_locked_mode(&s_ui, mode);
-}
-
-void ui_set_mode_held(harmony_mode_t mode, uint8_t held)
-{
-    ui_state_set_mode_held(&s_ui, mode, held);
-}
-
-void ui_set_extensions(uint8_t ext_bitmask, led_preset_t color)
-{
-    ui_state_set_extensions(ext_bitmask, color);
-}
-
 // Called from chord engine when any chord is active
 void ui_chord_screen_on(char *chord_spelling)
 {
     set_chord_spelling(chord_spelling);
     screen_engine_touch(&s_screen_engine, UI_SCENE_CHORD, 0);
-    s_ui.dirty_display = 1;
+    s_dirty_display = 1;
 }
 
 void ui_chord_screen_off(void)
 {
     screen_engine_touch(&s_screen_engine, s_screen_engine.previous, UI_SCENE_TIMEOUT_MS / 3);
-    s_ui.dirty_display = 1;
+    s_dirty_display = 1;
 }
 
 void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
@@ -120,7 +70,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         if (bpm > 250) bpm = 250;
         chord_engine_set_bpm(bpm);
 
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
         return;
     }
 
@@ -136,7 +86,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         while (next < 0) next += 12;
         while (next >= 12) next -= 12;
         s_scene.pending_tonic_pc = (uint8_t)next;
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
         return;
     }
 
@@ -153,7 +103,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         if (prg > 127) prg = 127;
         s_scene.pending_instrument_program = (uint8_t)prg;
 
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
         return;
     }
 
@@ -170,7 +120,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         while (p >= (int16_t)PLAY_PATTERN_COUNT) p -= (int16_t)PLAY_PATTERN_COUNT;
         s_scene.pending_pattern = (uint8_t)p;
 
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
         return;
     }
 
@@ -187,7 +137,7 @@ void ui_handle_encoder_turn(uint8_t encoder_id, int8_t delta)
         if (voicing >= (int16_t)CHORD_VOICING_COUNT) voicing -= (int16_t)CHORD_VOICING_COUNT;
         s_scene.pending_voicing = (uint8_t)voicing;
 
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
         return;
     }
 }
@@ -232,7 +182,7 @@ void ui_handle_encoder_press(uint8_t encoder_id, uint8_t pressed)
         }
 
         screen_engine_touch(&s_screen_engine, target, UI_SCENE_TIMEOUT_MS);
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
         return;
     }
 
@@ -262,17 +212,21 @@ void ui_tick(uint8_t elapsed_ms)
     ui_scene_id_t active_screen = screen_engine_active_screen(&s_screen_engine);
     if (active_screen != s_scene.active) {
         s_scene.active = active_screen;
-        s_ui.dirty_display = 1;
+        s_dirty_display = 1;
     }
     
     if (s_leds.dirty_mask) {
         ui_flush_leds(&s_leds);
     }
 
-    if (s_ui.dirty_display) {
-        if (!screens_render(s_scene.active, &s_ui, &s_scene)) {
+    if (s_dirty_display) {
+        if (!screens_render(s_scene.active, s_ui_mode, &s_scene)) {
             return;
         }
-        s_ui.dirty_display = 0;
+        s_dirty_display = 0;
     }
 }
+
+// Exposed for the LED engine.
+harmony_mode_t ui_get_mode(void) { return s_ui_mode; }
+void ui_set_mode_internal(harmony_mode_t mode) { s_ui_mode = mode; }

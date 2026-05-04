@@ -2,8 +2,6 @@
 #include "ui/ui.h"
 #include <stdbool.h>
 
-#include "midi.h" // debug
-
 extern harmony_context_t s_harmony_ctx;
 extern settings_context_t s_settings_ctx;
 extern harmony_mode_t s_mode_locked;

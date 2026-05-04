@@ -14,7 +14,7 @@ static const uint8_t s_mode_scales[HARMONY_MODE_COUNT] = {
     0b0011011, // Locrian
 };
 
-static const uint8_t *get_scale_with_mode(harmony_mode_t mode)
+const uint8_t *get_scale_with_mode(harmony_mode_t mode)
 {
     if (mode >= HARMONY_MODE_COUNT) {
         mode = HARMONY_MODE_IONIAN;

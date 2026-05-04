@@ -10,7 +10,8 @@
 #define LED_COUNT 26
 
 // LED Presets (sent from 32U4, interpreted by 328P).
-typedef enum {
+typedef uint8_t led_preset_t;
+enum {
     LED_OFF         = 0,  // LED off
     LED_IDLE        = 1,  // Default idle state
     LED_ACTIVE      = 2,  // Active/pressed
@@ -20,6 +21,6 @@ typedef enum {
     LED_ERROR       = 6,  // Error indicator
     LED_ACCENT      = 7,  // Accent color
     LED_PRESET_COUNT
-} led_preset_t;
+};
 
 #endif // LEDS_H

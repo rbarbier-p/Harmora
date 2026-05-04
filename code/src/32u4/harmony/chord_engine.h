@@ -158,6 +158,7 @@ void chord_engine_all_notes_off(void);
 void voicifie_chord(uint8_t *notes, uint8_t count);
 void harmony_context_init(harmony_context_t *ctx);
 uint8_t harmony_resolve_intervals(uint8_t key_id, const harmony_context_t *ctx, harmony_intervals_t *out);
+const uint8_t *get_scale_with_mode(harmony_mode_t mode);
 
 // harmony_helpers.c
 char *spell_chord(char *spelling, uint8_t key_id, const harmony_intervals_t *h);

@@ -9,9 +9,12 @@ void ui_leds_init(ui_leds_t *leds)
     }
 
     for (uint8_t i = 0; i < LED_COUNT; i++) {
-        leds->fullbuffer[i] = LED_OFF;
+        leds->fullbuffer[i] = (uint8_t)LED_OFF;
     }
     leds->dirty_mask = 0;
+    leds->hold_mode = (uint8_t)HARMONY_MODE_COUNT;
+    leds->locked_mode = (uint8_t)HARMONY_MODE_COUNT;
+    leds->hold_mode_active = 0;
 }
 
 uint8_t ui_flush_leds(ui_leds_t *leds)
@@ -24,7 +27,11 @@ uint8_t ui_flush_leds(ui_leds_t *leds)
     uint8_t idx = 0;
 
     for (uint8_t i = 0; i < LED_COUNT; i++) {
-        if (leds->dirty_mask & ((uint32_t)1 << i)) {
+        if (leds->dirty_mask & ((uint32_t)1U << i)) {
+            // opcode + led_id + preset
+            if ((uint8_t)(idx + 3) > MCU_LINK_MAX_PAYLOAD) {
+                break;
+            }
             payload[idx++] = CMD_LED;
             payload[idx++] = i;
             payload[idx++] = leds->fullbuffer[i];
@@ -37,11 +44,10 @@ uint8_t ui_flush_leds(ui_leds_t *leds)
     }
 
     if (!mcu_link_queue_display_frame(payload, idx)) {
+        // Keep dirty bits set so we retry next tick.
         return 0;
     }
 
     leds->dirty_mask = 0;
-
     return 1;
 }
-
