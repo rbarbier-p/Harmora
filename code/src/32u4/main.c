@@ -6,8 +6,6 @@
 #include "ui/ui.h"
 #include "utils.h"
 
-#include <stdio.h>
-
 extern volatile uint8_t usbConfigured;
 
 static uint8_t s_rx_last_payload_len = 0;

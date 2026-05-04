@@ -1,4 +1,6 @@
 #include <avr/io.h>
+#include <stdbool.h>
+#include <util/delay.h>
 
 #include "adc.h"
 #include "I2C.h"
@@ -12,8 +14,6 @@
 #include "scheduler.h"
 #include "stopwatch.h"
 #include "tasks.h"
-
-#include <util/delay.h>
 
 int main(void) {
   i2c_init();

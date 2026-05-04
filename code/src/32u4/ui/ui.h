@@ -13,7 +13,7 @@
 #define UI_ENC_ID_KEY        2
 #define UI_ENC_ID_PATTERN    3
 #define UI_ENC_ID_VOICING    4
-#define UI_ENC_ID_VOLUME     5
+#define UI_ENC_ID_OCTAVE_SPLIT 5
 
 // piano led mapping
 #define UI_LED_ID_PC_C   11
@@ -57,7 +57,7 @@ typedef enum {
     UI_SCENE_KEY,
     UI_SCENE_INSTRUMENT,
     UI_SCENE_PATTERN,
-    UI_SCENE_VOLUME,
+    UI_SCENE_OCTAVE_SPLIT,
     UI_SCENE_CHORD,
     UI_SCENE_VOICING,
 } ui_scene_id_t;
@@ -122,14 +122,14 @@ uint8_t ui_flush_leds(ui_leds_t *leds);
 
 // screens.c
 uint8_t screens_render(ui_scene_id_t screen_id, harmony_mode_t mode, const ui_scene_state_t *scene);
-uint8_t screen_render_clear(harmony_mode_t mode, const ui_scene_state_t *scene);
-uint8_t screen_render_bpm(harmony_mode_t mode, const ui_scene_state_t *scene);
+uint8_t screen_render_clear(void);
+uint8_t screen_render_bpm(void);
 uint8_t screen_render_key(harmony_mode_t mode, const ui_scene_state_t *scene);
-uint8_t screen_render_instrument(harmony_mode_t mode, const ui_scene_state_t *scene);
-uint8_t screen_render_pattern(harmony_mode_t mode, const ui_scene_state_t *scene);
+uint8_t screen_render_instrument(const ui_scene_state_t *scene);
+uint8_t screen_render_pattern(const ui_scene_state_t *scene);
 uint8_t screen_render_chord(void);
-uint8_t screen_render_voicings(harmony_mode_t mode, const ui_scene_state_t *scene);
-uint8_t screen_render_volume(harmony_mode_t mode, const ui_scene_state_t *scene);
+uint8_t screen_render_voicings(const ui_scene_state_t *scene);
+uint8_t screen_render_octave_split(void);
 void set_chord_spelling(char *text);
 
 #endif // UI_H

@@ -2,6 +2,7 @@
 #define CHORD_ENGINE_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define HARMONY_MAX_INTERVALS 8
 #define CHORD_ENGINE_MAX_HELD_KEYS 12

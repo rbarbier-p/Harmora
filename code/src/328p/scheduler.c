@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include "tasks.h"
+#include <stdbool.h>
 
 // Task function pointer type
 typedef void (*task_func_t)(void);
