@@ -3,7 +3,7 @@
 #include "SPI.h"
 #include "mcu_com.h"
 #include "chord_engine.h"
-#include "ui/ui.h"
+#include "ui.h"
 #include "utils.h"
 
 extern volatile uint8_t usbConfigured;
