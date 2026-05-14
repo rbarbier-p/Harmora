@@ -50,7 +50,6 @@ static uint8_t convert_velocity(uint32_t velocity, uint32_t min, uint32_t max)
 }
 
 void task_hall_scan(void) {
-     /*
   // Rene's board
   static uint8_t press_threshold[12] = {
     122, 97, 84, 90, // weird new bug with the hall sensor threshold being 117
@@ -63,7 +62,7 @@ void task_hall_scan(void) {
         68, 63, 69, 54,
         63, 80, 54, 52
     };
-    */
+     /*
    // Malo's board (10 lower than unpressed key)
       static const uint8_t press_threshold[12] = {
           111, 114, 120, 109,
@@ -76,6 +75,7 @@ void task_hall_scan(void) {
         74, 77, 90, 91,
         76, 67, 78, 83
     };
+    */
      
   // Channel mapping array (12 bytes in FLASH)
   static const uint8_t key_to_channel[12] = {
